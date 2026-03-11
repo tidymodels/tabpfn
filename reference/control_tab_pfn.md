@@ -55,6 +55,11 @@ control_tab_pfn(
 
   An integer to set the random number stream.
 
+## Value
+
+A list with extra class `"control_tab_pfn"` that has named elements for
+each of the argument values.
+
 ## References
 
 <https://github.com/PriorLabs/TabPFN/blob/main/src/tabpfn/classifier.py>,
@@ -67,5 +72,5 @@ control_tab_pfn()
 #> control object for `tab_pfn()`
 #> 
 #> non-default arguments:
-#> • `random_state`: 731199
+#> • `random_state`: 841111
 ```

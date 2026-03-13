@@ -77,8 +77,9 @@ probability estimates are in columns with the pattern <code>.pred_{level}</code>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Minimal example for quick execution</span></span></span>
 <span class="r-in"><span><span class="va">car_train</span> <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">[</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,   <span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">car_test</span>  <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">15</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">car_test</span>  <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">6</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Fit</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="is_tab_pfn_installed.html">is_tab_pfn_installed</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span> <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">cyl</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">drat</span><span class="op">)</span>, <span class="va">car_train</span><span class="op">)</span></span></span>
@@ -87,6 +88,7 @@ probability estimates are in columns with the pattern <code>.pred_{level}</code>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">car_test</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">car_test</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

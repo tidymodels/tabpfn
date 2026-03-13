@@ -312,6 +312,7 @@ preprint* arXiv:2112.10510 (2021).
 predictors <- mtcars[, -1]
 outcome <- mtcars[, 1]
 
+if (FALSE) { # \dontrun{
 if (is_tab_pfn_installed() & interactive()) {
  # XY interface
  mod <- tab_pfn(predictors, outcome)
@@ -330,4 +331,5 @@ if (is_tab_pfn_installed() & interactive()) {
   mod3
  }
 }
+} # }
 ```

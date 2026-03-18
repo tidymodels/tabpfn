@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/tidymodels/tabpfn/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/tidymodels/tabpfn/blob/v0.1.0/DESCRIPTION)
 
 Kuhn M (2026). *tabpfn: Prior-Data Fitted Network Foundational Model for
 Tabular Data*. R package version 0.1.0, <https://tabpfn.tidymodels.org>.

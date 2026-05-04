@@ -140,3 +140,30 @@ is_tab_pfn_installed <- function() {
   res <- try(reticulate::import("tabpfn"), silent = TRUE)
   !inherits(res, "try-error")
 }
+
+check_model_version <- function(x, call = rlang::caller_env()) {
+  if (!is_tab_pfn_installed()) {
+    cli::cli_abort(
+      "The {.code tabpfn} Python library could not be imported.",
+      call = call
+    )
+  }
+
+  py_lib <- reticulate::import("tabpfn")
+  builtins <- reticulate::import_builtins()
+  valid_versions <- py_lib$constants$ModelVersion |>
+    builtins$list() |>
+    unlist()
+
+  if (!x %in% valid_versions) {
+    cli::cli_abort(
+      c(
+        "{.arg model_version} must be one of {.or {.val {valid_versions}}}.",
+        x = "{.val {x}} is not a valid model version."
+      ),
+      call = call
+    )
+  }
+
+  invisible(x)
+}

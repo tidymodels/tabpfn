@@ -11,7 +11,8 @@ control_tab_pfn(
   inference_precision = "auto",
   fit_mode = "fit_preprocessors",
   memory_saving_mode = "auto",
-  random_state = sample.int(10^6, 1)
+  random_state = sample.int(10^6, 1),
+  ...
 )
 }
 \arguments{
@@ -38,6 +39,10 @@ cached. Values are \code{"fit_preprocessors"} (the default), \code{"low_memory"}
 errors. Values are either a logical or \code{"auto"}.}
 
 \item{random_state}{An integer to set the random number stream.}
+
+\item{...}{Additional named arguments passed directly to the TabPFN Python
+constructor. Use this to supply options not covered by the named parameters
+above (e.g. arguments added in newer versions of the Python package).}
 }
 \value{
 A list with extra class \code{"control_tab_pfn"} that has named elements

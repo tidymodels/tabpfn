@@ -1,0 +1,15 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://tabpfn.tidymodels.org/dev/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/LICENSE.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/authors.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/index.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/news/index.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/reference/TabPFN-package.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/reference/control_tab_pfn.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/reference/index.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/reference/is_tab_pfn_installed.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/reference/predict.tab_pfn.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/reference/reexports.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/dev/reference/tab_pfn.html</loc></url>
+</urlset>
+

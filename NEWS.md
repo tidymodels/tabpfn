@@ -1,4 +1,4 @@
-# tabpfn (dev)
+# tabpfn (development version)
 
 # tabpfn 0.1.0
 

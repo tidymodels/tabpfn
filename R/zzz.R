@@ -1,4 +1,5 @@
-tabpfn <- NULL
+.pkg_env <- new.env()
+.pkg_env$tab_pfn <- NULL
 
 .onLoad <- function(...) {
   # Set PyTorch TorchInductor cache to R's temp directory
@@ -11,7 +12,7 @@ tabpfn <- NULL
   reticulate::py_require("tabpfn")
 
   tryCatch(
-    tabpfn <<- reticulate::import(
+    .pkg_env$tab_pfn <- reticulate::import(
       "tabpfn",
       delay_load = list(
         on_error = function(e) {

@@ -417,7 +417,7 @@ tab_pfn_bridge <- function(processed, options, ...) {
 # Implementation
 
 tab_pfn_impl <- function(x, y, opts) {
-  tabpfn <- reticulate::import("tabpfn")
+  tabpfn <- .pkg_env$tab_pfn
   cls_wrapper <- function(...) {
     tabpfn$TabPFNClassifier(...)
   }

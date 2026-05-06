@@ -11,14 +11,29 @@ msg_tabpfn_not_available <- function(cnd) {
 }
 
 check_libomp <- function() {
-  os_info <- Sys.info()['sysname']
+  os_info <- Sys.info()[["sysname"]]
   if (os_info != "Darwin") {
     return(invisible(NULL))
   }
-  vm_types <- system(paste("vmmap", Sys.getpid()), intern = TRUE)
-  has_libomp <- any(grepl("libomp", vm_types))
 
-  if (has_libomp) {
+  vm_types <- system(paste("vmmap", Sys.getpid()), intern = TRUE)
+  libomp_lines <- grep("libomp", vm_types, value = TRUE)
+
+  if (length(libomp_lines) == 0) {
+    return(invisible(NULL))
+  }
+
+  # Extract the file path from each vmmap line (path starts with "/" at end of line)
+  libomp_paths <- sub(".*\\s(/\\S+)\\s*$", "\\1", libomp_lines)
+
+  # libomp loaded from within the active Python environment is fine — torch will
+  # reuse it. Only error if libomp came from outside the Python env (e.g. an R
+  # package or an OpenMP-enabled R binary), because torch would then try to load
+  # its own bundled copy alongside a foreign one, causing a segfault.
+  py_env_root <- reticulate::py_config()$prefix
+  outside_py_env <- !startsWith(libomp_paths, py_env_root)
+
+  if (any(outside_py_env)) {
     cli::cli_abort(
       c(
         i = "We believe that an existing package has loaded {.pkg OpenMP}.",

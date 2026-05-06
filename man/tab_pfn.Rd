@@ -21,6 +21,7 @@ tab_pfn(x, ...)
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -33,6 +34,7 @@ tab_pfn(x, ...)
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -45,6 +47,7 @@ tab_pfn(x, ...)
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -57,6 +60,7 @@ tab_pfn(x, ...)
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -96,6 +100,12 @@ function or after? Default is \code{FALSE}.}
 \item{training_set_limit}{An integer greater than 2L (and possibly \code{Inf})
 that can be used to keep the training data within the limits of the
 data constraints imposed by the Python library.}
+
+\item{version}{A character string for the model version (e.g., \code{"v2"},
+\code{"v2.5"}). When \code{NULL} (the default), the Python library's current default
+version is used. When set, the model is initialized via
+\code{create_default_for_version()} with the corresponding \code{ModelVersion} enum
+value.}
 
 \item{control}{A list of options produced by \code{\link[=control_tab_pfn]{control_tab_pfn()}}.}
 

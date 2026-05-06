@@ -431,15 +431,17 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
 # Implementation
 
 tab_pfn_impl <- function(x, y, opts, version = NULL) {
-  tabpfn <- reticulate::import("tabpfn")
+  tabpfn <- .pkg_env$tab_pfn
 
   if (!is.null(version)) {
-    default_model <- if (is.factor(y)) {
-      tabpfn$TabPFNClassifier
+    if (is.factor(y)) {
+      default_model <- tabpfn$TabPFNClassifier
     } else {
-      tabpfn$TabPFNRegressor
+      default_model <- tabpfn$TabPFNRegressor
     }
-    opts$model_path <- default_model$create_default_for_version(version)$model_path
+    opts$model_path <- default_model$create_default_for_version(
+      version
+    )$model_path
   }
 
   cls_wrapper <- function(...) {

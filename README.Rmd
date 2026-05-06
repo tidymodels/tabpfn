@@ -29,7 +29,14 @@ This R package is a wrapper of the [Python library](https://github.com/PriorLabs
 
 ## Installation
 
-You can install the development version of tabpfn like so:
+You can download the package from CRAN via:
+
+```{r}
+#| eval: false
+install.packages("tabpfn")
+```
+
+or you can install the development version of tabpfn like so:
 
 ```{r}
 #| eval: false
@@ -67,16 +74,17 @@ i 32 data points
 i 10 predictors
 ```
 
-
 ## Example
 
+
+After loading the package: 
 
 ```{r}
 #| label: tab-start-up
 library(tabpfn)
 ```
 
-To fit a model: 
+we can fit a model via the standard x/y interface. 
 
 ```{r}
 #| label: mtcars
@@ -85,7 +93,7 @@ reg_mod <- tab_pfn(mtcars[1:25, -1], mtcars$mpg[1:25])
 reg_mod
 ```
 
-In addition to the x/y interface shown above, there are also formula and recipes interfaces. 
+There are also formula and recipes interfaces. 
 
 Prediction follows the usual S3 `predict()` method: 
 
@@ -123,15 +131,36 @@ The fit looks fairly good when shown with out-of-sample data:
 #| fig.width: 5
 #| fig.height: 4
 #| fig.align: "center"
-#| out.width: 50%
+#| out.width: 70%
 
 cbind(grid, grid_pred) |>
- ggplot(aes(X1, X2)) + 
- geom_point(data = two_cls_val, aes(col = class, pch = class), 
-            alpha = 3 / 4, cex = 3) +
- geom_contour(aes(z = .pred_Class1), breaks = 1/ 2, col = "black", linewidth = 1) +
- coord_equal(ratio = 1)
+  ggplot(aes(X1, X2)) +
+  geom_point(
+    data = two_cls_val,
+    aes(col = class, pch = class),
+    alpha = 3 / 4,
+    cex = 3
+  ) +
+  geom_contour(
+    aes(z = .pred_Class1),
+    breaks = 1 / 2,
+    col = "black",
+    linewidth = 1
+  ) +
+  coord_equal(ratio = 1)
 ```
+
+## License
+
+[PriorLabs](https://priorlabs.ai/) created the model. When it released version 2.5 of the model, which contained several improvements. One other change is that accessing the model parameters required an API key. Without one, an error occurs:
+
+> This model is gated and requires you to accept its terms.  Please follow these steps: 1. Visit [https://huggingface.co/Prior-Labs/tabpfn_2_5](https://huggingface.co/Prior-Labs/tabpfn_2_5) in your browser and accept the terms of use. 2. Log in to your Hugging Face account via the command line by running: hf auth login (Alternatively, you can set the `HF_TOKEN` environment variable with a read token).
+
+The license includes provisions for "Non-Commercial Use Only" if you are just trying it out. 
+
+Instructions for installing the package and obtaining the API key are in the [package's manual](https://tabpfn.tidymodels.org/reference/tab_pfn.html#license-requirements). 
+
+Also, the model is most effective when a GPU is available (by an order of magnitude or two). This may seem obvious to anyone already working with deep learning models, but it is a fairly new requirement for those strictly working with traditional tabular data models. 
 
 ## Code of Conduct
   

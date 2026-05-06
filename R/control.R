@@ -17,6 +17,9 @@
 #' @param memory_saving_mode A character string to help with out-of-memory
 #' errors. Values are either a logical or `"auto"`.
 #' @param random_state An integer to set the random number stream.
+#' @param ... Additional named arguments passed directly to the TabPFN Python
+#'   constructor. Use this to supply options not covered by the named parameters
+#'   above (e.g. arguments added in newer versions of the Python package).
 #' @return A list with extra class `"control_tab_pfn"` that has named elements
 #' for each of the argument values.
 #' @references
@@ -32,7 +35,8 @@ control_tab_pfn <- function(
   inference_precision = "auto",
   fit_mode = "fit_preprocessors",
   memory_saving_mode = "auto",
-  random_state = sample.int(10^6, 1)
+  random_state = sample.int(10^6, 1),
+  ...
 ) {
   check_bool(ignore_pretraining_limits)
   check_string(fit_mode)
@@ -54,14 +58,29 @@ control_tab_pfn <- function(
     cli::cli_abort(mem_msg)
   }
 
-  args <- list(
-    n_preprocessing_jobs = as.integer(n_preprocessing_jobs),
-    device = device,
-    ignore_pretraining_limits = ignore_pretraining_limits,
-    inference_precision = inference_precision,
-    fit_mode = fit_mode,
-    memory_saving_mode = memory_saving_mode,
-    random_state = as.integer(random_state)
+  dot_args <- rlang::list2(...)
+  reserved <- c(
+    "n_preprocessing_jobs", "device", "ignore_pretraining_limits",
+    "inference_precision", "fit_mode", "memory_saving_mode", "random_state"
+  )
+  conflicts <- intersect(names(dot_args), reserved)
+  if (length(conflicts) > 0) {
+    cli::cli_abort(
+      "Argument{?s} {.arg {conflicts}} must be passed as named argument{?s}, not via {.code ...}."
+    )
+  }
+
+  args <- c(
+    list(
+      n_preprocessing_jobs = as.integer(n_preprocessing_jobs),
+      device = device,
+      ignore_pretraining_limits = ignore_pretraining_limits,
+      inference_precision = inference_precision,
+      fit_mode = fit_mode,
+      memory_saving_mode = memory_saving_mode,
+      random_state = as.integer(random_state)
+    ),
+    dot_args
   )
 
   class(args) <- "control_tab_pfn"
@@ -70,7 +89,11 @@ control_tab_pfn <- function(
 
 #' @export
 print.control_tab_pfn <- function(x, ...) {
-  non_default <- purrr::map2_lgl(x, control_tab_pfn(), ~ !identical(.x, .y))
+  defaults <- control_tab_pfn()
+  common <- intersect(names(x), names(defaults))
+  extra <- setdiff(names(x), names(defaults))
+  non_default_common <- purrr::map2_lgl(x[common], defaults[common], ~ !identical(.x, .y))
+  non_default <- c(non_default_common, stats::setNames(rep(TRUE, length(extra)), extra))
 
   cli::cli_inform("control object for {.fn tab_pfn}")
   if (any(non_default)) {

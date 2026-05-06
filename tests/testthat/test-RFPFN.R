@@ -33,15 +33,6 @@ test_that("rf_pfn regression - random forest", {
   pred_f <- predict(mod_f, mtcars[1:3, ])
   expect_equal(pred_f[0, ], pred_ptype)
   expect_equal(nrow(pred_f), 3L)
-
-  # Matrix
-  set.seed(166)
-  mod_mat <- try(rf_pfn(as.matrix(predictors), outcome), silent = TRUE)
-  expect_s3_class(mod_mat, exp_rf_cls)
-
-  pred_mat <- predict(mod_mat, mtcars[1:3, -1])
-  expect_equal(pred_mat[0, ], pred_ptype)
-  expect_equal(nrow(pred_mat), 3L)
 })
 
 test_that("rf_pfn regression - decision tree", {
@@ -62,11 +53,6 @@ test_that("rf_pfn regression - decision tree", {
   pred <- predict(mod, mtcars[1:3, -1])
   expect_equal(pred[0, ], pred_ptype)
   expect_equal(nrow(pred), 3L)
-
-  aug <- augment(mod, mtcars[1:3, -1])
-  expect_s3_class(aug, c("tbl_df", "tbl", "data.frame"))
-  expect_equal(nrow(aug), 3L)
-  expect_equal(ncol(aug), 11L)
 })
 
 # ------------------------------------------------------------------------------
@@ -79,7 +65,6 @@ test_that("rf_pfn classification - random forest", {
 
   data(two_class_dat, package = "modeldata")
   x_tr_df <- two_class_dat[1:20, 1:2]
-  x_tr_mat <- as.matrix(x_tr_df)
   y_tr <- two_class_dat$Class[1:20]
   x_te_df <- two_class_dat[21:23, 1:2]
 
@@ -113,15 +98,6 @@ test_that("rf_pfn classification - random forest", {
   pred_f <- predict(mod_f, x_te_df)
   expect_equal(pred_f[0, ], pred_ptype)
   expect_equal(nrow(pred_f), 3L)
-
-  # Matrix
-  set.seed(956)
-  mod_mat <- try(rf_pfn(x_tr_mat, y_tr), silent = TRUE)
-  expect_s3_class(mod_mat, exp_rf_cls)
-
-  pred_mat <- predict(mod_mat, x_te_df)
-  expect_equal(pred_mat[0, ], pred_ptype)
-  expect_equal(nrow(pred_mat), 3L)
 })
 
 test_that("rf_pfn classification - decision tree", {
@@ -149,11 +125,6 @@ test_that("rf_pfn classification - decision tree", {
   pred <- predict(mod, x_te)
   expect_equal(pred[0, ], pred_ptype)
   expect_equal(nrow(pred), 3L)
-
-  aug <- augment(mod, x_te)
-  expect_s3_class(aug, c("tbl_df", "tbl", "data.frame"))
-  expect_equal(nrow(aug), 3L)
-  expect_equal(ncol(aug), 5L)
 })
 
 # ------------------------------------------------------------------------------

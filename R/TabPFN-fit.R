@@ -42,6 +42,12 @@
 #' that can be used to keep the training data within the limits of the
 #' data constraints imposed by the Python library.
 #'
+#' @param version A character string for the model version (e.g., `"v2"`,
+#' `"v2.5"`). When `NULL` (the default), the Python library's current default
+#' version is used. When set, the model is initialized via
+#' `create_default_for_version()` with the corresponding `ModelVersion` enum
+#' value.
+#'
 #' @param control A list of options produced by [control_tab_pfn()].
 #'
 #' @param ... Not currently used, but required for extensibility.
@@ -264,6 +270,7 @@ tab_pfn.data.frame <- function(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 ) {
@@ -282,7 +289,7 @@ tab_pfn.data.frame <- function(
     processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
   }
 
-  tab_pfn_bridge(processed, options, ...)
+  tab_pfn_bridge(processed, options, version = version, ...)
 }
 
 # XY method - matrix
@@ -297,6 +304,7 @@ tab_pfn.matrix <- function(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 ) {
@@ -315,7 +323,7 @@ tab_pfn.matrix <- function(
     processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
   }
 
-  tab_pfn_bridge(processed, options, ...)
+  tab_pfn_bridge(processed, options, version = version, ...)
 }
 
 # Formula method
@@ -330,6 +338,7 @@ tab_pfn.formula <- function(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 ) {
@@ -355,7 +364,7 @@ tab_pfn.formula <- function(
     processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
   }
 
-  tab_pfn_bridge(processed, options, ...)
+  tab_pfn_bridge(processed, options, version = version, ...)
 }
 
 # Recipe method
@@ -370,6 +379,7 @@ tab_pfn.recipe <- function(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 ) {
@@ -388,21 +398,25 @@ tab_pfn.recipe <- function(
     processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
   }
 
-  tab_pfn_bridge(processed, options, ...)
+  tab_pfn_bridge(processed, options, version = version, ...)
 }
 
 # ------------------------------------------------------------------------------
 # Bridge
 
-tab_pfn_bridge <- function(processed, options, ...) {
+tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
   rlang::check_dots_empty()
+
+  if (!is.null(version)) {
+    check_model_version(version)
+  }
 
   predictors <- processed$predictors
   outcome <- processed$outcomes[[1]]
 
   check_data_constraints(predictors, outcome, options)
 
-  res <- tab_pfn_impl(predictors, outcome, options)
+  res <- tab_pfn_impl(predictors, outcome, options, version = version)
 
   new_tab_pfn(
     fit = res$fit,
@@ -416,8 +430,20 @@ tab_pfn_bridge <- function(processed, options, ...) {
 # ------------------------------------------------------------------------------
 # Implementation
 
-tab_pfn_impl <- function(x, y, opts) {
+tab_pfn_impl <- function(x, y, opts, version = NULL) {
   tabpfn <- .pkg_env$tab_pfn
+
+  if (!is.null(version)) {
+    if (is.factor(y)) {
+      default_model <- tabpfn$TabPFNClassifier
+    } else {
+      default_model <- tabpfn$TabPFNRegressor
+    }
+    opts$model_path <- default_model$create_default_for_version(
+      version
+    )$model_path
+  }
+
   cls_wrapper <- function(...) {
     tabpfn$TabPFNClassifier(...)
   }

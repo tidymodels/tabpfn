@@ -2,18 +2,23 @@
 % Please edit documentation in R/download_all_models.R
 \name{download_all_models}
 \alias{download_all_models}
-\title{download all TabPFN pre-trained model checkpoints}
+\title{Download all TabPFN pre-trained model checkpoints}
 \usage{
 download_all_models(cache_dir = NULL)
 }
 \arguments{
 \item{cache_dir}{an option to override the default cache directory}
 }
+\value{
+Invisibly returns \code{NULL}. Called for its side effect of
+downloading model files.
+}
 \description{
-As of 2026-05-05, there are 36 pre-trained models equalling roughly 1.2 GB of storage.
-Each model is trained on various synthetic & real datasets tailored to classification & regression.
-This function routine will require you to sign a one-time license for both 2.5 & 2.6 model varieties.
-Downloading all models will take some time, please be patient!
+As of 2026-05-05, there are 36 pre-trained models equaling roughly 1.2 GB
+of storage. Each model is trained on various synthetic & real datasets
+tailored to classification & regression. This function routine will require
+you to sign a one-time license for both 2.5 & 2.6 model varieties.
+Downloading all models will take some time.
 }
 \examples{
 \donttest{

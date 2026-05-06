@@ -1,3 +1,20 @@
+test_that("list_tabpfn_versions returns a character vector", {
+  skip_if(!is_tab_pfn_installed())
+  skip_on_cran()
+
+  versions <- list_tabpfn_versions()
+  expect_type(versions, "character")
+  expect_gt(length(versions), 0)
+})
+
+test_that("list_tabpfn_versions includes known versions", {
+  skip_if(!is_tab_pfn_installed())
+  skip_on_cran()
+
+  versions <- list_tabpfn_versions()
+  expect_contains(versions, "v2")
+})
+
 test_that("check_model_version validates correctly", {
   skip_if(!is_tab_pfn_installed())
   skip_on_cran()

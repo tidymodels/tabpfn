@@ -2,6 +2,10 @@
 
 ## tabpfn (development version)
 
+- [`control_tab_pfn()`](https://tabpfn.tidymodels.org/dev/reference/control_tab_pfn.md)
+  now accepts `...` to pass additional arguments directly to the TabPFN
+  Python constructor (e.g. `model_path`).
+
 - [`tab_pfn()`](https://tabpfn.tidymodels.org/dev/reference/tab_pfn.md)
   gains a `version` argument to select a specific TabPFN model version
   (e.g., `"v2"`, `"v2.5"`). When `NULL`, the Python library’s current

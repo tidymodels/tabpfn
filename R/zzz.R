@@ -9,6 +9,7 @@ tabpfn <- NULL
   }
 
   reticulate::py_require("tabpfn")
+  reticulate::py_require("tabpfn-extensions[rf_pfn]")
 
   tryCatch(
     tabpfn <<- reticulate::import(

@@ -223,6 +223,39 @@ Add `reticulate::py_require("tabpfn-extensions[rf_pfn]")` immediately after the 
 
 ---
 
+### Smoke tests
+
+After `devtools::document()` and `devtools::load_all()`, verify the golden path manually before moving to Phase II:
+
+```r
+# Regression — random forest (default)
+mod <- rf_pfn(mtcars[, -1], mtcars[, 1])
+mod
+predict(mod, mtcars[1:5, -1])
+augment(mod, mtcars[1:5, -1])
+
+# Regression — decision tree
+mod2 <- rf_pfn(mtcars[, -1], mtcars[, 1], tree_type = "decision_tree")
+mod2
+predict(mod2, mtcars[1:5, -1])
+
+# Classification — random forest
+outcome_cls <- factor(ifelse(mtcars$mpg > 20, "high", "low"))
+mod3 <- rf_pfn(mtcars[, -1], outcome_cls)
+predict(mod3, mtcars[1:5, -1])
+
+# Formula interface
+mod4 <- rf_pfn(mpg ~ ., mtcars)
+predict(mod4, mtcars[1:5, ])
+
+# DT mode should error on RF-only params
+rf_pfn(mtcars[, -1], mtcars[, 1], tree_type = "decision_tree", bootstrap = TRUE)
+rf_pfn(mtcars[, -1], mtcars[, 1], tree_type = "decision_tree", rf_average_logits = TRUE)
+rf_pfn(mtcars[, -1], mtcars[, 1], tree_type = "decision_tree", max_predict_time = 30)
+```
+
+---
+
 ## Phase II — Testing
 
 New test file: `tests/testthat/test-RFPFN.R`

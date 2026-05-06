@@ -156,28 +156,6 @@ is_tab_pfn_installed <- function() {
   !inherits(res, "try-error")
 }
 
-#' Download all TabPFN models to the local cache
-#'
-#' Downloads all available TabPFN model weights to the local cache directory.
-#' Model weights that have already been downloaded are skipped.
-#' @return `NULL`, invisibly.
-#' @examples
-#' if (interactive()) {
-#'  download_tab_pfn_models()
-#' }
-#' @export
-download_tab_pfn_models <- function() {
-  if (!is_tab_pfn_installed()) {
-    cli::cli_abort(msg_tabpfn_not_available())
-  }
-
-  tabpfn <- reticulate::import("tabpfn")
-  model_loading <- tabpfn$model_loading
-  cache_dir <- model_loading$get_cache_dir()
-  model_loading$download_all_models(cache_dir)
-
-  invisible(NULL)
-}
 
 check_model_version <- function(x, call = rlang::caller_env()) {
   if (!is_tab_pfn_installed()) {

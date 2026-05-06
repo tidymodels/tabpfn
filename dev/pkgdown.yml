@@ -2,7 +2,7 @@ pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles: {}
-last_built: 2026-05-06T14:46Z
+last_built: 2026-05-06T19:37Z
 urls:
   reference: https://tabpfn.tidymodels.org/reference
   article: https://tabpfn.tidymodels.org/articles

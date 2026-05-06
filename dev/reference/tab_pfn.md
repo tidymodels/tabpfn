@@ -21,6 +21,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -34,6 +35,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -47,6 +49,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -60,6 +63,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -118,6 +122,14 @@ tab_pfn(
   An integer greater than 2L (and possibly `Inf`) that can be used to
   keep the training data within the limits of the data constraints
   imposed by the Python library.
+
+- version:
+
+  A character string for the model version (e.g., `"v2"`, `"v2.5"`).
+  When `NULL` (the default), the Python library's current default
+  version is used. When set, the model is initialized via
+  `create_default_for_version()` with the corresponding `ModelVersion`
+  enum value.
 
 - control:
 

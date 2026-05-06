@@ -59,6 +59,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -72,6 +73,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -85,6 +87,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -98,6 +101,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -152,6 +156,14 @@ function or after? Default is <code>FALSE</code>.</p></dd>
 <dd><p>An integer greater than 2L (and possibly <code>Inf</code>)
 that can be used to keep the training data within the limits of the
 data constraints imposed by the Python library.</p></dd>
+
+
+<dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
+<dd><p>A character string for the model version (e.g., <code>"v2"</code>,
+<code>"v2.5"</code>). When <code>NULL</code> (the default), the Python library's current default
+version is used. When set, the model is initialized via
+<code>create_default_for_version()</code> with the corresponding <code>ModelVersion</code> enum
+value.</p></dd>
 
 
 <dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>

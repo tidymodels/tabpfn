@@ -1,3 +1,35 @@
+#' Predict using an RF-PFN model
+#'
+#' @param object,x An `rf_pfn` object.
+#'
+#' @param new_data A data frame or matrix of new predictors.
+#'
+#' @param ... Not used, but required for extensibility.
+#'
+#' @return
+#'
+#' [predict()] returns a tibble of predictions and [augment()] appends the
+#' columns in `new_data`. In either case, the number of rows in the tibble is
+#' guaranteed to be the same as the number of rows in `new_data`.
+#'
+#' For regression, the prediction is in the column `.pred`. For classification,
+#' the class predictions are in `.pred_class` and the probability estimates are
+#' in columns with the pattern `.pred_{level}` where `level` is the levels of
+#' the outcome factor vector.
+#'
+#' @examples
+#' car_train <- mtcars[ 1:5,   ]
+#' car_test  <- mtcars[6, -1]
+#'
+#' \dontrun{
+#' if (is_tab_pfn_installed() & interactive()) {
+#'  mod <- rf_pfn(mpg ~ cyl + log(drat), car_train)
+#'
+#'  predict(mod, car_test)
+#'  augment(mod, car_test)
+#' }
+#' }
+#'
 #' @export
 predict.rf_pfn <- function(object, new_data, ...) {
   rlang::check_dots_empty()

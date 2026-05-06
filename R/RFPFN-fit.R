@@ -1,3 +1,153 @@
+#' Fit an RF-PFN model.
+#'
+#' `rf_pfn()` combines a scikit-learn tree ensemble (random forest or decision
+#' tree) with TabPFN models at each leaf/node, as described in Müller _et al_
+#' (2025). This allows the model to benefit from both tree inductive biases and
+#' the in-context learning abilities of TabPFN.
+#'
+#' @param x Depending on the context:
+#'
+#'   * A __data frame__ of predictors.
+#'   * A __matrix__ of predictors.
+#'   * A __recipe__ specifying a set of preprocessing steps
+#'     created from [recipes::recipe()].
+#'
+#' @param y When `x` is a __data frame__ or __matrix__, `y` is the outcome
+#' specified as:
+#'
+#'   * A __data frame__ with 1 numeric column.
+#'   * A __matrix__ with 1 numeric column.
+#'   * A numeric __vector__ for regression or a __factor__ for classification.
+#'
+#' @param data When a __recipe__ or __formula__ is used, `data` is specified as:
+#'
+#'   * A __data frame__ containing both the predictors and the outcome.
+#'
+#' @param formula A formula specifying the outcome terms on the left-hand side,
+#' and the predictor terms on the right-hand side.
+#'
+#' @param tree_type One of `"random_forest"` (default) or `"decision_tree"`.
+#' Selects the type of tree ensemble used as the outer wrapper. Parameters
+#' marked as RF-only below are not available when `tree_type = "decision_tree"`.
+#'
+#' @param num_estimators An integer for the number of trees in the ensemble
+#' (random forest only). Default is `8L`.
+#'
+#' @param softmax_temperature An adjustment factor that is a divisor in the
+#' exponents of the softmax function. Defaults to `0.9`. See [tab_pfn()] for
+#' details.
+#'
+#' @param balance_probabilities A logical to adjust the prior probabilities in
+#' cases where there is a class imbalance. Default is `FALSE`. Classification
+#' only.
+#'
+#' @param average_before_softmax A logical. For cases where
+#' `num_estimators > 1`, should the average be done before using the softmax
+#' function or after? Default is `FALSE`.
+#'
+#' @param max_depth An integer for the maximum depth of each tree, or `NULL`
+#' to allow unlimited depth. Default is `5L`.
+#'
+#' @param min_samples_split An integer for the minimum number of samples
+#' required to split an internal node. Default is `1000L`.
+#'
+#' @param min_samples_leaf An integer for the minimum number of samples required
+#' to be at a leaf node. Default is `5L`.
+#'
+#' @param max_features The number of features to consider when looking for the
+#' best split. Can be a string (e.g., `"sqrt"`, `"log2"`) or a numeric value.
+#' Default is `"sqrt"`.
+#'
+#' @param fit_nodes A logical. Should TabPFN be fit at internal nodes as well
+#' as leaves? Default is `TRUE`.
+#'
+#' @param dt_average_logits A logical. For decision trees, should logits be
+#' averaged across nodes rather than probabilities? Default is `TRUE`.
+#'
+#' @param bootstrap A logical. Should bootstrap samples be used to build each
+#' tree? Default is `NULL` (Python default used). RF only — an error is raised
+#' if set when `tree_type = "decision_tree"`.
+#'
+#' @param rf_average_logits A logical. Should logits be averaged across trees
+#' rather than probabilities? Default is `NULL` (Python default used). RF only —
+#' an error is raised if set when `tree_type = "decision_tree"`.
+#'
+#' @param max_predict_time A number for the maximum time in seconds allowed for
+#' prediction. Default is `NULL` (Python default used). RF only — an error is
+#' raised if set when `tree_type = "decision_tree"`.
+#'
+#' @param training_set_limit An integer greater than 2L (and possibly `Inf`)
+#' that can be used to keep the training data within the limits of the
+#' data constraints imposed by the Python library. Default is `10000`.
+#'
+#' @param control A list of options produced by [control_tab_pfn()].
+#'
+#' @param ... Not currently used, but required for extensibility.
+#'
+#' @details
+#'
+#' RF-PFN wraps any of the four Python classes from `tabpfn_extensions`:
+#' `RandomForestTabPFNClassifier`, `RandomForestTabPFNRegressor`,
+#' `DecisionTreeTabPFNClassifier`, and `DecisionTreeTabPFNRegressor`. The
+#' appropriate class is selected automatically based on `tree_type` and the
+#' type of `y`. The inner TabPFN model (created from `control`) is passed
+#' automatically; there is no need to create it manually.
+#'
+#' See [tab_pfn()] for details on computing requirements, license requirements,
+#' Python installation, and data constraints.
+#'
+#' @return
+#'
+#' An `rf_pfn` object with elements:
+#'
+#'   * `fit`: the Python object containing the fitted RF-PFN model.
+#'   * `levels`: a character string of class levels (or `NULL` for regression).
+#'   * `training`: a vector with the training set dimensions.
+#'   * `logging`: any R or Python messages produced by the computations.
+#'   * `tree_type`: the value of the `tree_type` argument used to fit the model.
+#'   * `blueprint`: an object produced by [hardhat::mold()] used to process
+#'      new data during prediction.
+#'
+#' @references
+#'
+#' Müller, Samuel, Nagler, Thomas, Hollmann, Noah. "RF-PFN: In-Context Learning
+#' Random Forests via Prior-Fitted Networks." _arXiv preprint_
+#' arXiv:2501.16215 (2025).
+#'
+#' Hollmann, Noah, Samuel Müller, Lennart Purucker, Arjun Krishnakumar, Max
+#' Körfer, Shi Bin Hoo, Robin Tibor Schirrmeister, and Frank Hutter.
+#' "Accurate predictions on small data with a tabular foundation model."
+#'  _Nature_ 637, no. 8045 (2025): 319-326.
+#'
+#' @seealso [control_tab_pfn()], [predict.rf_pfn()], [tab_pfn()]
+#' @examples
+#' predictors <- mtcars[, -1]
+#' outcome <- mtcars[, 1]
+#'
+#' \dontrun{
+#' if (is_tab_pfn_installed() & interactive()) {
+#'  # XY interface - regression
+#'  mod <- rf_pfn(predictors, outcome)
+#'
+#'  # Formula interface
+#'  mod2 <- rf_pfn(mpg ~ ., mtcars)
+#'
+#'  # Decision tree variant
+#'  mod3 <- rf_pfn(predictors, outcome, tree_type = "decision_tree")
+#'
+#'  # Recipes interface
+#'  if (rlang::is_installed("recipes")) {
+#'   suppressPackageStartupMessages(library(recipes))
+#'   rec <-
+#'    recipe(mpg ~ ., mtcars) %>%
+#'    step_log(disp)
+#'
+#'   mod4 <- rf_pfn(rec, mtcars)
+#'   mod4
+#'  }
+#' }
+#' }
+#'
 #' @export
 rf_pfn <- function(x, ...) {
   UseMethod("rf_pfn")

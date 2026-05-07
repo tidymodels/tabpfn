@@ -152,7 +152,11 @@ sample_indicies <- function(molded, size_limit = row_limits) {
 #' }
 #' @export
 is_tab_pfn_installed <- function() {
-  res <- try(import_tabpfn(), silent = TRUE)
+  suppressWarnings(
+    res <- import_tabpfn() |>
+      reticulate::py_has_attr("noexists") |> # Forcing load of package
+      try(silent = TRUE)
+  )
   !inherits(res, "try-error")
 }
 

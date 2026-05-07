@@ -152,7 +152,7 @@ sample_indicies <- function(molded, size_limit = row_limits) {
 #' }
 #' @export
 is_tab_pfn_installed <- function() {
-  res <- try(reticulate::import("tabpfn"), silent = TRUE)
+  res <- try(import_tabpfn(), silent = TRUE)
   !inherits(res, "try-error")
 }
 
@@ -171,7 +171,7 @@ list_tabpfn_versions <- function() {
     cli::cli_abort(msg_tabpfn_not_available())
   }
 
-  py_lib <- reticulate::import("tabpfn")
+  py_lib <- import_tabpfn()
   builtins <- reticulate::import_builtins()
   py_lib$constants$ModelVersion |>
     builtins$list() |>

@@ -60,4 +60,9 @@
     }
   }
 }
+
+import_tabpfn <- function() {
+  .pkg_env$tab_pfn
+}
+
 # nocov end

@@ -531,7 +531,7 @@ check_fit_args <- function(opts, call = rlang::caller_env()) {
   # There have been some argument name differences in the python package versions
 
   arg_names <- names(opts)
-  py_lib <- try(reticulate::import("tabpfn"), silent = TRUE)
+  py_lib <- try(import_tabpfn(), silent = TRUE)
   if (inherits(py_lib, "try-error")) {
     cli::cli_alert_danger(
       "The {.code tabpfn} Python library could not be imported."

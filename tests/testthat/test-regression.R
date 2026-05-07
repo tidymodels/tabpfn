@@ -1,3 +1,17 @@
+test_that("show_env_var returns value when set", {
+  withr::with_envvar(
+    new = c(TABPFN_TEST_VAR = "hello"),
+    expect_equal(tabpfn:::show_env_var("TABPFN_TEST_VAR"), "hello")
+  )
+})
+
+test_that("show_env_var returns not set when empty", {
+  withr::with_envvar(
+    new = c(TABPFN_TEST_VAR = ""),
+    expect_equal(tabpfn:::show_env_var("TABPFN_TEST_VAR"), "<not set>")
+  )
+})
+
 test_that('regression models', {
   skip_if_no_tabpfn()
 
@@ -56,6 +70,55 @@ test_that('regression models', {
   expect_snapshot_error(
     tab_pfn(1, 2)
   )
+})
+
+test_that('version argument', {
+  skip_if_no_tabpfn()
+
+  set.seed(166)
+  mod <- try(tab_pfn(predictors, outcome, version = "v2"), silent = TRUE)
+  expect_s3_class(mod, exp_cls)
+})
+
+test_that('training_set_limit with data frame and matrix interfaces', {
+  skip_if_no_tabpfn()
+
+  set.seed(166)
+  mod_df <- try(
+    tab_pfn(
+      predictors,
+      outcome,
+      training_set_limit = 20,
+      control = control_tab_pfn(ignore_pretraining_limits = TRUE)
+    ),
+    silent = TRUE
+  )
+  expect_equal(mod_df$training[1], 20)
+
+  set.seed(166)
+  mod_mat <- try(
+    tab_pfn(
+      as.matrix(predictors),
+      outcome,
+      training_set_limit = 20,
+      control = control_tab_pfn(ignore_pretraining_limits = TRUE)
+    ),
+    silent = TRUE
+  )
+  expect_equal(mod_mat$training[1], 20)
+
+  set.seed(166)
+  rec <- recipes::recipe(mpg ~ ., data = mtcars)
+  mod_rec <- try(
+    tab_pfn(
+      rec,
+      mtcars,
+      training_set_limit = 20,
+      control = control_tab_pfn(ignore_pretraining_limits = TRUE)
+    ),
+    silent = TRUE
+  )
+  expect_equal(mod_rec$training[1], 20)
 })
 
 test_that('reproducible results', {

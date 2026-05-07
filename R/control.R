@@ -60,8 +60,13 @@ control_tab_pfn <- function(
 
   dot_args <- rlang::list2(...)
   reserved <- c(
-    "n_preprocessing_jobs", "device", "ignore_pretraining_limits",
-    "inference_precision", "fit_mode", "memory_saving_mode", "random_state"
+    "n_preprocessing_jobs",
+    "device",
+    "ignore_pretraining_limits",
+    "inference_precision",
+    "fit_mode",
+    "memory_saving_mode",
+    "random_state"
   )
   conflicts <- intersect(names(dot_args), reserved)
   if (length(conflicts) > 0) {
@@ -92,8 +97,15 @@ print.control_tab_pfn <- function(x, ...) {
   defaults <- control_tab_pfn()
   common <- intersect(names(x), names(defaults))
   extra <- setdiff(names(x), names(defaults))
-  non_default_common <- purrr::map2_lgl(x[common], defaults[common], ~ !identical(.x, .y))
-  non_default <- c(non_default_common, stats::setNames(rep(TRUE, length(extra)), extra))
+  non_default_common <- purrr::map2_lgl(
+    x[common],
+    defaults[common],
+    ~ !identical(.x, .y)
+  )
+  non_default <- c(
+    non_default_common,
+    stats::setNames(rep(TRUE, length(extra)), extra)
+  )
 
   cli::cli_inform("control object for {.fn tab_pfn}")
   if (any(non_default)) {

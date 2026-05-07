@@ -171,9 +171,9 @@ list_tabpfn_versions <- function() {
     cli::cli_abort(msg_tabpfn_not_available())
   }
 
-  py_lib <- import_tabpfn()
+  tabpfn <- import_tabpfn()
   builtins <- reticulate::import_builtins()
-  py_lib$constants$ModelVersion |>
+  tabpfn$constants$ModelVersion |>
     builtins$list() |>
     unlist()
 }

@@ -30,8 +30,8 @@ test_that('control dot args - model_path', {
   skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
 
-  tab_pfn_py <- import_tabpfn()
-  model_path <- tab_pfn_py$TabPFNClassifier$create_default_for_version(
+  tabpfn <- import_tabpfn()
+  model_path <- tabpfn$TabPFNClassifier$create_default_for_version(
     "v2.6"
   )$model_path
 

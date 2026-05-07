@@ -1,6 +1,5 @@
 test_that("list_tabpfn_versions returns a character vector", {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
 
   versions <- list_tabpfn_versions()
   expect_type(versions, "character")
@@ -8,16 +7,14 @@ test_that("list_tabpfn_versions returns a character vector", {
 })
 
 test_that("list_tabpfn_versions includes known versions", {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
 
   versions <- list_tabpfn_versions()
   expect_contains(versions, "v2")
 })
 
 test_that("check_model_version validates correctly", {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
 
   expect_no_error(check_model_version("v2"))
   expect_no_error(check_model_version("v2.5"))
@@ -26,8 +23,7 @@ test_that("check_model_version validates correctly", {
 })
 
 test_that('data constraints', {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
 
   set.seed(418)

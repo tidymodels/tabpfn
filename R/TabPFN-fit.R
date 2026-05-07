@@ -431,7 +431,7 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
 # Implementation
 
 tab_pfn_impl <- function(x, y, opts, version = NULL) {
-  tabpfn <- .pkg_env$tab_pfn
+  tabpfn <- import_tabpfn()
 
   if (!is.null(version)) {
     if (is.factor(y)) {

@@ -1,3 +1,4 @@
+# nocov start
 .pkg_env <- new.env()
 .pkg_env$tab_pfn <- NULL
 
@@ -59,3 +60,4 @@
     }
   }
 }
+# nocov end

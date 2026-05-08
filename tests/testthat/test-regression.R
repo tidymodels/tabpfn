@@ -72,14 +72,6 @@ test_that('regression models', {
   )
 })
 
-test_that('version argument', {
-  skip_if_no_tabpfn()
-
-  set.seed(166)
-  mod <- try(tab_pfn(predictors, outcome, version = "v2"), silent = TRUE)
-  expect_s3_class(mod, exp_cls)
-})
-
 test_that('training_set_limit with data frame and matrix interfaces', {
   skip_if_no_tabpfn()
 

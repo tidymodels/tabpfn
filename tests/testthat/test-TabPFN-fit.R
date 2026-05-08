@@ -15,6 +15,16 @@ test_that("check_data_constraints errors when too many rows", {
   )
 })
 
+test_that("tab_pfn v2 errors with more than 500 predictors", {
+  skip_if_no_tabpfn()
+  n <- 100
+  x <- as.data.frame(matrix(rnorm(n * 501), nrow = n, ncol = 501))
+  x$y <- factor(rep(c("a", "b"), length.out = n))
+  expect_error(
+    tab_pfn(y ~ ., data = x, version = "v2")
+  )
+})
+
 test_that("check_data_constraints errors when too many columns", {
   x <- matrix(0, nrow = 10, ncol = 2001)
   y <- factor(rep(c("a", "b"), length.out = 10))

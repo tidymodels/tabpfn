@@ -74,6 +74,7 @@ test_that('regression models', {
 
 test_that('training_set_limit with data frame and matrix interfaces', {
   skip_if_no_tabpfn()
+  skip_if_not_installed("recipes")
 
   set.seed(166)
   mod_df <- try(

@@ -431,7 +431,7 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
 # Implementation
 
 tab_pfn_impl <- function(x, y, opts, version = NULL) {
-  tabpfn <- .pkg_env$tab_pfn
+  tabpfn <- import_tabpfn()
 
   if (!is.null(version)) {
     if (is.factor(y)) {
@@ -531,29 +531,8 @@ check_fit_args <- function(opts, call = rlang::caller_env()) {
   # There have been some argument name differences in the python package versions
 
   arg_names <- names(opts)
-  py_lib <- try(reticulate::import("tabpfn"), silent = TRUE)
-  if (inherits(py_lib, "try-error")) {
-    cli::cli_alert_danger(
-      "The {.code tabpfn} Python library could not be imported."
-    )
-    url <- "https://rstudio.github.io/reticulate/articles/versions.html#order-of-discovery"
-    cli::cli_inform("See {.url {url}} for more information.")
-    cli::cli_bullets(
-      c(
-        i = "Environmental variables:",
-        i = "{.code RETICULATE_PYTHON}: {show_env_var('RETICULATE_PYTHON')}",
-        i = "{.code RETICULATE_PYTHON_ENV}: {show_env_var('RETICULATE_PYTHON_ENV')}",
-        i = "{.code RETICULATE_USE_MANAGED_VENV}: {show_env_var('RETICULATE_USE_MANAGED_VENV')}",
-        i = "{.code VIRTUAL_ENV}: {show_env_var('VIRTUAL_ENV')}"
-      )
-    )
-    cli::cli_abort(
-      "The {.code tabpfn} Python library could not be imported.",
-      call = NULL
-    )
-  }
-
-  py_arg_names <- names(formals(py_lib$TabPFNClassifier))
+  tabpfn <- import_tabpfn()
+  py_arg_names <- names(formals(tabpfn$TabPFNClassifier))
   if (any(py_arg_names == "n_jobs")) {
     names(opts) <- gsub("^n_preprocessing_jobs$", "n_jobs", names(opts))
   }

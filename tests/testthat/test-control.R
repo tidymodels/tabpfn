@@ -27,12 +27,11 @@ test_that('control values', {
 })
 
 test_that('control dot args - model_path', {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
 
-  tab_pfn_py <- reticulate::import("tabpfn")
-  model_path <- tab_pfn_py$TabPFNClassifier$create_default_for_version(
+  tabpfn <- import_tabpfn()
+  model_path <- tabpfn$TabPFNClassifier$create_default_for_version(
     "v2.6"
   )$model_path
 
@@ -47,8 +46,7 @@ test_that('control dot args - model_path', {
 })
 
 test_that('control dot args - invalid parameter fails', {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
 
   data(two_class_dat, package = "modeldata")

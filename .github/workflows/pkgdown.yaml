@@ -4,6 +4,7 @@ on:
   push:
     branches: temp
   pull_request:
+    branches: temp
   release:
     types: [published]
   workflow_dispatch:

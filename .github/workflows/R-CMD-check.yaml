@@ -8,6 +8,7 @@ on:
   push:
     branches: temp
   pull_request:
+    branches: temp
 
 name: R-CMD-check.yaml
 

@@ -57,20 +57,12 @@ jobs:
             any::remotes
           needs: check
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.13.1'
+      - uses: astral-sh/setup-uv@v4
 
-      - name: setup r-reticulate venv
-        shell: Rscript {0}
+      - name: Setup r-reticulate venv
         run: |
-          remotes::install_local()
-          library(reticulate)
-          virtualenv_create("r-reticulate", Sys.which("python"),
-            packages = c(
-              "tabpfn"
-          ))
-          python <- reticulate::virtualenv_python("r-reticulate")
+          uv venv /home/runner/.virtualenvs/r-reticulate --python 3.13.1
+          uv pip install tabpfn --python /home/runner/.virtualenvs/r-reticulate
 
       - name: Get TabPFN cache info
         id: tabpfn-cache

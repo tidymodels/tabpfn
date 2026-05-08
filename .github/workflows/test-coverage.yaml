@@ -2,9 +2,8 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: temp
+    branches: [main, master]
   pull_request:
-    branches: temp
 
 name: test-coverage.yaml
 
@@ -30,20 +29,43 @@ jobs:
           extra-packages: any::covr, any::xml2 remotes reticulate
           needs: coverage
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.13.1'
+      - uses: astral-sh/setup-uv@v4
 
-      - name: setup r-reticulate venv
-        shell: Rscript {0}
+      - name: Setup r-reticulate venv
         run: |
-          remotes::install_local()
-          library(reticulate)
-          virtualenv_create("r-reticulate", Sys.which("python"),
-            packages = c(
-              "tabpfn"
-          ))
-          python <- reticulate::virtualenv_python("r-reticulate")
+          uv venv /home/runner/.virtualenvs/r-reticulate --python 3.13.1
+          uv pip install tabpfn --python /home/runner/.virtualenvs/r-reticulate
+
+      - name: Get TabPFN cache info
+        id: tabpfn-cache
+        shell: bash
+        run: |
+          VENV_PYTHON="/home/runner/.virtualenvs/r-reticulate/bin/python"
+          CACHE_DIR=$($VENV_PYTHON -c "from tabpfn.model_loading import get_cache_dir; print(get_cache_dir())")
+          echo "dir=$CACHE_DIR" >> $GITHUB_OUTPUT
+          echo "month=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
+
+      - name: Cache TabPFN models
+        id: tabpfn-models-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.tabpfn-cache.outputs.dir }}
+          key: tabpfn-models-${{ runner.os }}-${{ steps.tabpfn-cache.outputs.month }}
+
+      - name: Download TabPFN models
+        if: steps.tabpfn-models-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          /home/runner/.virtualenvs/r-reticulate/bin/python - << 'EOF'
+          from tabpfn.model_loading import download_all_models, get_cache_dir
+          import logging
+          logging.basicConfig(level=logging.INFO, format="%(message)s")
+          cache_dir = get_cache_dir()
+          cache_dir.mkdir(parents=True, exist_ok=True)
+          print(f"Downloading all models to {cache_dir}")
+          download_all_models(cache_dir)
+          print(f"All models downloaded to {cache_dir}")
+          EOF
 
       - name: Test coverage
         run: |

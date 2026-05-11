@@ -212,23 +212,22 @@ specific computations and might be slower than the CPU for some data sets.</p>
 <h3 id="license-requirements">License Requirements<a class="anchor" aria-label="anchor" href="#license-requirements"></a></h3>
 
 
-<p>On November 6, 2025, PriorLabs released version 2.5 of the model, which
-contained several improvements. One other change is that accessing the model
-parameters required an API key. Without one, an error occurs:</p>
-<p>"This model is gated and requires you to accept its terms.  Please
-follow these steps: 1. Visit <a href="https://huggingface.co/Prior-Labs/tabpfn_2_5" class="external-link">https://huggingface.co/Prior-Labs/tabpfn_2_5</a>
-in your browser and accept the terms of use. 2. Log in to your Hugging Face
-account via the command line by running: hf auth login (Alternatively, you
-can set the HF_TOKEN environment variable with a read token)."</p>
-<p>The license contains provisions for "Non-Commercial Use Only" usage if that
-is relevant for you.</p>
-<p>To get an API key, use the <code>huggingface</code> link above, create an account, and
-then get an API key. Once you have that, put it in your <code>.Renviron</code> file in
-the form of:</p>
-<div class="sourceCode"><pre><code><span></span>
-<span><span class="va">HF_TOKEN</span><span class="op">=</span><span class="va">your_api_key_value</span></span></code></pre></div>
+<p>Starting with version 2.5, using TabPFN requires accepting the model license
+and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
+has its own license that must be accepted individually.</p>
+<p>To set up access:</p><ol><li><p>Visit <a href="https://ux.priorlabs.ai" class="external-link">https://ux.priorlabs.ai</a> and create an
+account.</p></li>
+<li><p>Go to the <strong>License</strong> tab and accept the license for each model version
+you intend to use.</p></li>
+<li><p>Obtain your token from your account page.</p></li>
+<li><p>Set the <code>TABPFN_TOKEN</code> environment variable. The easiest way is to add it
+to your <code>.Renviron</code> file:</p></li>
+</ol><div class="sourceCode"><pre><code><span></span>
+<span><span class="va">TABPFN_TOKEN</span><span class="op">=</span><span class="va">your_token_value</span></span></code></pre></div>
 
 <p>The <span class="pkg">usethis</span> function <code>edit_r_environ()</code> can be very helpful here.</p>
+<p>Users who already have <code>TABPFN_TOKEN</code> set can use TabPFN v2 without any
+additional steps.</p>
 </div>
 
 <div class="section">

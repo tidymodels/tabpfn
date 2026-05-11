@@ -17,7 +17,14 @@ idiomatic R syntax using standard S3 methods.
 
 ## Installation
 
-You can install the development version of tabpfn like so:
+You can download the package from CRAN via:
+
+``` r
+
+install.packages("tabpfn")
+```
+
+or you can install the development version of tabpfn like so:
 
 ``` r
 
@@ -59,12 +66,14 @@ i 10 predictors
 
 ## Example
 
+After loading the package:
+
 ``` r
 
 library(tabpfn)
 ```
 
-To fit a model:
+we can fit a model via the standard x/y interface.
 
 ``` r
 
@@ -77,8 +86,7 @@ reg_mod
 #> ℹ 10 predictors
 ```
 
-In addition to the x/y interface shown above, there are also formula and
-recipes interfaces.
+There are also formula and recipes interfaces.
 
 Prediction follows the usual S3
 [`predict()`](https://rdrr.io/r/stats/predict.html) method:
@@ -89,13 +97,13 @@ predict(reg_mod, mtcars[26:32, -1])
 #> # A tibble: 7 × 1
 #>   .pred
 #>   <dbl>
-#> 1  29.8
-#> 2  25.6
-#> 3  26.2
+#> 1  29.3
+#> 2  24.6
+#> 3  24.7
 #> 4  16.5
-#> 5  19.4
-#> 6  14.7
-#> 7  23.6
+#> 5  18.9
+#> 6  15.6
+#> 7  23.2
 ```
 
 tabpfn follows the tidymodels prediction convention: a data frame is
@@ -127,16 +135,16 @@ grid_pred
 #> # A tibble: 625 × 3
 #>    .pred_Class1 .pred_Class2 .pred_class
 #>           <dbl>        <dbl> <fct>      
-#>  1        0.988      0.0122  Class1     
-#>  2        0.992      0.00823 Class1     
-#>  3        0.993      0.00721 Class1     
-#>  4        0.993      0.00714 Class1     
-#>  5        0.991      0.00944 Class1     
-#>  6        0.982      0.0175  Class1     
-#>  7        0.965      0.0347  Class1     
-#>  8        0.922      0.0775  Class1     
-#>  9        0.799      0.201   Class1     
-#> 10        0.554      0.446   Class1     
+#>  1        0.621        0.379 Class1     
+#>  2        0.486        0.514 Class2     
+#>  3        0.614        0.386 Class1     
+#>  4        0.530        0.470 Class1     
+#>  5        0.513        0.487 Class1     
+#>  6        0.498        0.502 Class2     
+#>  7        0.669        0.331 Class1     
+#>  8        0.602        0.398 Class1     
+#>  9        0.550        0.450 Class1     
+#> 10        0.568        0.432 Class1     
 #> # ℹ 615 more rows
 ```
 
@@ -145,14 +153,46 @@ The fit looks fairly good when shown with out-of-sample data:
 ``` r
 
 cbind(grid, grid_pred) |>
- ggplot(aes(X1, X2)) + 
- geom_point(data = two_cls_val, aes(col = class, pch = class), 
-            alpha = 3 / 4, cex = 3) +
- geom_contour(aes(z = .pred_Class1), breaks = 1/ 2, col = "black", linewidth = 1) +
- coord_equal(ratio = 1)
+  ggplot(aes(X1, X2)) +
+  geom_point(
+    data = two_cls_val,
+    aes(col = class, pch = class),
+    alpha = 3 / 4,
+    cex = 3
+  ) +
+  geom_contour(
+    aes(z = .pred_Class1),
+    breaks = 1 / 2,
+    col = "black",
+    linewidth = 1
+  ) +
+  coord_equal(ratio = 1)
 ```
 
 ![](reference/figures/README-boundaries-1.png)
+
+## License
+
+[PriorLabs](https://priorlabs.ai/) created the model. Starting with
+version 2.5, using TabPFN requires accepting the model license and
+setting a token. Each model version (v2.5, v2.6, etc.) has its own
+license that must be accepted individually.
+
+To get access, visit <https://ux.priorlabs.ai>, go to the **Licenses**
+tab (1), and accept the license for each model version you intend to use
+(2). Then set the `TABPFN_TOKEN` environment variable with the token
+from your account. Users who already have `TABPFN_TOKEN` set can use
+TabPFN v2 without any additional steps.
+
+![Screenshot of the PriorLabs UX portal Licenses
+page](reference/figures/license.png)
+
+Screenshot of the PriorLabs UX portal Licenses page
+
+Also, the model is most effective when a GPU is available (by an order
+of magnitude or two). This may seem obvious to anyone already working
+with deep learning models, but it is a fairly new requirement for those
+strictly working with traditional tabular data models.
 
 ## Code of Conduct
 

@@ -152,13 +152,11 @@ cbind(grid, grid_pred) |>
 
 ## License
 
-[PriorLabs](https://priorlabs.ai/) created the model. When it released version 2.5 of the model, which contained several improvements. One other change is that accessing the model parameters required an API key. Without one, an error occurs:
+[PriorLabs](https://priorlabs.ai/) created the model. Starting with version 2.5, using TabPFN requires accepting the model license and setting a token. Each model version (v2.5, v2.6, etc.) has its own license that must be accepted individually.
 
-> This model is gated and requires you to accept its terms.  Please follow these steps: 1. Visit [https://huggingface.co/Prior-Labs/tabpfn_2_5](https://huggingface.co/Prior-Labs/tabpfn_2_5) in your browser and accept the terms of use. 2. Log in to your Hugging Face account via the command line by running: hf auth login (Alternatively, you can set the `HF_TOKEN` environment variable with a read token).
+To get access, visit [https://ux.priorlabs.ai](https://ux.priorlabs.ai), go to the **Licenses** tab (1), and accept the license for each model version you intend to use (2). Then set the `TABPFN_TOKEN` environment variable with the token from your account. Users who already have `TABPFN_TOKEN` set can use TabPFN v2 without any additional steps.
 
-The license includes provisions for "Non-Commercial Use Only" if you are just trying it out. 
-
-Instructions for installing the package and obtaining the API key are in the [package's manual](https://tabpfn.tidymodels.org/reference/tab_pfn.html#license-requirements). 
+![Screenshot of the PriorLabs UX portal Licenses page](man/figures/license.png)
 
 Also, the model is most effective when a GPU is available (by an order of magnitude or two). This may seem obvious to anyone already working with deep learning models, but it is a fairly new requirement for those strictly working with traditional tabular data models. 
 

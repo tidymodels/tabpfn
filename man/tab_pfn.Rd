@@ -151,28 +151,29 @@ specific computations and might be slower than the CPU for some data sets.
 
 \subsection{License Requirements}{
 
-On November 6, 2025, PriorLabs released version 2.5 of the model, which
-contained several improvements. One other change is that accessing the model
-parameters required an API key. Without one, an error occurs:
+Starting with version 2.5, using TabPFN requires accepting the model license
+and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
+has its own license that must be accepted individually.
 
-"This model is gated and requires you to accept its terms.  Please
-follow these steps: 1. Visit \url{https://huggingface.co/Prior-Labs/tabpfn_2_5}
-in your browser and accept the terms of use. 2. Log in to your Hugging Face
-account via the command line by running: hf auth login (Alternatively, you
-can set the HF_TOKEN environment variable with a read token)."
-
-The license contains provisions for "Non-Commercial Use Only" usage if that
-is relevant for you.
-
-To get an API key, use the \code{huggingface} link above, create an account, and
-then get an API key. Once you have that, put it in your \code{.Renviron} file in
-the form of:
+To set up access:
+\enumerate{
+\item Visit \url{https://ux.priorlabs.ai} and create an
+account.
+\item Go to the \strong{License} tab and accept the license for each model version
+you intend to use.
+\item Obtain your token from your account page.
+\item Set the \code{TABPFN_TOKEN} environment variable. The easiest way is to add it
+to your \code{.Renviron} file:
+}
 
 \preformatted{
-HF_TOKEN=your_api_key_value
+TABPFN_TOKEN=your_token_value
 }
 
 The \pkg{usethis} function \code{edit_r_environ()} can be very helpful here.
+
+Users who already have \code{TABPFN_TOKEN} set can use TabPFN v2 without any
+additional steps.
 }
 
 \subsection{Python Installation}{

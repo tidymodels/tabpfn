@@ -1,6 +1,19 @@
+test_that("show_env_var returns value when set", {
+  withr::with_envvar(
+    new = c(TABPFN_TEST_VAR = "hello"),
+    expect_equal(tabpfn:::show_env_var("TABPFN_TEST_VAR"), "hello")
+  )
+})
+
+test_that("show_env_var returns not set when empty", {
+  withr::with_envvar(
+    new = c(TABPFN_TEST_VAR = ""),
+    expect_equal(tabpfn:::show_env_var("TABPFN_TEST_VAR"), "<not set>")
+  )
+})
+
 test_that('regression models', {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
 
   pred_ptype <- tibble::tibble(.pred = numeric(0))
 
@@ -59,9 +72,50 @@ test_that('regression models', {
   )
 })
 
+test_that('training_set_limit with data frame and matrix interfaces', {
+  skip_if_no_tabpfn()
+  skip_if_not_installed("recipes")
+
+  set.seed(166)
+  mod_df <- try(
+    tab_pfn(
+      predictors,
+      outcome,
+      training_set_limit = 20,
+      control = control_tab_pfn(ignore_pretraining_limits = TRUE)
+    ),
+    silent = TRUE
+  )
+  expect_equal(mod_df$training[1], 20)
+
+  set.seed(166)
+  mod_mat <- try(
+    tab_pfn(
+      as.matrix(predictors),
+      outcome,
+      training_set_limit = 20,
+      control = control_tab_pfn(ignore_pretraining_limits = TRUE)
+    ),
+    silent = TRUE
+  )
+  expect_equal(mod_mat$training[1], 20)
+
+  set.seed(166)
+  rec <- recipes::recipe(mpg ~ ., data = mtcars)
+  mod_rec <- try(
+    tab_pfn(
+      rec,
+      mtcars,
+      training_set_limit = 20,
+      control = control_tab_pfn(ignore_pretraining_limits = TRUE)
+    ),
+    silent = TRUE
+  )
+  expect_equal(mod_rec$training[1], 20)
+})
+
 test_that('reproducible results', {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
 
   set.seed(166)
   mod_1 <- try(tab_pfn(predictors, outcome), silent = TRUE)
@@ -88,8 +142,7 @@ test_that('reproducible results', {
 
 
 test_that('regression models - recipes', {
-  skip_if(!is_tab_pfn_installed())
-  skip_on_cran()
+  skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
   skip_if_not_installed("recipes")
 

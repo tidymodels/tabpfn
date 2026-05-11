@@ -70,28 +70,28 @@
 #'
 #' ## License Requirements
 #'
-#' On November 6, 2025, PriorLabs released version 2.5 of the model, which
-#' contained several improvements. One other change is that accessing the model
-#' parameters required an API key. Without one, an error occurs:
+#' Starting with version 2.5, using TabPFN requires accepting the model license
+#' and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
+#' has its own license that must be accepted individually.
 #'
-#' "This model is gated and requires you to accept its terms.  Please
-#' follow these steps: 1. Visit [https://huggingface.co/Prior-Labs/tabpfn_2_5](https://huggingface.co/Prior-Labs/tabpfn_2_5)
-#' in your browser and accept the terms of use. 2. Log in to your Hugging Face
-#' account via the command line by running: hf auth login (Alternatively, you
-#' can set the HF_TOKEN environment variable with a read token)."
+#' To set up access:
 #'
-#' The license contains provisions for "Non-Commercial Use Only" usage if that
-#' is relevant for you.
-#'
-#' To get an API key, use the `huggingface` link above, create an account, and
-#' then get an API key. Once you have that, put it in your `.Renviron` file in
-#' the form of:
+#' 1. Visit [https://ux.priorlabs.ai](https://ux.priorlabs.ai) and create an
+#'    account.
+#' 2. Go to the **License** tab and accept the license for each model version
+#'    you intend to use.
+#' 3. Obtain your token from your account page.
+#' 4. Set the `TABPFN_TOKEN` environment variable. The easiest way is to add it
+#'    to your `.Renviron` file:
 #'
 #' \preformatted{
-#' HF_TOKEN=your_api_key_value
+#' TABPFN_TOKEN=your_token_value
 #' }
 #'
 #' The \pkg{usethis} function `edit_r_environ()` can be very helpful here.
+#'
+#' Users who already have `TABPFN_TOKEN` set can use TabPFN v2 without any
+#' additional steps.
 #'
 #' ## Python Installation
 #'
@@ -431,7 +431,7 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
 # Implementation
 
 tab_pfn_impl <- function(x, y, opts, version = NULL) {
-  tabpfn <- .pkg_env$tab_pfn
+  tabpfn <- import_tabpfn()
 
   if (!is.null(version)) {
     if (is.factor(y)) {
@@ -531,29 +531,8 @@ check_fit_args <- function(opts, call = rlang::caller_env()) {
   # There have been some argument name differences in the python package versions
 
   arg_names <- names(opts)
-  py_lib <- try(reticulate::import("tabpfn"), silent = TRUE)
-  if (inherits(py_lib, "try-error")) {
-    cli::cli_alert_danger(
-      "The {.code tabpfn} Python library could not be imported."
-    )
-    url <- "https://rstudio.github.io/reticulate/articles/versions.html#order-of-discovery"
-    cli::cli_inform("See {.url {url}} for more information.")
-    cli::cli_bullets(
-      c(
-        i = "Environmental variables:",
-        i = "{.code RETICULATE_PYTHON}: {show_env_var('RETICULATE_PYTHON')}",
-        i = "{.code RETICULATE_PYTHON_ENV}: {show_env_var('RETICULATE_PYTHON_ENV')}",
-        i = "{.code RETICULATE_USE_MANAGED_VENV}: {show_env_var('RETICULATE_USE_MANAGED_VENV')}",
-        i = "{.code VIRTUAL_ENV}: {show_env_var('VIRTUAL_ENV')}"
-      )
-    )
-    cli::cli_abort(
-      "The {.code tabpfn} Python library could not be imported.",
-      call = NULL
-    )
-  }
-
-  py_arg_names <- names(formals(py_lib$TabPFNClassifier))
+  tabpfn <- import_tabpfn()
+  py_arg_names <- names(formals(tabpfn$TabPFNClassifier))
   if (any(py_arg_names == "n_jobs")) {
     names(opts) <- gsub("^n_preprocessing_jobs$", "n_jobs", names(opts))
   }

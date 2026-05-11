@@ -1,3 +1,4 @@
+# nocov start
 .pkg_env <- new.env()
 .pkg_env$tab_pfn <- NULL
 
@@ -60,3 +61,9 @@
     }
   }
 }
+
+import_tabpfn <- function() {
+  .pkg_env$tab_pfn
+}
+
+# nocov end

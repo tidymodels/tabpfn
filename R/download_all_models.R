@@ -19,7 +19,7 @@
 #' }
 download_all_models <- function(cache_dir = NULL) {
   pathlib <- reticulate::import("pathlib")
-  tabpfn <- reticulate::import("tabpfn")
+  tabpfn <- import_tabpfn()
   model_loading <- tabpfn$model_loading
   if (is.null(cache_dir)) {
     cache_dir <- model_loading$get_cache_dir()

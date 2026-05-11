@@ -6,6 +6,20 @@
 # * https://r-pkgs.org/testing-design.html#sec-tests-files-overview
 # * https://testthat.r-lib.org/articles/special-files.html
 
+# For coverage testing set:
+#   Sys.setenv("NOT_CRAN" = TRUE)
+
+# To have Claude run coverage, get it to run:
+# withr::with_envvar(
+#  new = c("NOT_CRAN" = ""),
+#  {
+#   x <- covr::package_coverage(type = "tests")
+#   file <- tempfile(fileext = ".html")
+#   covr::report(x, file)
+#   print(file)
+#  }
+# )
+
 library(testthat)
 library(tabpfn)
 

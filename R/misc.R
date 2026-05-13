@@ -161,27 +161,6 @@ is_tab_pfn_installed <- function() {
 }
 
 
-#' List available TabPFN model versions
-#'
-#' Returns a character vector of valid model version strings accepted by
-#' [tab_pfn()]'s `version` argument. The available model versions are queried
-#' directly from the currently installed Python `tabpfn` library, not
-#' hard-coded in this package, so results may differ across Python library
-#' versions.
-#' @return A character vector of model version strings.
-#' @export
-tabpfn_list_versions <- function() {
-  if (!is_tab_pfn_installed()) {
-    cli::cli_abort(msg_tabpfn_not_available())
-  }
-
-  tabpfn <- import_tabpfn()
-  builtins <- reticulate::import_builtins()
-  tabpfn$constants$ModelVersion |>
-    builtins$list() |>
-    unlist()
-}
-
 check_model_version <- function(x, call = rlang::caller_env()) {
   valid_versions <- tabpfn_list_versions()
 

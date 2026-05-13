@@ -170,7 +170,7 @@ is_tab_pfn_installed <- function() {
 #' versions.
 #' @return A character vector of model version strings.
 #' @export
-list_tabpfn_versions <- function() {
+tabpfn_list_versions <- function() {
   if (!is_tab_pfn_installed()) {
     cli::cli_abort(msg_tabpfn_not_available())
   }
@@ -183,7 +183,7 @@ list_tabpfn_versions <- function() {
 }
 
 check_model_version <- function(x, call = rlang::caller_env()) {
-  valid_versions <- list_tabpfn_versions()
+  valid_versions <- tabpfn_list_versions()
 
   if (!x %in% valid_versions) {
     cli::cli_abort(

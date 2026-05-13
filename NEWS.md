@@ -7,7 +7,7 @@
   version (e.g., `"v2"`, `"v2.5"`). When `NULL`, the Python library's current
   default is used (#15).
 
-- New `list_tabpfn_versions()` returns the model versions supported by the
+- New `tabpfn_list_versions()` returns the model versions supported by the
   currently installed Python `tabpfn` library.
 
 - Added `download_all_models` to close (#15) @frankiethull

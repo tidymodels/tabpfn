@@ -15,9 +15,9 @@
 #' @export
 #' @examples
 #' \donttest{
-#' download_all_models()
+#' tabpfn_download_models()
 #' }
-download_all_models <- function(cache_dir = NULL) {
+tabpfn_download_models <- function(cache_dir = NULL) {
   pathlib <- reticulate::import("pathlib")
   tabpfn <- import_tabpfn()
   model_loading <- tabpfn$model_loading

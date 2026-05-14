@@ -13,11 +13,11 @@
   ([\#15](https://github.com/tidymodels/tabpfn/issues/15)).
 
 - New
-  [`list_tabpfn_versions()`](https://tabpfn.tidymodels.org/dev/reference/list_tabpfn_versions.md)
+  [`tabpfn_list_versions()`](https://tabpfn.tidymodels.org/dev/reference/tabpfn_list_versions.md)
   returns the model versions supported by the currently installed Python
   `tabpfn` library.
 
-- Added `download_all_models` to close
+- Added `tabpfn_download_models` to close
   ([\#15](https://github.com/tidymodels/tabpfn/issues/15))
   [@frankiethull](https://github.com/frankiethull)
 

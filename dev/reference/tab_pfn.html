@@ -325,6 +325,43 @@ are allowed.</p>
 </div>
 
 <div class="section">
+<h3 id="model-selection">Model Selection<a class="anchor" aria-label="anchor" href="#model-selection"></a></h3>
+
+
+<p>By default, TabPFN uses the Python library's current default model version.
+There are two ways to override this.</p><div class="section">
+<h4 id="selecting-a-model-version">Selecting a model version<a class="anchor" aria-label="anchor" href="#selecting-a-model-version"></a></h4>
+
+
+<p>Use the <code>version</code> argument to select a specific released model version. For
+example:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span>  <span class="co"># Use version 2.0</span></span>
+<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="st">"v2"</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Use version 2.5</span></span>
+<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="st">"v2.5"</span><span class="op">)</span></span></code></pre></div>
+
+</div>
+
+<div class="section">
+<h4 id="pointing-to-a-local-model-file">Pointing to a local model file<a class="anchor" aria-label="anchor" href="#pointing-to-a-local-model-file"></a></h4>
+
+
+<p>If you have a model file on disk (e.g., downloaded for offline use), pass
+its path via <code>control_tab_pfn(model_path = ...)</code>:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span>  <span class="va">ctrl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span>model_path <span class="op">=</span> <span class="st">"/path/to/model_file.ckpt"</span><span class="op">)</span></span>
+<span>  <span class="va">mod</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, control <span class="op">=</span> <span class="va">ctrl</span><span class="op">)</span></span></code></pre></div>
+
+<p>Note that <code>version</code> and <code>model_path</code> are mutually exclusive: if <code>version</code>
+is set, it overwrites any <code>model_path</code> supplied through <code>control</code>.</p>
+</div>
+
+
+</div>
+
+<div class="section">
 <h3 id="calculations">Calculations<a class="anchor" aria-label="anchor" href="#calculations"></a></h3>
 
 

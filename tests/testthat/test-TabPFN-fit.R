@@ -1,6 +1,6 @@
 test_that("tab_pfn fits with all versions", {
   skip_if_no_tabpfn()
-  for (version in list_tabpfn_versions()) {
+  for (version in tabpfn_list_versions()) {
     mod <- tab_pfn(am ~ mpg + wt, data = mtcars, version = version)
     expect_s3_class(mod, "tab_pfn")
   }

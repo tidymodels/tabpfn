@@ -21,6 +21,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -34,6 +35,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -47,6 +49,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -60,6 +63,7 @@ tab_pfn(
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
   training_set_limit = 10000,
+  version = NULL,
   control = control_tab_pfn(),
   ...
 )
@@ -119,6 +123,14 @@ tab_pfn(
   keep the training data within the limits of the data constraints
   imposed by the Python library.
 
+- version:
+
+  A character string for the model version (e.g., `"v2"`, `"v2.5"`).
+  When `NULL` (the default), the Python library's current default
+  version is used. When set, the model is initialized via
+  `create_default_for_version()` with the corresponding `ModelVersion`
+  enum value.
+
 - control:
 
   A list of options produced by
@@ -170,26 +182,29 @@ for some data sets.
 
 ### License Requirements
 
-On November 6, 2025, PriorLabs released version 2.5 of the model, which
-contained several improvements. One other change is that accessing the
-model parameters required an API key. Without one, an error occurs:
+Starting with version 2.5, using TabPFN requires accepting the model
+license and obtaining a token from PriorLabs. Each model version (v2.5,
+v2.6, etc.) has its own license that must be accepted individually.
 
-"This model is gated and requires you to accept its terms. Please follow
-these steps: 1. Visit <https://huggingface.co/Prior-Labs/tabpfn_2_5> in
-your browser and accept the terms of use. 2. Log in to your Hugging Face
-account via the command line by running: hf auth login (Alternatively,
-you can set the HF_TOKEN environment variable with a read token)."
+To set up access:
 
-The license contains provisions for "Non-Commercial Use Only" usage if
-that is relevant for you.
+1.  Visit <https://ux.priorlabs.ai> and create an account.
 
-To get an API key, use the `huggingface` link above, create an account,
-and then get an API key. Once you have that, put it in your `.Renviron`
-file in the form of:
+2.  Go to the **License** tab and accept the license for each model
+    version you intend to use.
 
-    HF_TOKEN=your_api_key_value
+3.  Obtain your token from your account page.
+
+4.  Set the `TABPFN_TOKEN` environment variable. The easiest way is to
+    add it to your `.Renviron` file:
+
+
+    TABPFN_TOKEN=your_token_value
 
 The usethis function `edit_r_environ()` can be very helpful here.
+
+Users who already have `TABPFN_TOKEN` set can use TabPFN v2 without any
+additional steps.
 
 ### Python Installation
 
@@ -204,6 +219,7 @@ The first approach, which we *strongly suggest*, is to simply load this
 package and attempt to run a model. This will prompt reticulate to
 create an ephemeral environment and automatically install the required
 packages. That process would look like this:
+
 
       > library(tabpfn)
       >
@@ -244,6 +260,7 @@ Alternatively, you can use the functions in the reticulate package to
 create a virtual environment and install the required Python packages
 there. An example pattern is:
 
+
       library(reticulate)
 
       venv_name <- "r-tabpfn"    # exact name can be different
@@ -260,6 +277,7 @@ Once you have that virtual environment installed, you can declare it as
 your preferred Python installation with `use_virtualenv()`. (You must do
 this before reticulate has initialized Python, i.e., before attempting
 to use tabpfn):
+
 
       reticulate::use_virtualenv("r-tabpfn")
 
@@ -278,9 +296,40 @@ Be default, there are limits to the training data dimensions:
 Predictors do not require preprocessing; missing values and factor
 vectors are allowed.
 
+### Model Selection
+
+By default, TabPFN uses the Python library's current default model
+version. There are two ways to override this.
+
+#### Selecting a model version
+
+Use the `version` argument to select a specific released model version.
+For example:
+
+
+      # Use version 2.0
+      mod <- tab_pfn(predictors, outcome, version = "v2")
+
+      # Use version 2.5
+      mod <- tab_pfn(predictors, outcome, version = "v2.5")
+
+#### Pointing to a local model file
+
+If you have a model file on disk (e.g., downloaded for offline use),
+pass its path via `control_tab_pfn(model_path = ...)`:
+
+
+      ctrl <- control_tab_pfn(model_path = "/path/to/model_file.ckpt")
+      mod  <- tab_pfn(predictors, outcome, control = ctrl)
+
+Note that `version` and `model_path` are mutually exclusive: if
+`version` is set, it overwrites any `model_path` supplied through
+`control`.
+
 ### Calculations
 
 For the `softmax_temperature` value, the softmax terms are:
+
 
     exp(value / softmax_temperature)
 

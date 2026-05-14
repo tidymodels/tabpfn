@@ -12,7 +12,8 @@ control_tab_pfn(
   inference_precision = "auto",
   fit_mode = "fit_preprocessors",
   memory_saving_mode = "auto",
-  random_state = sample.int(10^6, 1)
+  random_state = sample.int(10^6, 1),
+  ...
 )
 ```
 
@@ -54,6 +55,13 @@ control_tab_pfn(
 - random_state:
 
   An integer to set the random number stream.
+
+- ...:
+
+  Additional named arguments passed directly to the TabPFN Python
+  constructor. Use this to supply options not covered by the named
+  parameters above (e.g. arguments added in newer versions of the Python
+  package).
 
 ## Value
 

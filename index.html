@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tabpfn</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,44 +67,48 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of tabpfn like so:</p>
+<p>You can download the package from CRAN via:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tabpfn"</span><span class="op">)</span></span></code></pre></div>
+<p>or you can install the development version of tabpfn like so:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://pak.r-lib.org/" class="external-link">pak</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tidymodels/tabpfn"</span><span class="op">)</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>You’ll need a Python virtual environment to access the underlying library. After installing the R package, tabpfn will install the required Python bits when you first fit a model:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(tabpfn)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="sc">&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="er">&gt;</span> predictors <span class="ot">&lt;-</span> mtcars[, <span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="sc">&gt;</span> outcome <span class="ot">&lt;-</span> mtcars[, <span class="dv">1</span>]</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="sc">&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="er">&gt;</span> <span class="co"># XY interface</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="er">&gt;</span> mod <span class="ot">&lt;-</span> <span class="fu">tab_pfn</span>(predictors, outcome)</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>Downloading uv...Done<span class="sc">!</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>Downloading cpython<span class="dv">-3</span>.<span class="fl">12.12</span> (download) (<span class="fl">15.9</span>MiB)</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a> Downloading cpython<span class="dv">-3</span>.<span class="fl">12.12</span> (download)</span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>Downloading <span class="fu">setuptools</span> (<span class="fl">1.1</span>MiB)</span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>Downloading scikit<span class="sc">-</span><span class="fu">learn</span> (<span class="fl">8.2</span>MiB)</span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>Downloading <span class="fu">numpy</span> (<span class="fl">4.9</span>MiB)</span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="sc">&lt;</span>downloading and installing more packages<span class="sc">&gt;</span></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a> Downloading llvmlite</span>
-<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a> Downloading torch</span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>Installed <span class="dv">58</span> packages <span class="cf">in</span> <span class="dv">350</span>ms</span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="sc">&gt;</span> mod</span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>tabpfn Regression Model</span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>Training set</span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>i <span class="dv">32</span> data points</span>
-<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>i <span class="dv">10</span> predictors</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(tabpfn)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="sc">&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="er">&gt;</span> predictors <span class="ot">&lt;-</span> mtcars[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="sc">&gt;</span> outcome <span class="ot">&lt;-</span> mtcars[, <span class="dv">1</span>]</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="sc">&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="er">&gt;</span> <span class="co"># XY interface</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="er">&gt;</span> mod <span class="ot">&lt;-</span> <span class="fu">tab_pfn</span>(predictors, outcome)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>Downloading uv...Done<span class="sc">!</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>Downloading cpython<span class="dv">-3</span>.<span class="fl">12.12</span> (download) (<span class="fl">15.9</span>MiB)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a> Downloading cpython<span class="dv">-3</span>.<span class="fl">12.12</span> (download)</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>Downloading <span class="fu">setuptools</span> (<span class="fl">1.1</span>MiB)</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>Downloading scikit<span class="sc">-</span><span class="fu">learn</span> (<span class="fl">8.2</span>MiB)</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>Downloading <span class="fu">numpy</span> (<span class="fl">4.9</span>MiB)</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="sc">&lt;</span>downloading and installing more packages<span class="sc">&gt;</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a> Downloading llvmlite</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a> Downloading torch</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>Installed <span class="dv">58</span> packages <span class="cf">in</span> <span class="dv">350</span>ms</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="sc">&gt;</span> mod</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>tabpfn Regression Model</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>Training set</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>i <span class="dv">32</span> data points</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>i <span class="dv">10</span> predictors</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tabpfn.tidymodels.org">tabpfn</a></span><span class="op">)</span></span></code></pre></div>
-<p>To fit a model:</p>
+<p>After loading the package:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tabpfn.tidymodels.org">tabpfn</a></span><span class="op">)</span></span></code></pre></div>
+<p>we can fit a model via the standard x/y interface.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">364</span><span class="op">)</span></span>
 <span><span class="va">reg_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">reg_mod</span></span>
@@ -112,23 +116,23 @@
 <span><span class="co">#&gt; Training set</span></span>
 <span><span class="co">#&gt; ℹ 25 data points</span></span>
 <span><span class="co">#&gt; ℹ 10 predictors</span></span></code></pre></div>
-<p>In addition to the x/y interface shown above, there are also formula and recipes interfaces.</p>
+<p>There are also formula and recipes interfaces.</p>
 <p>Prediction follows the usual S3 <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">reg_mod</span>, <span class="va">mtcars</span><span class="op">[</span><span class="fl">26</span><span class="op">:</span><span class="fl">32</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 7 × 1</span></span>
 <span><span class="co">#&gt;   .pred</span></span>
 <span><span class="co">#&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1  29.8</span></span>
-<span><span class="co">#&gt; 2  25.6</span></span>
-<span><span class="co">#&gt; 3  26.2</span></span>
-<span><span class="co">#&gt; 4  16.5</span></span>
-<span><span class="co">#&gt; 5  19.4</span></span>
-<span><span class="co">#&gt; 6  14.7</span></span>
-<span><span class="co">#&gt; 7  23.6</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  31.4</span></span>
+<span><span class="co">#&gt; 2  24.3</span></span>
+<span><span class="co">#&gt; 3  24.8</span></span>
+<span><span class="co">#&gt; 4  16.4</span></span>
+<span><span class="co">#&gt; 5  18.9</span></span>
+<span><span class="co">#&gt; 6  14.4</span></span>
+<span><span class="co">#&gt; 7  22.5</span></span></code></pre></div>
 <p>tabpfn follows the tidymodels prediction convention: a data frame is always returned with a standard set of column names.</p>
 <p>For a classification model, the outcome should always be a factor vector. For example, using these data from the modeldata package:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://modeldata.tidymodels.org" class="external-link">modeldata</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'modeldata'</span></span>
@@ -150,26 +154,44 @@
 <span><span class="co">#&gt; # A tibble: 625 × 3</span></span>
 <span><span class="co">#&gt;    .pred_Class1 .pred_Class2 .pred_class</span></span>
 <span><span class="co">#&gt;           &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;      </span></span>
-<span><span class="co">#&gt;  1        0.988      0.0122  Class1     </span></span>
-<span><span class="co">#&gt;  2        0.992      0.00823 Class1     </span></span>
-<span><span class="co">#&gt;  3        0.993      0.00721 Class1     </span></span>
-<span><span class="co">#&gt;  4        0.993      0.00714 Class1     </span></span>
-<span><span class="co">#&gt;  5        0.991      0.00944 Class1     </span></span>
-<span><span class="co">#&gt;  6        0.982      0.0175  Class1     </span></span>
-<span><span class="co">#&gt;  7        0.965      0.0347  Class1     </span></span>
-<span><span class="co">#&gt;  8        0.922      0.0775  Class1     </span></span>
-<span><span class="co">#&gt;  9        0.799      0.201   Class1     </span></span>
-<span><span class="co">#&gt; 10        0.554      0.446   Class1     </span></span>
+<span><span class="co">#&gt;  1        0.997      0.00273 Class1     </span></span>
+<span><span class="co">#&gt;  2        0.998      0.00217 Class1     </span></span>
+<span><span class="co">#&gt;  3        0.998      0.00182 Class1     </span></span>
+<span><span class="co">#&gt;  4        0.998      0.00155 Class1     </span></span>
+<span><span class="co">#&gt;  5        0.998      0.00167 Class1     </span></span>
+<span><span class="co">#&gt;  6        0.998      0.00222 Class1     </span></span>
+<span><span class="co">#&gt;  7        0.996      0.00438 Class1     </span></span>
+<span><span class="co">#&gt;  8        0.989      0.0109  Class1     </span></span>
+<span><span class="co">#&gt;  9        0.948      0.0522  Class1     </span></span>
+<span><span class="co">#&gt; 10        0.745      0.255   Class1     </span></span>
 <span><span class="co">#&gt; # ℹ 615 more rows</span></span></code></pre></div>
 <p>The fit looks fairly good when shown with out-of-sample data:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">grid</span>, <span class="va">grid_pred</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">X1</span>, <span class="va">X2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">two_cls_val</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">class</span>, pch <span class="op">=</span> <span class="va">class</span><span class="op">)</span>, </span>
-<span>            alpha <span class="op">=</span> <span class="fl">3</span> <span class="op">/</span> <span class="fl">4</span>, cex <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
-<span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_contour.html" class="external-link">geom_contour</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>z <span class="op">=</span> <span class="va">.pred_Class1</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fl">1</span><span class="op">/</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span>ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-boundaries-1.png" width="50%" style="display: block; margin: auto;"></p>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">X1</span>, <span class="va">X2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">two_cls_val</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">class</span>, pch <span class="op">=</span> <span class="va">class</span><span class="op">)</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="fl">3</span> <span class="op">/</span> <span class="fl">4</span>,</span>
+<span>    cex <span class="op">=</span> <span class="fl">3</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_contour.html" class="external-link">geom_contour</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>z <span class="op">=</span> <span class="va">.pred_Class1</span><span class="op">)</span>,</span>
+<span>    breaks <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">2</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>    linewidth <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span>ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-boundaries-1.png" alt="" width="70%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p><a href="https://priorlabs.ai/" class="external-link">PriorLabs</a> created the model. Starting with version 2.5, using TabPFN requires accepting the model license and setting a token. Each model version (v2.5, v2.6, etc.) has its own license that must be accepted individually.</p>
+<p>To get access, visit <a href="https://ux.priorlabs.ai" class="external-link uri">https://ux.priorlabs.ai</a>, go to the <strong>Licenses</strong> tab (1), and accept the license for each model version you intend to use (2). Then set the <code>TABPFN_TOKEN</code> environment variable with the token from your account. Users who already have <code>TABPFN_TOKEN</code> set can use TabPFN v2 without any additional steps.</p>
+<figure><img src="reference/figures/license.png" alt="Screenshot of the PriorLabs UX portal Licenses page"><figcaption aria-hidden="true">
+Screenshot of the PriorLabs UX portal Licenses page
+</figcaption></figure><p>Also, the model is most effective when a GPU is available (by an order of magnitude or two). This may seem obvious to anyone already working with deep learning models, but it is a fairly new requirement for those strictly working with traditional tabular data models.</p>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
@@ -180,6 +202,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=tabpfn" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/tidymodels/tabpfn/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/tidymodels/tabpfn/issues" class="external-link">Report a bug</a></li>
 </ul>

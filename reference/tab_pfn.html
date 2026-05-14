@@ -11,7 +11,7 @@ regression and classification models."><script src="https://cdn.jsdelivr.net/gh/
 
     <a class="navbar-brand me-2" href="../index.html">tabpfn</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@ regression and classification models."><script src="https://cdn.jsdelivr.net/gh/
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Fit a TabPFN model.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tidymodels/tabpfn/blob/v0.1.0/R/TabPFN-fit.R" class="external-link"><code>R/TabPFN-fit.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidymodels/tabpfn/blob/main/R/TabPFN-fit.R" class="external-link"><code>R/TabPFN-fit.R</code></a></small>
       <div class="d-none name"><code>tab_pfn.Rd</code></div>
     </div>
 
@@ -59,6 +59,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -72,6 +73,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -85,6 +87,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -98,6 +101,7 @@ regression and classification models.</p>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -154,6 +158,14 @@ that can be used to keep the training data within the limits of the
 data constraints imposed by the Python library.</p></dd>
 
 
+<dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
+<dd><p>A character string for the model version (e.g., <code>"v2"</code>,
+<code>"v2.5"</code>). When <code>NULL</code> (the default), the Python library's current default
+version is used. When set, the model is initialized via
+<code>create_default_for_version()</code> with the corresponding <code>ModelVersion</code> enum
+value.</p></dd>
+
+
 <dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>
 <dd><p>A list of options produced by <code><a href="control_tab_pfn.html">control_tab_pfn()</a></code>.</p></dd>
 
@@ -200,23 +212,22 @@ specific computations and might be slower than the CPU for some data sets.</p>
 <h3 id="license-requirements">License Requirements<a class="anchor" aria-label="anchor" href="#license-requirements"></a></h3>
 
 
-<p>On November 6, 2025, PriorLabs released version 2.5 of the model, which
-contained several improvements. One other change is that accessing the model
-parameters required an API key. Without one, an error occurs:</p>
-<p>"This model is gated and requires you to accept its terms.  Please
-follow these steps: 1. Visit <a href="https://huggingface.co/Prior-Labs/tabpfn_2_5" class="external-link">https://huggingface.co/Prior-Labs/tabpfn_2_5</a>
-in your browser and accept the terms of use. 2. Log in to your Hugging Face
-account via the command line by running: hf auth login (Alternatively, you
-can set the HF_TOKEN environment variable with a read token)."</p>
-<p>The license contains provisions for "Non-Commercial Use Only" usage if that
-is relevant for you.</p>
-<p>To get an API key, use the <code>huggingface</code> link above, create an account, and
-then get an API key. Once you have that, put it in your <code>.Renviron</code> file in
-the form of:</p>
-<div class="sourceCode"><pre><code><span></span>
-<span><span class="va">HF_TOKEN</span><span class="op">=</span><span class="va">your_api_key_value</span></span></code></pre></div>
+<p>Starting with version 2.5, using TabPFN requires accepting the model license
+and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
+has its own license that must be accepted individually.</p>
+<p>To set up access:</p><ol><li><p>Visit <a href="https://ux.priorlabs.ai" class="external-link">https://ux.priorlabs.ai</a> and create an
+account.</p></li>
+<li><p>Go to the <strong>License</strong> tab and accept the license for each model version
+you intend to use.</p></li>
+<li><p>Obtain your token from your account page.</p></li>
+<li><p>Set the <code>TABPFN_TOKEN</code> environment variable. The easiest way is to add it
+to your <code>.Renviron</code> file:</p></li>
+</ol><div class="sourceCode"><pre><code><span></span>
+<span><span class="va">TABPFN_TOKEN</span><span class="op">=</span><span class="va">your_token_value</span></span></code></pre></div>
 
 <p>The <span class="pkg">usethis</span> function <code>edit_r_environ()</code> can be very helpful here.</p>
+<p>Users who already have <code>TABPFN_TOKEN</code> set can use TabPFN v2 without any
+additional steps.</p>
 </div>
 
 <div class="section">
@@ -311,6 +322,43 @@ predictors (2,000). There is an unchangeable limit to the number of classes
 (10).</p></li>
 </ul><p>Predictors do not require preprocessing; missing values and factor vectors
 are allowed.</p>
+</div>
+
+<div class="section">
+<h3 id="model-selection">Model Selection<a class="anchor" aria-label="anchor" href="#model-selection"></a></h3>
+
+
+<p>By default, TabPFN uses the Python library's current default model version.
+There are two ways to override this.</p><div class="section">
+<h4 id="selecting-a-model-version">Selecting a model version<a class="anchor" aria-label="anchor" href="#selecting-a-model-version"></a></h4>
+
+
+<p>Use the <code>version</code> argument to select a specific released model version. For
+example:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span>  <span class="co"># Use version 2.0</span></span>
+<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="st">"v2"</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Use version 2.5</span></span>
+<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="st">"v2.5"</span><span class="op">)</span></span></code></pre></div>
+
+</div>
+
+<div class="section">
+<h4 id="pointing-to-a-local-model-file">Pointing to a local model file<a class="anchor" aria-label="anchor" href="#pointing-to-a-local-model-file"></a></h4>
+
+
+<p>If you have a model file on disk (e.g., downloaded for offline use), pass
+its path via <code>control_tab_pfn(model_path = ...)</code>:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span>  <span class="va">ctrl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span>model_path <span class="op">=</span> <span class="st">"/path/to/model_file.ckpt"</span><span class="op">)</span></span>
+<span>  <span class="va">mod</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, control <span class="op">=</span> <span class="va">ctrl</span><span class="op">)</span></span></code></pre></div>
+
+<p>Note that <code>version</code> and <code>model_path</code> are mutually exclusive: if <code>version</code>
+is set, it overwrites any <code>model_path</code> supplied through <code>control</code>.</p>
+</div>
+
+
 </div>
 
 <div class="section">

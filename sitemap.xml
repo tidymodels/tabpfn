@@ -5,12 +5,14 @@
 <url><loc>https://tabpfn.tidymodels.org/authors.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/index.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/news/index.html</loc></url>
-<url><loc>https://tabpfn.tidymodels.org/reference/TabPFN-package.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/reference/control_tab_pfn.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/reference/index.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/reference/is_tab_pfn_installed.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/reference/predict.tab_pfn.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/reference/reexports.html</loc></url>
 <url><loc>https://tabpfn.tidymodels.org/reference/tab_pfn.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/reference/tabpfn-package.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/reference/tabpfn_download_models.html</loc></url>
+<url><loc>https://tabpfn.tidymodels.org/reference/tabpfn_list_versions.html</loc></url>
 </urlset>
 

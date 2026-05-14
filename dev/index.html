@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tabpfn</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -124,13 +124,13 @@
 <span><span class="co">#&gt; # A tibble: 7 × 1</span></span>
 <span><span class="co">#&gt;   .pred</span></span>
 <span><span class="co">#&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1  29.3</span></span>
-<span><span class="co">#&gt; 2  24.6</span></span>
-<span><span class="co">#&gt; 3  24.7</span></span>
-<span><span class="co">#&gt; 4  16.5</span></span>
+<span><span class="co">#&gt; 1  31.4</span></span>
+<span><span class="co">#&gt; 2  24.3</span></span>
+<span><span class="co">#&gt; 3  24.8</span></span>
+<span><span class="co">#&gt; 4  16.4</span></span>
 <span><span class="co">#&gt; 5  18.9</span></span>
-<span><span class="co">#&gt; 6  15.6</span></span>
-<span><span class="co">#&gt; 7  23.2</span></span></code></pre></div>
+<span><span class="co">#&gt; 6  14.4</span></span>
+<span><span class="co">#&gt; 7  22.5</span></span></code></pre></div>
 <p>tabpfn follows the tidymodels prediction convention: a data frame is always returned with a standard set of column names.</p>
 <p>For a classification model, the outcome should always be a factor vector. For example, using these data from the modeldata package:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -155,16 +155,16 @@
 <span><span class="co">#&gt; # A tibble: 625 × 3</span></span>
 <span><span class="co">#&gt;    .pred_Class1 .pred_Class2 .pred_class</span></span>
 <span><span class="co">#&gt;           &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;      </span></span>
-<span><span class="co">#&gt;  1        0.621        0.379 Class1     </span></span>
-<span><span class="co">#&gt;  2        0.486        0.514 Class2     </span></span>
-<span><span class="co">#&gt;  3        0.614        0.386 Class1     </span></span>
-<span><span class="co">#&gt;  4        0.530        0.470 Class1     </span></span>
-<span><span class="co">#&gt;  5        0.513        0.487 Class1     </span></span>
-<span><span class="co">#&gt;  6        0.498        0.502 Class2     </span></span>
-<span><span class="co">#&gt;  7        0.669        0.331 Class1     </span></span>
-<span><span class="co">#&gt;  8        0.602        0.398 Class1     </span></span>
-<span><span class="co">#&gt;  9        0.550        0.450 Class1     </span></span>
-<span><span class="co">#&gt; 10        0.568        0.432 Class1     </span></span>
+<span><span class="co">#&gt;  1        0.997      0.00273 Class1     </span></span>
+<span><span class="co">#&gt;  2        0.998      0.00217 Class1     </span></span>
+<span><span class="co">#&gt;  3        0.998      0.00182 Class1     </span></span>
+<span><span class="co">#&gt;  4        0.998      0.00155 Class1     </span></span>
+<span><span class="co">#&gt;  5        0.998      0.00167 Class1     </span></span>
+<span><span class="co">#&gt;  6        0.998      0.00222 Class1     </span></span>
+<span><span class="co">#&gt;  7        0.996      0.00438 Class1     </span></span>
+<span><span class="co">#&gt;  8        0.989      0.0109  Class1     </span></span>
+<span><span class="co">#&gt;  9        0.948      0.0522  Class1     </span></span>
+<span><span class="co">#&gt; 10        0.745      0.255   Class1     </span></span>
 <span><span class="co">#&gt; # ℹ 615 more rows</span></span></code></pre></div>
 <p>The fit looks fairly good when shown with out-of-sample data:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">

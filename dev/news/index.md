@@ -2,6 +2,11 @@
 
 ## tabpfn (development version)
 
+## tabpfn 0.2.0
+
+- Updated notes on License Requirements in
+  [`?tab_pfn`](https://tabpfn.tidymodels.org/dev/reference/tab_pfn.md).
+
 - [`control_tab_pfn()`](https://tabpfn.tidymodels.org/dev/reference/control_tab_pfn.md)
   now accepts `...` to pass additional arguments directly to the TabPFN
   Python constructor (e.g. `model_path`).
@@ -17,8 +22,9 @@
   returns the model versions supported by the currently installed Python
   `tabpfn` library.
 
-- Added `tabpfn_download_models` to close
-  ([\#15](https://github.com/tidymodels/tabpfn/issues/15))
+- Added
+  [`tabpfn_download_models()`](https://tabpfn.tidymodels.org/dev/reference/tabpfn_download_models.md)
+  to close ([\#15](https://github.com/tidymodels/tabpfn/issues/15))
   [@frankiethull](https://github.com/frankiethull)
 
 ## tabpfn 0.1.0

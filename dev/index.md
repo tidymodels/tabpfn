@@ -97,13 +97,13 @@ predict(reg_mod, mtcars[26:32, -1])
 #> # A tibble: 7 × 1
 #>   .pred
 #>   <dbl>
-#> 1  29.3
-#> 2  24.6
-#> 3  24.7
-#> 4  16.5
+#> 1  31.4
+#> 2  24.3
+#> 3  24.8
+#> 4  16.4
 #> 5  18.9
-#> 6  15.6
-#> 7  23.2
+#> 6  14.4
+#> 7  22.5
 ```
 
 tabpfn follows the tidymodels prediction convention: a data frame is
@@ -135,16 +135,16 @@ grid_pred
 #> # A tibble: 625 × 3
 #>    .pred_Class1 .pred_Class2 .pred_class
 #>           <dbl>        <dbl> <fct>      
-#>  1        0.621        0.379 Class1     
-#>  2        0.486        0.514 Class2     
-#>  3        0.614        0.386 Class1     
-#>  4        0.530        0.470 Class1     
-#>  5        0.513        0.487 Class1     
-#>  6        0.498        0.502 Class2     
-#>  7        0.669        0.331 Class1     
-#>  8        0.602        0.398 Class1     
-#>  9        0.550        0.450 Class1     
-#> 10        0.568        0.432 Class1     
+#>  1        0.997      0.00273 Class1     
+#>  2        0.998      0.00217 Class1     
+#>  3        0.998      0.00182 Class1     
+#>  4        0.998      0.00155 Class1     
+#>  5        0.998      0.00167 Class1     
+#>  6        0.998      0.00222 Class1     
+#>  7        0.996      0.00438 Class1     
+#>  8        0.989      0.0109  Class1     
+#>  9        0.948      0.0522  Class1     
+#> 10        0.745      0.255   Class1     
 #> # ℹ 615 more rows
 ```
 

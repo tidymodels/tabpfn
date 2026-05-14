@@ -15,13 +15,13 @@ Source:
 [`DESCRIPTION`](https://github.com/tidymodels/tabpfn/blob/main/DESCRIPTION)
 
 Kuhn M (2026). *tabpfn: Prior-Data Fitted Network Foundational Model for
-Tabular Data*. R package version 0.1.0.9000,
+Tabular Data*. R package version 0.2.0.9000,
 <https://tabpfn.tidymodels.org>.
 
     @Manual{,
       title = {tabpfn: Prior-Data Fitted Network Foundational Model for Tabular Data},
       author = {Max Kuhn},
       year = {2026},
-      note = {R package version 0.1.0.9000},
+      note = {R package version 0.2.0.9000},
       url = {https://tabpfn.tidymodels.org},
     }

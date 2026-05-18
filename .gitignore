@@ -52,3 +52,5 @@ docs
 
 .DS_Store
 .positai
+
+.claude/settings.local.json

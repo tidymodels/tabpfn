@@ -1,3 +1,24 @@
+#' List available TabPFN model versions
+#'
+#' Returns a character vector of valid model version strings accepted by
+#' [tab_pfn()]'s `version` argument. The available model versions are queried
+#' directly from the currently installed Python `tabpfn` library, not
+#' hard-coded in this package, so results may differ across Python library
+#' versions.
+#' @return A character vector of model version strings.
+#' @export
+tabpfn_list_versions <- function() {
+  if (!is_tab_pfn_installed()) {
+    cli::cli_abort(msg_tabpfn_not_available())
+  }
+
+  tabpfn <- import_tabpfn()
+  builtins <- reticulate::import_builtins()
+  tabpfn$constants$ModelVersion |>
+    builtins$list() |>
+    unlist()
+}
+
 #' Download all TabPFN pre-trained model checkpoints
 #'
 #' @description
@@ -15,9 +36,9 @@
 #' @export
 #' @examples
 #' \donttest{
-#' download_all_models()
+#' tabpfn_download_models()
 #' }
-download_all_models <- function(cache_dir = NULL) {
+tabpfn_download_models <- function(cache_dir = NULL) {
   pathlib <- reticulate::import("pathlib")
   tabpfn <- import_tabpfn()
   model_loading <- tabpfn$model_loading

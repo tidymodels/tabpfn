@@ -185,6 +185,37 @@
 #' Predictors do not require preprocessing; missing values and factor vectors
 #' are allowed.
 #'
+#' ## Model Selection
+#'
+#' By default, TabPFN uses the Python library's current default model version.
+#' There are two ways to override this.
+#'
+#' ### Selecting a model version
+#'
+#' Use the `version` argument to select a specific released model version. For
+#' example:
+#'
+#' \preformatted{
+#'   # Use version 2.0
+#'   mod <- tab_pfn(predictors, outcome, version = "v2")
+#'
+#'   # Use version 2.5
+#'   mod <- tab_pfn(predictors, outcome, version = "v2.5")
+#' }
+#'
+#' ### Pointing to a local model file
+#'
+#' If you have a model file on disk (e.g., downloaded for offline use), pass
+#' its path via `control_tab_pfn(model_path = ...)`:
+#'
+#' \preformatted{
+#'   ctrl <- control_tab_pfn(model_path = "/path/to/model_file.ckpt")
+#'   mod  <- tab_pfn(predictors, outcome, control = ctrl)
+#' }
+#'
+#' Note that `version` and `model_path` are mutually exclusive: if `version`
+#' is set, it overwrites any `model_path` supplied through `control`.
+#'
 #' ## Calculations
 #'
 #' For the `softmax_temperature` value, the softmax terms are:

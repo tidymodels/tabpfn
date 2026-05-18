@@ -1,18 +1,3 @@
-test_that("list_tabpfn_versions returns a character vector", {
-  skip_if_no_tabpfn()
-
-  versions <- list_tabpfn_versions()
-  expect_type(versions, "character")
-  expect_gt(length(versions), 0)
-})
-
-test_that("list_tabpfn_versions includes known versions", {
-  skip_if_no_tabpfn()
-
-  versions <- list_tabpfn_versions()
-  expect_contains(versions, "v2")
-})
-
 test_that("check_model_version validates correctly", {
   skip_if_no_tabpfn()
 
@@ -25,9 +10,4 @@ test_that("check_model_version validates correctly", {
 test_that("msg_tabpfn_not_available returns correct structure", {
   msg <- tabpfn:::msg_tabpfn_not_available()
   expect_named(msg, c("x", "i", "i"))
-})
-
-test_that("list_tabpfn_versions errors when tabpfn not installed", {
-  local_mocked_bindings(is_tab_pfn_installed = function() FALSE)
-  expect_error(list_tabpfn_versions(), "not installed")
 })

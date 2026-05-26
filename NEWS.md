@@ -1,5 +1,7 @@
 # tabpfn (development version)
 
+- Added a `type` argument to be consistent with parsnip. Defaults to `NULL`, which will produce all prediction types. 
+
 # tabpfn 0.2.0
 
 - Updated notes on License Requirements in `?tab_pfn`. 

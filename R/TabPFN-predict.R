@@ -4,6 +4,9 @@
 #'
 #' @param new_data A data frame or matrix of new predictors.
 #'
+#' @param type The type of prediction. For classification, can be `"class"` or
+#' `"prob"`. Defaults to `NULL` which gives all prediction types possible.
+#'
 #' @param ... Not used, but required for extensibility.
 #'
 #' @return
@@ -34,10 +37,10 @@
 #' }
 #'
 #' @export
-predict.tab_pfn <- function(object, new_data, ...) {
+predict.tab_pfn <- function(object, new_data, type = NULL, ...) {
   rlang::check_dots_empty()
   forged <- hardhat::forge(new_data, object$blueprint)$predictors
-  res <- predict(object$fit, forged, object$levels)
+  res <- predict(object$fit, forged, object$levels, type = type)
   res
 }
 
@@ -49,6 +52,7 @@ predict.tabpfn.regressor.TabPFNRegressor <- function(
   object,
   new_data,
   levels,
+  type = NULL,
   ...
 ) {
   py_msg <- reticulate::py_capture_output(
@@ -70,6 +74,7 @@ predict.tabpfn.classifier.TabPFNClassifier <- function(
   object,
   new_data,
   levels,
+  type = NULL,
   ...
 ) {
   py_msg <- reticulate::py_capture_output(
@@ -87,15 +92,23 @@ predict.tabpfn.classifier.TabPFNClassifier <- function(
     # and "a", object$classes_ will have c("a", "b)
     res$.pred_class <- factor(object$classes_[cls_ind], levels = levels)
   }
+  if (!is.null(type)) {
+    type <- rlang::arg_match(type, c("class", "prob"))
+    if (type == "class") {
+      res <- res[, ".pred_class"]
+    } else if (type == "prob") {
+      res <- res[, names(res) != ".pred_class"]
+    }
+  }
 
   res
 }
 
 #' @export
 #' @rdname predict.tab_pfn
-augment.tab_pfn <- function(x, new_data, ...) {
+augment.tab_pfn <- function(x, new_data, type = NULL, ...) {
   new_data <- tibble::new_tibble(new_data)
-  res <- predict(x, new_data)
+  res <- predict(x, new_data, type = type)
   res <- cbind(res, new_data)
   tibble::new_tibble(res)
 }

@@ -30,6 +30,14 @@ test_that('classification models', {
   expect_equal(pred_df[0, ], pred_ptype)
   expect_equal(nrow(pred_df), 3L)
 
+  pred_cls_df <- predict(mod_df, x_te_df, type = "class")
+  expect_equal(pred_cls_df[0, ], pred_ptype[, ".pred_class"])
+  expect_equal(nrow(pred_cls_df), 3L)
+
+  pred_df <- predict(mod_df, x_te_df, type = "prob")
+  expect_equal(pred_df[0, ], pred_ptype[, 1:2])
+  expect_equal(nrow(pred_df), 3L)
+
   aug_df <- augment(mod_df, x_te_df)
   expect_s3_class(aug_df, c("tbl_df", "tbl", "data.frame"))
   expect_equal(nrow(aug_df), 3L)

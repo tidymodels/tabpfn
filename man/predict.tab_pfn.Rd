@@ -5,14 +5,17 @@
 \alias{augment.tab_pfn}
 \title{Predict using \code{TabPFN}}
 \usage{
-\method{predict}{tab_pfn}(object, new_data, ...)
+\method{predict}{tab_pfn}(object, new_data, type = NULL, ...)
 
-\method{augment}{tab_pfn}(x, new_data, ...)
+\method{augment}{tab_pfn}(x, new_data, type = NULL, ...)
 }
 \arguments{
 \item{object, x}{A \code{tab_pfn} object.}
 
 \item{new_data}{A data frame or matrix of new predictors.}
+
+\item{type}{The type of prediction. For classification, can be \code{"class"} or
+\code{"prob"}. Defaults to \code{NULL} which gives all prediction types possible.}
 
 \item{...}{Not used, but required for extensibility.}
 }

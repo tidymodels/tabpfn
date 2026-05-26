@@ -2,7 +2,12 @@
 
 ## tabpfn (development version)
 
+- Added a `type` argument to be consistent with parsnip. Defaults to
+  `NULL`, which will produce all prediction types.
+
 ## tabpfn 0.2.0
+
+CRAN release: 2026-05-14
 
 - Updated notes on License Requirements in
   [`?tab_pfn`](https://tabpfn.tidymodels.org/dev/reference/tab_pfn.md).

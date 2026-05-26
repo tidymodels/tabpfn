@@ -6,10 +6,10 @@ Predict using `TabPFN`
 
 ``` r
 # S3 method for class 'tab_pfn'
-predict(object, new_data, ...)
+predict(object, new_data, type = NULL, ...)
 
 # S3 method for class 'tab_pfn'
-augment(x, new_data, ...)
+augment(x, new_data, type = NULL, ...)
 ```
 
 ## Arguments
@@ -21,6 +21,12 @@ augment(x, new_data, ...)
 - new_data:
 
   A data frame or matrix of new predictors.
+
+- type:
+
+  The type of prediction. For classification, can be `"class"` or
+  `"prob"`. Defaults to `NULL` which gives all prediction types
+  possible.
 
 - ...:
 

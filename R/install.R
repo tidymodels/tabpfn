@@ -63,7 +63,8 @@ install_tabpfn <- function(
   check_bool(restart_session)
   method <- rlang::arg_match(method)
 
-  explicit_version <- !(is.null(version) || version %in% c("default", "release"))
+  explicit_version <- !(is.null(version) ||
+    version %in% c("default", "release"))
   spec <- resolve_tabpfn_spec(version)
   exists <- env_exists(envname)
 
@@ -109,8 +110,15 @@ install_tabpfn <- function(
 
     if (new_env) {
       return(recreate_env(
-        spec, envname, method, python_version, extra_packages,
-        installed = installed, target = spec, restart_session, ...
+        spec,
+        envname,
+        method,
+        python_version,
+        extra_packages,
+        installed = installed,
+        target = spec,
+        restart_session,
+        ...
       ))
     }
 
@@ -125,8 +133,10 @@ install_tabpfn <- function(
   # ---- No explicit version ---------------------------------------------------
   if (!check_latest) {
     cli::cli_inform(
-      c("v" = "{.val {envname}} already exists; skipping version check
-              ({.code check_latest = FALSE}).")
+      c(
+        "v" = "{.val {envname}} already exists; skipping version check
+              ({.code check_latest = FALSE})."
+      )
     )
     return(invisible(envname))
   }
@@ -144,18 +154,24 @@ install_tabpfn <- function(
     return(invisible(envname))
   }
 
-  if (!is.null(installed) &&
-      numeric_version(installed) >= numeric_version(latest)) {
+  if (
+    !is.null(installed) &&
+      numeric_version(installed) >= numeric_version(latest)
+  ) {
     cli::cli_inform(
-      c("v" = "{.val {envname}} already has the latest {.pkg tabpfn}
-              ({installed}). Nothing to do.")
+      c(
+        "v" = "{.val {envname}} already has the latest {.pkg tabpfn}
+              ({installed}). Nothing to do."
+      )
     )
     return(invisible(envname))
   }
 
   cli::cli_inform(
-    c("i" = "{.val {envname}} has {.pkg tabpfn} {installed}. A newer version
-            ({latest}) is available.")
+    c(
+      "i" = "{.val {envname}} has {.pkg tabpfn} {installed}. A newer version
+            ({latest}) is available."
+    )
   )
 
   upgrade <- rlang::is_interactive() &&
@@ -172,8 +188,12 @@ install_tabpfn <- function(
   }
 
   install_env(
-    paste0("tabpfn==", latest), envname, method, python_version,
-    extra_packages, ...
+    paste0("tabpfn==", latest),
+    envname,
+    method,
+    python_version,
+    extra_packages,
+    ...
   )
   cli::cli_inform(
     c("v" = "Upgraded {.pkg tabpfn} to {latest} in {.val {envname}}.")
@@ -185,8 +205,15 @@ install_tabpfn <- function(
 # Recreate an existing environment (destructive) after confirmation.
 
 recreate_env <- function(
-  spec, envname, method, python_version, extra_packages,
-  installed, target, restart_session, ...
+  spec,
+  envname,
+  method,
+  python_version,
+  extra_packages,
+  installed,
+  target,
+  restart_session,
+  ...
 ) {
   target_version <- sub("^tabpfn==", "", target)
   cli::cli_inform(
@@ -195,8 +222,15 @@ recreate_env <- function(
 
   proceed <- !rlang::is_interactive() ||
     tabpfn_confirm(
-      paste0("Replace ", envname, " (tabpfn ", installed, " → ",
-             target_version, ")? (Yes/no) "),
+      paste0(
+        "Replace ",
+        envname,
+        " (tabpfn ",
+        installed,
+        " -> ",
+        target_version,
+        ")? (Yes/no) "
+      ),
       FALSE
     )
 
@@ -262,8 +296,14 @@ env_tabpfn_version <- function(envname) {
   row$version[[1]]
 }
 
-install_env <- function(spec, envname, method, python_version, extra_packages,
-                        ...) {
+install_env <- function(
+  spec,
+  envname,
+  method,
+  python_version,
+  extra_packages,
+  ...
+) {
   reticulate::py_install(
     packages = c(spec, extra_packages),
     envname = envname,

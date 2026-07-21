@@ -17,19 +17,21 @@ URL: https://tabpfn.tidymodels.org, https://github.com/tidymodels/tabpfn
 BugReports: https://github.com/tidymodels/tabpfn/issues
 Depends: 
     R (>= 4.1.0)
-Imports: 
+Imports:
     cli,
     dplyr,
     generics,
     hardhat,
+    jsonlite,
     purrr,
     reticulate (>= 1.41.0.1),
     rlang (>= 1.1.0),
     tibble
-Suggests: 
+Suggests:
     covr,
     modeldata,
     recipes,
+    rstudioapi,
     spelling,
     testthat (>= 3.0.0),
     withr

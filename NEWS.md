@@ -1,5 +1,7 @@
 # tabpfn (development version)
 
+- New `install_tabpfn()` sets up a persistent `"r-tabpfn"` Python virtual environment. It has a `version` argument to pin a specific `tabpfn` release and, by default, offers to upgrade an existing environment when a newer release is available.
+
 - Added a `type` argument to be consistent with parsnip. Defaults to `NULL`, which will produce all prediction types. 
 
 # tabpfn 0.2.0

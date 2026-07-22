@@ -21,6 +21,21 @@ test_that("extract_model_version falls back to 'unknown' softly", {
   expect_identical(tabpfn:::extract_model_version(NULL), "unknown")
 })
 
+test_that("tab_pfn records the fitting device", {
+  skip_if_no_tabpfn()
+  mod <- tab_pfn(am ~ mpg + wt, data = mtcars, version = "v2")
+  expect_type(mod$device, "character")
+  expect_true(length(mod$device) >= 1)
+  expect_false(anyNA(mod$device))
+  expect_true(all(nzchar(mod$device)))
+})
+
+test_that("extract_model_device falls back to 'unknown' softly", {
+  # An object without the expected python internals must not error.
+  expect_identical(tabpfn:::extract_model_device(list()), "unknown")
+  expect_identical(tabpfn:::extract_model_device(NULL), "unknown")
+})
+
 test_that("check_data_constraints errors when too many rows", {
   x <- matrix(0, nrow = 50001, ncol = 2)
   y <- factor(rep(c("a", "b"), length.out = 50001))

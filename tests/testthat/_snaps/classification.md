@@ -3,56 +3,60 @@
     Code
       mod_df
     Message
-      TabPFN-v3 Classification Model
-    Output
       
-    Message
-      Training set
+      -- TabPFN-v3 Classification Model --
+      
+      Training set:
       i 20 data points
       i 2 predictors
       i class levels: "Class1" and "Class2"
+      Device:
+      i cpu
 
 ---
 
     Code
       mod_f
     Message
-      TabPFN-v3 Classification Model
-    Output
       
-    Message
-      Training set
+      -- TabPFN-v3 Classification Model --
+      
+      Training set:
       i 20 data points
       i 2 predictors
       i class levels: "Class1" and "Class2"
+      Device:
+      i cpu
 
 ---
 
     Code
       mod_mat
     Message
-      TabPFN-v3 Classification Model
-    Output
       
-    Message
-      Training set
+      -- TabPFN-v3 Classification Model --
+      
+      Training set:
       i 20 data points
       i 2 predictors
       i class levels: "Class1" and "Class2"
+      Device:
+      i cpu
 
 # classification models - recipes
 
     Code
       mod_rec
     Message
-      TabPFN-v3 Classification Model
-    Output
       
-    Message
-      Training set
+      -- TabPFN-v3 Classification Model --
+      
+      Training set:
       i 20 data points
       i 3 predictors
       i class levels: "Class1" and "Class2"
+      Device:
+      i cpu
 
 # main options
 

@@ -1,6 +1,8 @@
 test_that('classification models', {
   skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
+  # Force CPU so the printed device is deterministic across hardware.
+  local_tabpfn_cpu()
 
   #-----------------------------------------------------------------------------
 
@@ -80,6 +82,8 @@ test_that('classification models - recipes', {
   skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
   skip_if_not_installed("recipes")
+  # Force CPU so the printed device is deterministic across hardware.
+  local_tabpfn_cpu()
 
   reticulate::import("torch")
 

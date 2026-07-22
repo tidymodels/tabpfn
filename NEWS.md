@@ -2,6 +2,8 @@
 
 - Added a `type` argument to be consistent with parsnip. Defaults to `NULL`, which will produce all prediction types. 
 
+- The fitted `tab_pfn` object now records the underlying TabPFN model version in a `version` element, which is also shown by the print method. It falls back to `"unknown"` if the version cannot be determined.
+
 # tabpfn 0.2.0
 
 - Updated notes on License Requirements in `?tab_pfn`. 

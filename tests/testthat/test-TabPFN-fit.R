@@ -6,6 +6,21 @@ test_that("tab_pfn fits with all versions", {
   }
 })
 
+test_that("tab_pfn records the model version", {
+  skip_if_no_tabpfn()
+  mod <- tab_pfn(am ~ mpg + wt, data = mtcars, version = "v2")
+  expect_type(mod$version, "character")
+  expect_length(mod$version, 1)
+  expect_false(is.na(mod$version))
+  expect_true(nzchar(mod$version))
+})
+
+test_that("extract_model_version falls back to 'unknown' softly", {
+  # An object without the expected python internals must not error.
+  expect_identical(tabpfn:::extract_model_version(list()), "unknown")
+  expect_identical(tabpfn:::extract_model_version(NULL), "unknown")
+})
+
 test_that("check_data_constraints errors when too many rows", {
   x <- matrix(0, nrow = 50001, ncol = 2)
   y <- factor(rep(c("a", "b"), length.out = 50001))

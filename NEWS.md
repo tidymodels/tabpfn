@@ -4,6 +4,8 @@
 
 - The fitted `tab_pfn` object now records the underlying TabPFN model version in a `version` element, which is also shown by the print method. It falls back to `"unknown"` if the version cannot be determined.
 
+- The fitted `tab_pfn` object now records the device(s) used to fit the model (e.g. `"cpu"`, `"mps"`, or `"cuda:0"`) in a `device` element, which is also shown by the print method. It falls back to `"unknown"` if the device cannot be determined.
+
 # tabpfn 0.2.0
 
 - Updated notes on License Requirements in `?tab_pfn`. 

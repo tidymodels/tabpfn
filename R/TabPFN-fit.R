@@ -233,6 +233,8 @@
 #'   * `fit`: the python object containing the model.
 #'   * `levels`: a character string of class levels (or NULL for regression)
 #'   * `training`: a vector with the training set dimensions.
+#'   * `version`: the underlying TabPFN model version (or `"unknown"` if it
+#'      cannot be determined).
 #'   * `logging`: any R or python messages produced by the computations.
 #'   * `blueprint`: am object produced by [hardhat::mold()] used to process
 #'      new data during prediction.
@@ -454,7 +456,8 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
     levels = res$lvls,
     training = res$train,
     logging = res$logging,
-    blueprint = processed$blueprint
+    blueprint = processed$blueprint,
+    version = res$version
   )
 }
 
@@ -507,16 +510,39 @@ tab_pfn_impl <- function(x, y, opts, version = NULL) {
     fit = model_fit,
     lvls = levels(y),
     train = dim(x),
+    version = extract_model_version(model_fit),
     logging = c(r = msgs, py = py_msg)
   )
   class(res) <- c("tab_pfn")
   res
 }
 
+# Soft extraction of the underlying TabPFN model version. The Python object
+# internals could change over time, so any failure falls back to "unknown"
+# rather than erroring.
+extract_model_version <- function(model_fit) {
+  res <- try(
+    {
+      cls <- reticulate::py_get_attr(model_fit$configs_[[1]], "__class__")
+      cls$name
+    },
+    silent = TRUE
+  )
+  if (inherits(res, "try-error") || is.null(res) || length(res) == 0) {
+    return("unknown")
+  }
+  as.character(res)
+}
+
 #' @export
 print.tab_pfn <- function(x, ...) {
   type <- ifelse(is.null(x$levels), "Regression", "Classification")
-  cli::cli_inform("TabPFN {type} Model")
+  model <- if (is.null(x$version) || identical(x$version, "unknown")) {
+    "TabPFN"
+  } else {
+    x$version
+  }
+  cli::cli_inform("{model} {type} Model")
   cat("\n")
   cli::cli_inform("Training set\n\n")
   cli::cli_inform(c(i = "{x$training[1]} data point{?s}"))

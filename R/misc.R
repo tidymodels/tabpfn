@@ -161,6 +161,28 @@ is_tab_pfn_installed <- function() {
 }
 
 
+# Normalizes a user-supplied model version. Users may pass a bare number
+# (e.g. `2.5` or `"2.5"`); we prefix a `v` so it matches the `v`-prefixed
+# strings the Python library expects. The prefix is only added when the value
+# does not already start with `v`, and matching remains exact, so a bare `2.5`
+# will never match something like `v2.5-turbo` unless `v2.5` itself exists.
+normalize_model_version <- function(x) {
+  if (is.null(x)) {
+    return(x)
+  }
+
+  if (is.numeric(x)) {
+    x <- format(x, trim = TRUE)
+  }
+
+  if (is.character(x) && !grepl("^v", x)) {
+    x <- paste0("v", x)
+  }
+
+  x
+}
+
+
 check_model_version <- function(x, call = rlang::caller_env()) {
   valid_versions <- tabpfn_list_versions()
 

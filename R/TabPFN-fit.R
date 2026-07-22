@@ -443,6 +443,7 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
   rlang::check_dots_empty()
 
   if (!is.null(version)) {
+    version <- normalize_model_version(version)
     check_model_version(version)
   }
 

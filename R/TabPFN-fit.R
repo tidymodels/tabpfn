@@ -567,9 +567,8 @@ print.tab_pfn <- function(x, ...) {
   } else {
     x$version
   }
-  cli::cli_inform("{model} {type} Model")
-  cat("\n")
-  cli::cli_inform("Training set\n\n")
+  cli::cli_h2("{model} {type} Model")
+  cli::cli_inform("Training set:")
   cli::cli_inform(c(i = "{x$training[1]} data point{?s}"))
   cli::cli_inform(c(i = "{x$training[2]} predictor{?s}"))
 
@@ -578,8 +577,7 @@ print.tab_pfn <- function(x, ...) {
   }
 
   if (!is.null(x$device)) {
-    cat("\n")
-    cli::cli_inform("{cli::qty(x$device)}Device{?s}\n\n")
+    cli::cli_inform("{cli::qty(x$device)}Device{?s}:")
     cli::cli_inform(rlang::set_names(x$device, "i"))
   }
 

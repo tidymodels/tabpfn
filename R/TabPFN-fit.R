@@ -457,7 +457,8 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
     training = res$train,
     logging = res$logging,
     blueprint = processed$blueprint,
-    version = res$version
+    version = res$version,
+    device = res$device
   )
 }
 
@@ -511,6 +512,7 @@ tab_pfn_impl <- function(x, y, opts, version = NULL) {
     lvls = levels(y),
     train = dim(x),
     version = extract_model_version(model_fit),
+    device = extract_model_device(model_fit),
     logging = c(r = msgs, py = py_msg)
   )
   class(res) <- c("tab_pfn")
@@ -534,6 +536,29 @@ extract_model_version <- function(model_fit) {
   as.character(res)
 }
 
+# Soft extraction of the device(s) the fitted model resolved to. Recent TabPFN
+# versions expose a `devices_` tuple; older ones a single `device_`. Any failure
+# falls back to "unknown" rather than erroring.
+extract_model_device <- function(model_fit) {
+  res <- try(
+    {
+      if (reticulate::py_has_attr(model_fit, "devices_")) {
+        devices <- model_fit$devices_
+      } else if (reticulate::py_has_attr(model_fit, "device_")) {
+        devices <- list(model_fit$device_)
+      } else {
+        devices <- list()
+      }
+      purrr::map_chr(devices, reticulate::py_str)
+    },
+    silent = TRUE
+  )
+  if (inherits(res, "try-error") || is.null(res) || length(res) == 0) {
+    return("unknown")
+  }
+  res
+}
+
 #' @export
 print.tab_pfn <- function(x, ...) {
   type <- ifelse(is.null(x$levels), "Regression", "Classification")
@@ -550,6 +575,12 @@ print.tab_pfn <- function(x, ...) {
 
   if (!is.null(x$levels)) {
     cli::cli_inform(c(i = "class levels: {.val {x$levels}}"))
+  }
+
+  if (!is.null(x$device)) {
+    cat("\n")
+    cli::cli_inform("{cli::qty(x$device)}Device{?s}\n\n")
+    cli::cli_inform(rlang::set_names(x$device, "i"))
   }
 
   invisible(x)

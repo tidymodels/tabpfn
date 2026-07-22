@@ -123,6 +123,8 @@ A \code{tab_pfn} object with elements:
 \item \code{fit}: the python object containing the model.
 \item \code{levels}: a character string of class levels (or NULL for regression)
 \item \code{training}: a vector with the training set dimensions.
+\item \code{version}: the underlying TabPFN model version (or \code{"unknown"} if it
+cannot be determined).
 \item \code{logging}: any R or python messages produced by the computations.
 \item \code{blueprint}: am object produced by \code{\link[hardhat:mold]{hardhat::mold()}} used to process
 new data during prediction.

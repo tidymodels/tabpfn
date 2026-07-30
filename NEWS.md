@@ -1,5 +1,7 @@
 # tabpfn (development version)
 
+- When the `"r-tabpfn"` environment (created by `install_tabpfn()`) is the Python installation reticulate resolves to, the `tabpfn` Python library is now imported eagerly at load time so that PyTorch claims OpenMP before other packages can, avoiding a segmentation fault (#34).
+
 - New `install_tabpfn()` sets up a persistent `"r-tabpfn"` Python virtual environment. It has a `version` argument to pin a specific `tabpfn` release and, by default, offers to upgrade an existing environment when a newer release is available.
 
 - Added a `type` argument to be consistent with parsnip. Defaults to `NULL`, which will produce all prediction types. 

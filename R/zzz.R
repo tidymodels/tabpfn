@@ -32,6 +32,26 @@
       cli::cli_warn(msg_tabpfn_not_available(e))
     }
   )
+
+  # The `delay_load` above defers the real Python import (and torch grabbing
+  # its bundled libomp) until the first use of `tab_pfn()`. By then a foreign
+  # OpenMP may already be loaded, causing the segfault described in #34.
+  #
+  # The `tryCatch()` above forces reticulate to resolve which Python it will
+  # use, so `py_exe()` is now known. When that Python is the canonical
+  # `"r-tabpfn"` environment (i.e. a deliberate `install_tabpfn()`), eagerly
+  # import `tabpfn` now so torch claims libomp before any other package can.
+  if (uses_canonical_env()) {
+    tryCatch(
+      {
+        check_libomp()
+        .pkg_env$tab_pfn <- reticulate::import("tabpfn")
+      },
+      error = function(e) {
+        cli::cli_warn(msg_tabpfn_not_available(e))
+      }
+    )
+  }
 }
 
 .onUnload <- function(libpath) {

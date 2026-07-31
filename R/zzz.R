@@ -86,3 +86,39 @@ import_tabpfn <- function() {
 }
 
 # nocov end
+
+#' Eagerly initialize the TabPFN Python library
+#'
+#' @description
+#' Forces the Python `tabpfn` library (and its PyTorch dependency) to load now
+#' instead of on first use. Because PyTorch bundles its own OpenMP runtime,
+#' loading it before any other package that uses OpenMP avoids the segmentation
+#' fault described in \url{https://github.com/tidymodels/tabpfn/issues/34}.
+#'
+#' For this to work, call it as the very first thing in your session, using
+#' `tabpfn::tabpfn_initialize()` (with the `::` prefix so it runs before
+#' `library(tabpfn)` and before any other package that might load OpenMP, such
+#' as \pkg{recipes}):
+#'
+#' ```r
+#' tabpfn::tabpfn_initialize()
+#' library(tabpfn)
+#' suppressPackageStartupMessages(library(recipes))
+#' fit_obj <- tab_pfn(mpg ~ ., data = mtcars)
+#' ```
+#'
+#' @return `NULL`, invisibly. Called for its side effect of loading the Python
+#'   library.
+#' @examples
+#' \dontrun{
+#' tabpfn::tabpfn_initialize()
+#' library(tabpfn)
+#' }
+#' @export
+tabpfn_initialize <- function() {
+  # Accessing an attribute of the module proxy is what actually materializes
+  # the Python import; `tabpfn_list_versions()` does this reliably. We call it
+  # only for that side effect and discard the result.
+  suppressMessages(tabpfn_list_versions())
+  invisible(NULL)
+}

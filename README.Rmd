@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# tabpfn
+# tabpfn <a href="https://tabpfn.tidymodels.org"><img src="man/figures/logo.png" align="right" height="138" alt="tabpfn website" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/tabpfn)](https://CRAN.R-project.org/package=tabpfn)

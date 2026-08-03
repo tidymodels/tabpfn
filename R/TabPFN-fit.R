@@ -572,6 +572,7 @@ print.tab_pfn <- function(x, ...) {
   }
 
   if (!is.null(x$device)) {
+    cat("\n")
     cli::cli_inform("{cli::qty(x$device)}Device{?s}:")
     cli::cli_inform(rlang::set_names(x$device, "i"))
   }

@@ -9,6 +9,9 @@
       Training set:
       i 32 data points
       i 10 predictors
+    Output
+      
+    Message
       Device:
       i cpu
 
@@ -23,6 +26,9 @@
       Training set:
       i 32 data points
       i 10 predictors
+    Output
+      
+    Message
       Device:
       i cpu
 
@@ -37,6 +43,9 @@
       Training set:
       i 32 data points
       i 10 predictors
+    Output
+      
+    Message
       Device:
       i cpu
 
@@ -55,6 +64,9 @@
       Training set:
       i 20 data points
       i 5 predictors
+    Output
+      
+    Message
       Device:
       i cpu
 

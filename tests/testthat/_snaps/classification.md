@@ -10,6 +10,9 @@
       i 20 data points
       i 2 predictors
       i class levels: "Class1" and "Class2"
+    Output
+      
+    Message
       Device:
       i cpu
 
@@ -25,6 +28,9 @@
       i 20 data points
       i 2 predictors
       i class levels: "Class1" and "Class2"
+    Output
+      
+    Message
       Device:
       i cpu
 
@@ -40,6 +46,9 @@
       i 20 data points
       i 2 predictors
       i class levels: "Class1" and "Class2"
+    Output
+      
+    Message
       Device:
       i cpu
 
@@ -55,6 +64,9 @@
       i 20 data points
       i 3 predictors
       i class levels: "Class1" and "Class2"
+    Output
+      
+    Message
       Device:
       i cpu
 

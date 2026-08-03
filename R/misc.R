@@ -10,6 +10,34 @@ msg_tabpfn_not_available <- function(cnd) {
   )
 }
 
+# Is reticulate's resolved Python the canonical `"r-tabpfn"` environment? Used
+# by `.onLoad()` to decide whether to eagerly import `tabpfn` (see #34).
+uses_canonical_env <- function(envname = "r-tabpfn") {
+  exe <- tryCatch(reticulate::py_exe(), error = function(e) NULL)
+  if (is.null(exe) || !nzchar(exe)) {
+    return(FALSE)
+  }
+
+  norm <- function(p) {
+    if (is.null(p) || !nzchar(p)) {
+      return(NULL)
+    }
+    tryCatch(normalizePath(p, mustWork = FALSE), error = function(e) p)
+  }
+
+  exe <- norm(exe)
+
+  venv <- if (reticulate::virtualenv_exists(envname)) {
+    norm(reticulate::virtualenv_python(envname))
+  }
+  conda <- tryCatch(
+    norm(reticulate::conda_python(envname)),
+    error = function(e) NULL
+  )
+
+  identical(exe, venv) || identical(exe, conda)
+}
+
 check_libomp <- function() {
   os_info <- Sys.info()[["sysname"]]
   if (os_info != "Darwin") {
@@ -39,7 +67,7 @@ check_libomp <- function() {
         i = "We believe that an existing package has loaded {.pkg OpenMP}.",
         x = "{.pkg PyTorch} was about to do the same and would cause a segmentation fault.",
         i = "See {.url https://github.com/tidymodels/tabpfn/issues/3}.",
-        "!" = "Try running {.code reticulate::import('torch')} in a new R session prior to loading other packages.",
+        "!" = "In a new R session, run {.code tabpfn::tabpfn_initialize()} before loading {.pkg tabpfn} or any other package.",
         call = NULL
       )
     )

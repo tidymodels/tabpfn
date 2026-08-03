@@ -141,34 +141,26 @@
 #' See the documentation for [reticulate::py_require()] to learn more about this
 #' method.
 #'
-#' ### Manually created `venv` Virtual Environment
+#' ### Persistent Environment with `install_tabpfn()`
 #'
-#' Alternatively, you can use the functions in the \pkg{reticulate} package to
-#' create a virtual environment and install the required Python packages there.
-#' An example pattern is:
-#'
-#' \preformatted{
-#'   library(reticulate)
-#'
-#'   venv_name <- "r-tabpfn"    # exact name can be different
-#'   venv_seed_python <-
-#'     virtualenv_starter(">=3.11,<3.14") %||% install_python()
-#'
-#'   virtualenv_create(
-#'     envname = venv_name,
-#'     python = venv_seed_python,
-#'     packages = c("numpy", "tabpfn")
-#'   )
-#' }
-#'
-#' Once you have that virtual environment installed, you can declare it as your
-#' preferred Python installation with `use_virtualenv()`. (You must do this
-#' before reticulate has initialized Python, i.e., before attempting to use
-#' \pkg{tabpfn}):
+#' Alternatively, [install_tabpfn()] creates a persistent virtual environment
+#' named `"r-tabpfn"` and installs the Python `tabpfn` library into it:
 #'
 #' \preformatted{
-#'   reticulate::use_virtualenv("r-tabpfn")
+#'   library(tabpfn)
+#'
+#'   # Install the latest release
+#'   install_tabpfn()
+#'
+#'   # Or pin a specific version for reproducibility
+#'   install_tabpfn(version = "2.0.9")
 #' }
+#'
+#' You do not need to call `use_virtualenv()` afterwards: because this package
+#' imports the Python module `"tabpfn"`, \pkg{reticulate} automatically
+#' discovers and prefers the `"r-tabpfn"` environment over the ephemeral one.
+#' Run `install_tabpfn()` before \pkg{tabpfn} has initialized Python (i.e.,
+#' before fitting a model); if Python is already loaded, restart R first.
 #'
 #' ## Data
 #'

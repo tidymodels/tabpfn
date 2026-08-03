@@ -22,6 +22,16 @@ local_tabpfn_cpu <- function(.local_envir = parent.frame()) {
       reticulate::py_set_item(os$environ, key, old)
     },
     envir = .local_envir
+}
+    
+# Gate for tests that actually create/modify a Python environment. These are
+# slow and network-bound, so they only run when explicitly opted in.
+skip_if_not_installing <- function() {
+  skip_on_cran()
+  skip_on_ci()
+  skip_if(
+    Sys.getenv("TABPFN_TEST_INSTALL") != "true",
+    message = "set TABPFN_TEST_INSTALL=true to run install tests"
   )
 }
 

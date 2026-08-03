@@ -32,6 +32,26 @@
       cli::cli_warn(msg_tabpfn_not_available(e))
     }
   )
+
+  # The `delay_load` above defers the real Python import (and torch grabbing
+  # its bundled libomp) until the first use of `tab_pfn()`. By then a foreign
+  # OpenMP may already be loaded, causing the segfault described in #34.
+  #
+  # The `tryCatch()` above forces reticulate to resolve which Python it will
+  # use, so `py_exe()` is now known. When that Python is the canonical
+  # `"r-tabpfn"` environment (i.e. a deliberate `install_tabpfn()`), eagerly
+  # import `tabpfn` now so torch claims libomp before any other package can.
+  if (uses_canonical_env()) {
+    tryCatch(
+      {
+        check_libomp()
+        .pkg_env$tab_pfn <- reticulate::import("tabpfn")
+      },
+      error = function(e) {
+        cli::cli_warn(msg_tabpfn_not_available(e))
+      }
+    )
+  }
 }
 
 .onUnload <- function(libpath) {
@@ -66,3 +86,39 @@ import_tabpfn <- function() {
 }
 
 # nocov end
+
+#' Eagerly initialize the TabPFN Python library
+#'
+#' @description
+#' Forces the Python `tabpfn` library (and its PyTorch dependency) to load now
+#' instead of on first use. Because PyTorch bundles its own OpenMP runtime,
+#' loading it before any other package that uses OpenMP avoids the segmentation
+#' fault described in \url{https://github.com/tidymodels/tabpfn/issues/34}.
+#'
+#' For this to work, call it as the very first thing in your session, using
+#' `tabpfn::tabpfn_initialize()` (with the `::` prefix so it runs before
+#' `library(tabpfn)` and before any other package that might load OpenMP, such
+#' as \pkg{recipes}):
+#'
+#' ```r
+#' tabpfn::tabpfn_initialize()
+#' library(tabpfn)
+#' suppressPackageStartupMessages(library(recipes))
+#' fit_obj <- tab_pfn(mpg ~ ., data = mtcars)
+#' ```
+#'
+#' @return `NULL`, invisibly. Called for its side effect of loading the Python
+#'   library.
+#' @examples
+#' \dontrun{
+#' tabpfn::tabpfn_initialize()
+#' library(tabpfn)
+#' }
+#' @export
+tabpfn_initialize <- function() {
+  # Accessing an attribute of the module proxy is what actually materializes
+  # the Python import; `tabpfn_list_versions()` does this reliably. We call it
+  # only for that side effect and discard the result.
+  suppressMessages(tabpfn_list_versions())
+  invisible(NULL)
+}

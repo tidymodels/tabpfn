@@ -2,6 +2,27 @@
 
 ## tabpfn (development version)
 
+- New
+  [`tabpfn_initialize()`](https://tabpfn.tidymodels.org/dev/reference/tabpfn_initialize.md)
+  eagerly loads the Python `tabpfn` library (and PyTorch). Call it right
+  after [`library(tabpfn)`](https://tabpfn.tidymodels.org) and before
+  other OpenMP-using packages to avoid the segmentation fault described
+  in [\#34](https://github.com/tidymodels/tabpfn/issues/34).
+
+- When the `"r-tabpfn"` environment (created by
+  [`install_tabpfn()`](https://tabpfn.tidymodels.org/dev/reference/install_tabpfn.md))
+  is the Python installation reticulate resolves to, the `tabpfn` Python
+  library is now imported eagerly at load time so that PyTorch claims
+  OpenMP before other packages can, avoiding a segmentation fault
+  ([\#34](https://github.com/tidymodels/tabpfn/issues/34)).
+
+- New
+  [`install_tabpfn()`](https://tabpfn.tidymodels.org/dev/reference/install_tabpfn.md)
+  sets up a persistent `"r-tabpfn"` Python virtual environment. It has a
+  `version` argument to pin a specific `tabpfn` release and, by default,
+  offers to upgrade an existing environment when a newer release is
+  available.
+
 - Added a `type` argument to be consistent with parsnip. Defaults to
   `NULL`, which will produce all prediction types.
 

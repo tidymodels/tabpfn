@@ -279,32 +279,25 @@ method.</p>
 </div>
 
 <div class="section">
-<h4 id="manually-created-venv-virtual-environment">Manually created <code>venv</code> Virtual Environment<a class="anchor" aria-label="anchor" href="#manually-created-venv-virtual-environment"></a></h4>
+<h4 id="persistent-environment-with-install-tabpfn-">Persistent Environment with <code><a href="install_tabpfn.html">install_tabpfn()</a></code><a class="anchor" aria-label="anchor" href="#persistent-environment-with-install-tabpfn-"></a></h4>
 
 
-<p>Alternatively, you can use the functions in the <span class="pkg">reticulate</span> package to
-create a virtual environment and install the required Python packages there.
-An example pattern is:</p>
+<p>Alternatively, <code><a href="install_tabpfn.html">install_tabpfn()</a></code> creates a persistent virtual environment
+named <code>"r-tabpfn"</code> and installs the Python <code>tabpfn</code> library into it:</p>
 <div class="sourceCode"><pre><code><span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/reticulate/" class="external-link">reticulate</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tabpfn.tidymodels.org">tabpfn</a></span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="va">venv_name</span> <span class="op">&lt;-</span> <span class="st">"r-tabpfn"</span>    <span class="co"># exact name can be different</span></span>
-<span>  <span class="va">venv_seed_python</span> <span class="op">&lt;-</span></span>
-<span>    <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">virtualenv_starter</a></span><span class="op">(</span><span class="st">"&gt;=3.11,&lt;3.14"</span><span class="op">)</span> </span>
+<span>  <span class="co"># Install the latest release</span></span>
+<span>  <span class="fu"><a href="../reference/install_tabpfn.html">install_tabpfn</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="fu"><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">virtualenv_create</a></span><span class="op">(</span></span>
-<span>    envname <span class="op">=</span> <span class="va">venv_name</span>,</span>
-<span>    python <span class="op">=</span> <span class="va">venv_seed_python</span>,</span>
-<span>    packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"numpy"</span>, <span class="st">"tabpfn"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span>  <span class="co"># Or pin a specific version for reproducibility</span></span>
+<span>  <span class="fu"><a href="../reference/install_tabpfn.html">install_tabpfn</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"2.0.9"</span><span class="op">)</span></span></code></pre></div>
 
-<p>Once you have that virtual environment installed, you can declare it as your
-preferred Python installation with <code>use_virtualenv()</code>. (You must do this
-before reticulate has initialized Python, i.e., before attempting to use
-<span class="pkg">tabpfn</span>):</p>
-<div class="sourceCode"><pre><code><span></span>
-<span>  <span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/use_python.html" class="external-link">use_virtualenv</a></span><span class="op">(</span><span class="st">"r-tabpfn"</span><span class="op">)</span></span></code></pre></div>
-
+<p>You do not need to call <code>use_virtualenv()</code> afterwards: because this package
+imports the Python module <code>"tabpfn"</code>, <span class="pkg">reticulate</span> automatically
+discovers and prefers the <code>"r-tabpfn"</code> environment over the ephemeral one.
+Run <code><a href="install_tabpfn.html">install_tabpfn()</a></code> before <span class="pkg">tabpfn</span> has initialized Python (i.e.,
+before fitting a model); if Python is already loaded, restart R first.</p>
 </div>
 
 
@@ -430,7 +423,7 @@ arXiv:2112.10510 (2021).</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
   </div></footer></body></html>

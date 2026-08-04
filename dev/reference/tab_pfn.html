@@ -184,6 +184,10 @@ and the predictor terms on the right-hand side.</p></dd>
     <p>A <code>tab_pfn</code> object with elements:</p><ul><li><p><code>fit</code>: the python object containing the model.</p></li>
 <li><p><code>levels</code>: a character string of class levels (or NULL for regression)</p></li>
 <li><p><code>training</code>: a vector with the training set dimensions.</p></li>
+<li><p><code>version</code>: the underlying TabPFN model version (or <code>"unknown"</code> if it
+cannot be determined).</p></li>
+<li><p><code>device</code>: the device(s) the model was fitted on, e.g. <code>"cpu"</code>, <code>"mps"</code>,
+or <code>"cuda:0"</code> (or <code>"unknown"</code> if it cannot be determined).</p></li>
 <li><p><code>logging</code>: any R or python messages produced by the computations.</p></li>
 <li><p><code>blueprint</code>: am object produced by <code><a href="https://hardhat.tidymodels.org/reference/mold.html" class="external-link">hardhat::mold()</a></code> used to process
 new data during prediction.</p></li>

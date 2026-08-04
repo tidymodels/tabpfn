@@ -157,6 +157,12 @@ A `tab_pfn` object with elements:
 
 - `training`: a vector with the training set dimensions.
 
+- `version`: the underlying TabPFN model version (or `"unknown"` if it
+  cannot be determined).
+
+- `device`: the device(s) the model was fitted on, e.g. `"cpu"`,
+  `"mps"`, or `"cuda:0"` (or `"unknown"` if it cannot be determined).
+
 - `logging`: any R or python messages produced by the computations.
 
 - `blueprint`: am object produced by

@@ -4,6 +4,8 @@ new_tab_pfn <- function(
   training,
   logging,
   blueprint,
+  version = "unknown",
+  device = "unknown",
   call = NULL
 ) {
   cls <- c(
@@ -27,6 +29,8 @@ new_tab_pfn <- function(
     training = training,
     logging = logging,
     blueprint = blueprint,
+    version = version,
+    device = device,
     class = "tab_pfn"
   )
 }

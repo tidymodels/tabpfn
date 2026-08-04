@@ -14,6 +14,8 @@ test_that("show_env_var returns not set when empty", {
 
 test_that('regression models', {
   skip_if_no_tabpfn()
+  # Force CPU so the printed device is deterministic across hardware.
+  local_tabpfn_cpu()
 
   pred_ptype <- tibble::tibble(.pred = numeric(0))
 
@@ -145,6 +147,8 @@ test_that('regression models - recipes', {
   skip_if_no_tabpfn()
   skip_if_not_installed("modeldata")
   skip_if_not_installed("recipes")
+  # Force CPU so the printed device is deterministic across hardware.
+  local_tabpfn_cpu()
 
   reticulate::import("torch")
 

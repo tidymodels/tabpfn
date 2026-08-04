@@ -225,6 +225,10 @@
 #'   * `fit`: the python object containing the model.
 #'   * `levels`: a character string of class levels (or NULL for regression)
 #'   * `training`: a vector with the training set dimensions.
+#'   * `version`: the underlying TabPFN model version (or `"unknown"` if it
+#'      cannot be determined).
+#'   * `device`: the device(s) the model was fitted on, e.g. `"cpu"`, `"mps"`,
+#'      or `"cuda:0"` (or `"unknown"` if it cannot be determined).
 #'   * `logging`: any R or python messages produced by the computations.
 #'   * `blueprint`: am object produced by [hardhat::mold()] used to process
 #'      new data during prediction.
@@ -431,6 +435,7 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
   rlang::check_dots_empty()
 
   if (!is.null(version)) {
+    version <- normalize_model_version(version)
     check_model_version(version)
   }
 
@@ -446,7 +451,9 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
     levels = res$lvls,
     training = res$train,
     logging = res$logging,
-    blueprint = processed$blueprint
+    blueprint = processed$blueprint,
+    version = res$version,
+    device = res$device
   )
 }
 
@@ -499,23 +506,75 @@ tab_pfn_impl <- function(x, y, opts, version = NULL) {
     fit = model_fit,
     lvls = levels(y),
     train = dim(x),
+    version = extract_model_version(model_fit),
+    device = extract_model_device(model_fit),
     logging = c(r = msgs, py = py_msg)
   )
   class(res) <- c("tab_pfn")
   res
 }
 
+# Soft extraction of the underlying TabPFN model version. The Python object
+# internals could change over time, so any failure falls back to "unknown"
+# rather than erroring.
+extract_model_version <- function(model_fit) {
+  res <- try(
+    {
+      cls <- reticulate::py_get_attr(model_fit$configs_[[1]], "__class__")
+      cls$name
+    },
+    silent = TRUE
+  )
+  if (inherits(res, "try-error") || is.null(res) || length(res) == 0) {
+    return("unknown")
+  }
+  as.character(res)
+}
+
+# Soft extraction of the device(s) the fitted model resolved to. Recent TabPFN
+# versions expose a `devices_` tuple; older ones a single `device_`. Any failure
+# falls back to "unknown" rather than erroring.
+extract_model_device <- function(model_fit) {
+  res <- try(
+    {
+      if (reticulate::py_has_attr(model_fit, "devices_")) {
+        devices <- model_fit$devices_
+      } else if (reticulate::py_has_attr(model_fit, "device_")) {
+        devices <- list(model_fit$device_)
+      } else {
+        devices <- list()
+      }
+      purrr::map_chr(devices, reticulate::py_str)
+    },
+    silent = TRUE
+  )
+  if (inherits(res, "try-error") || is.null(res) || length(res) == 0) {
+    return("unknown")
+  }
+  res
+}
+
 #' @export
 print.tab_pfn <- function(x, ...) {
   type <- ifelse(is.null(x$levels), "Regression", "Classification")
-  cli::cli_inform("TabPFN {type} Model")
-  cat("\n")
-  cli::cli_inform("Training set\n\n")
+  model <- if (is.null(x$version) || identical(x$version, "unknown")) {
+    "TabPFN"
+  } else {
+    x$version
+  }
+  cli::cli_h2("{model} {type} Model")
+  cli::cli_inform("Training set:")
   cli::cli_inform(c(i = "{x$training[1]} data point{?s}"))
   cli::cli_inform(c(i = "{x$training[2]} predictor{?s}"))
 
   if (!is.null(x$levels)) {
     cli::cli_inform(c(i = "class levels: {.val {x$levels}}"))
+  }
+
+  if (!is.null(x$device)) {
+    cat("\n")
+    cli::cli_inform("{cli::qty(x$device)}Device{?s}:")
+    cli::cli_inform(rlang::set_names(x$device, "i"))
   }
 
   invisible(x)

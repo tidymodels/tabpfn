@@ -3,39 +3,51 @@
     Code
       mod_df
     Message
-      TabPFN Regression Model
+      
+      -- TabPFN-v3 Regression Model --
+      
+      Training set:
+      i 32 data points
+      i 10 predictors
     Output
       
     Message
-      Training set
-      i 32 data points
-      i 10 predictors
+      Device:
+      i cpu
 
 ---
 
     Code
       mod_f
     Message
-      TabPFN Regression Model
+      
+      -- TabPFN-v3 Regression Model --
+      
+      Training set:
+      i 32 data points
+      i 10 predictors
     Output
       
     Message
-      Training set
-      i 32 data points
-      i 10 predictors
+      Device:
+      i cpu
 
 ---
 
     Code
       mod_mat
     Message
-      TabPFN Regression Model
+      
+      -- TabPFN-v3 Regression Model --
+      
+      Training set:
+      i 32 data points
+      i 10 predictors
     Output
       
     Message
-      Training set
-      i 32 data points
-      i 10 predictors
+      Device:
+      i cpu
 
 ---
 
@@ -46,11 +58,15 @@
     Code
       mod_rec
     Message
-      TabPFN Regression Model
+      
+      -- TabPFN-v3 Regression Model --
+      
+      Training set:
+      i 20 data points
+      i 5 predictors
     Output
       
     Message
-      Training set
-      i 20 data points
-      i 5 predictors
+      Device:
+      i cpu
 

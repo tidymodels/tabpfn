@@ -52,6 +52,10 @@
       Device:
       i cpu
 
+---
+
+    `quantile_levels` is only for regression models.
+
 # classification models - recipes
 
     Code

@@ -7,6 +7,10 @@
 #' @param type The type of prediction. For classification, can be `"class"` or
 #' `"prob"`. Defaults to `NULL` which gives all prediction types possible.
 #'
+#' @param quantile_levels A numeric vector of probabilities, sorted in
+#' increasing order, at which to predict the outcome distribution. Regression
+#' only; defaults to `NULL` for no quantile predictions.
+#'
 #' @param ... Not used, but required for extensibility.
 #'
 #' @return
@@ -20,6 +24,9 @@
 #' probability estimates are in columns with the pattern `.pred_{level}` where
 #' `level` is the levels of the outcome factor vector.
 #'
+#' When `quantile_levels` is given, regression results also have a
+#' `.pred_quantile` column of [hardhat::quantile_pred()] values.
+#'
 #' @examples
 #' # Minimal example for quick execution
 #' car_train <- mtcars[ 1:5,   ]
@@ -32,15 +39,34 @@
 #'
 #'  # Predict
 #'  predict(mod, car_test)
+#'  predict(mod, car_test, quantile_levels = c(0.1, 0.5, 0.9))
 #'  augment(mod, car_test)
 #' }
 #' }
 #'
 #' @export
-predict.tab_pfn <- function(object, new_data, type = NULL, ...) {
+predict.tab_pfn <- function(
+  object,
+  new_data,
+  type = NULL,
+  quantile_levels = NULL,
+  ...
+) {
   rlang::check_dots_empty()
+  if (!is.null(quantile_levels) && !is.null(object$levels)) {
+    cli::cli_abort("{.arg quantile_levels} is only for regression models.")
+  }
+  if (!is.null(quantile_levels)) {
+    hardhat::check_quantile_levels(quantile_levels)
+  }
   forged <- hardhat::forge(new_data, object$blueprint)$predictors
-  res <- predict(object$fit, forged, object$levels, type = type)
+  res <- predict(
+    object$fit,
+    forged,
+    object$levels,
+    type = type,
+    quantile_levels = unname(quantile_levels)
+  )
   res
 }
 
@@ -53,17 +79,33 @@ predict.tabpfn.regressor.TabPFNRegressor <- function(
   new_data,
   levels,
   type = NULL,
+  quantile_levels = NULL,
   ...
 ) {
   py_msg <- reticulate::py_capture_output(
-    res <- try(object$predict(new_data), silent = TRUE)
+    res <- try(
+      object$predict(
+        new_data,
+        output_type = if (is.null(quantile_levels)) "mean" else "main",
+        quantiles = as.list(quantile_levels)
+      ),
+      silent = TRUE
+    )
   )
 
   if (inherits(res, "try-error")) {
     msgs <- as.character(res)
     cli::cli_abort("Prediction failed: {msgs}")
-  } else {
+  } else if (is.null(quantile_levels)) {
     res <- tibble::tibble(.pred = as.vector(res))
+  } else {
+    res <- tibble::tibble(
+      .pred = as.vector(res$mean),
+      .pred_quantile = hardhat::quantile_pred(
+        do.call(cbind, res$quantiles),
+        quantile_levels
+      )
+    )
   }
 
   res
@@ -106,9 +148,15 @@ predict.tabpfn.classifier.TabPFNClassifier <- function(
 
 #' @export
 #' @rdname predict.tab_pfn
-augment.tab_pfn <- function(x, new_data, type = NULL, ...) {
+augment.tab_pfn <- function(
+  x,
+  new_data,
+  type = NULL,
+  quantile_levels = NULL,
+  ...
+) {
   new_data <- tibble::new_tibble(new_data)
-  res <- predict(x, new_data, type = type)
+  res <- predict(x, new_data, type = type, quantile_levels = quantile_levels)
   res <- cbind(res, new_data)
   tibble::new_tibble(res)
 }

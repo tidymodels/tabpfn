@@ -76,6 +76,8 @@ test_that('classification models', {
   expect_s3_class(aug_mat, c("tbl_df", "tbl", "data.frame"))
   expect_equal(nrow(aug_mat), 3L)
   expect_equal(ncol(aug_mat), 5L)
+
+  expect_snapshot_error(predict(mod_mat, x_te_mat, quantile_levels = 0.5))
 })
 
 test_that('classification models - recipes', {

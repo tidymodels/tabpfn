@@ -5,9 +5,9 @@
 \alias{augment.tab_pfn}
 \title{Predict using \code{TabPFN}}
 \usage{
-\method{predict}{tab_pfn}(object, new_data, type = NULL, ...)
+\method{predict}{tab_pfn}(object, new_data, type = NULL, quantile_levels = NULL, ...)
 
-\method{augment}{tab_pfn}(x, new_data, type = NULL, ...)
+\method{augment}{tab_pfn}(x, new_data, type = NULL, quantile_levels = NULL, ...)
 }
 \arguments{
 \item{object, x}{A \code{tab_pfn} object.}
@@ -16,6 +16,10 @@
 
 \item{type}{The type of prediction. For classification, can be \code{"class"} or
 \code{"prob"}. Defaults to \code{NULL} which gives all prediction types possible.}
+
+\item{quantile_levels}{A numeric vector of probabilities, sorted in
+increasing order, at which to predict the outcome distribution. Regression
+only; defaults to \code{NULL} for no quantile predictions.}
 
 \item{...}{Not used, but required for extensibility.}
 }
@@ -28,6 +32,9 @@ For regression data, the prediction is in the column \code{.pred}. For
 classification, the class predictions are in \code{.pred_class} and the
 probability estimates are in columns with the pattern \verb{.pred_\{level\}} where
 \code{level} is the levels of the outcome factor vector.
+
+When \code{quantile_levels} is given, regression results also have a
+\code{.pred_quantile} column of \code{\link[hardhat:quantile_pred]{hardhat::quantile_pred()}} values.
 }
 \description{
 Predict using \code{TabPFN}
@@ -44,6 +51,7 @@ if (is_tab_pfn_installed() & interactive()) {
 
  # Predict
  predict(mod, car_test)
+ predict(mod, car_test, quantile_levels = c(0.1, 0.5, 0.9))
  augment(mod, car_test)
 }
 }

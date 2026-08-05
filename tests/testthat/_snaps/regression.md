@@ -53,6 +53,10 @@
 
     `tab_pfn()` is not defined for the number 1.
 
+# quantile regression models
+
+    `quantile_levels` must be a number between 0 and 1, not the number 1.9.
+
 # regression models - recipes
 
     Code

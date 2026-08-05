@@ -21,7 +21,7 @@ Imports:
     cli,
     dplyr,
     generics,
-    hardhat,
+    hardhat (>= 1.4.1),
     jsonlite,
     purrr,
     reticulate (>= 1.41.0.1),

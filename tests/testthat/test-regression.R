@@ -74,6 +74,36 @@ test_that('regression models', {
   )
 })
 
+test_that('quantile regression models', {
+  skip_if_no_tabpfn()
+
+  quantile_levels <- c(0.1, 0.5, 0.9)
+  pred_ptype <- tibble::tibble(
+    .pred = numeric(0),
+    .pred_quantile = hardhat::quantile_pred(
+      matrix(numeric(0), ncol = length(quantile_levels)),
+      quantile_levels
+    )
+  )
+
+  set.seed(166)
+  mod <- tab_pfn(predictors, outcome)
+
+  pred <- predict(mod, mtcars[1:3, -1], quantile_levels = quantile_levels)
+  expect_equal(pred[0, ], pred_ptype)
+  expect_equal(nrow(pred), 3L)
+  expect_equal(pred$.pred, predict(mod, mtcars[1:3, -1])$.pred)
+  expect_true(all(apply(as.matrix(pred$.pred_quantile), 1, diff) >= 0))
+
+  expect_no_error(predict(mod, mtcars[1:3, -1], quantile_levels = 0.5))
+
+  expect_snapshot_error(predict(mod, mtcars[1:3, -1], quantile_levels = 1.9))
+
+  aug <- augment(mod, mtcars[1:3, -1], quantile_levels = quantile_levels)
+  expect_equal(aug[, names(pred)], pred)
+  expect_equal(ncol(aug), 12L)
+})
+
 test_that('training_set_limit with data frame and matrix interfaces', {
   skip_if_no_tabpfn()
   skip_if_not_installed("recipes")

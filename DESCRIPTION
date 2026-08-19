@@ -29,6 +29,8 @@ Imports:
     tibble
 Suggests:
     covr,
+    ggplot2,
+    MASS,
     modeldata,
     recipes,
     rstudioapi,

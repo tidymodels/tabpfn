@@ -15,11 +15,13 @@
 \item{new_data}{A data frame or matrix of new predictors.}
 
 \item{type}{The type of prediction. For classification, can be \code{"class"} or
-\code{"prob"}. Defaults to \code{NULL} which gives all prediction types possible.}
+\code{"prob"}. Defaults to \code{NULL} which gives all prediction types possible. For
+regression, can be \code{"mean"} or \code{"quantile"}; when \code{"quantile"},
+\code{quantile_levels} must be supplied.}
 
 \item{quantile_levels}{A numeric vector of probabilities, sorted in
 increasing order, at which to predict the outcome distribution. Regression
-only; defaults to \code{NULL} for no quantile predictions.}
+only; required when \code{type = "quantile"} and must otherwise be \code{NULL}.}
 
 \item{...}{Not used, but required for extensibility.}
 }
@@ -40,6 +42,7 @@ When \code{quantile_levels} is given, regression results also have a
 Predict using \code{TabPFN}
 }
 \examples{
+\dontrun{
 if (rlang::is_installed(c("MASS", "ggplot2")) &
      is_tab_pfn_installed() &
      interactive()) {
@@ -88,5 +91,5 @@ if (rlang::is_installed(c("MASS", "ggplot2")) &
      aes(y = .pred_quantile, col = level, group = level)
    )
 }
-
+}
 }

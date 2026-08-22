@@ -89,19 +89,66 @@ test_that('quantile regression models', {
   set.seed(166)
   mod <- tab_pfn(predictors, outcome)
 
-  pred <- predict(mod, mtcars[1:3, -1], quantile_levels = quantile_levels)
+  pred <- predict(
+    mod,
+    mtcars[1:3, -1],
+    type = "quantile",
+    quantile_levels = quantile_levels
+  )
   expect_equal(pred[0, ], pred_ptype)
   expect_equal(nrow(pred), 3L)
   expect_equal(pred$.pred, predict(mod, mtcars[1:3, -1])$.pred)
   expect_true(all(apply(as.matrix(pred$.pred_quantile), 1, diff) >= 0))
 
-  expect_no_error(predict(mod, mtcars[1:3, -1], quantile_levels = 0.5))
+  expect_no_error(
+    predict(
+      mod,
+      mtcars[1:3, -1],
+      type = "quantile",
+      quantile_levels = 0.5
+    )
+  )
 
-  expect_snapshot_error(predict(mod, mtcars[1:3, -1], quantile_levels = 1.9))
+  expect_snapshot(
+    predict(mod, mtcars[1:3, -1], type = "quantile", quantile_levels = 1.9),
+    error = TRUE
+  )
 
-  aug <- augment(mod, mtcars[1:3, -1], quantile_levels = quantile_levels)
+  aug <- augment(
+    mod,
+    mtcars[1:3, -1],
+    type = "quantile",
+    quantile_levels = quantile_levels
+  )
   expect_equal(aug[, names(pred)], pred)
   expect_equal(ncol(aug), 12L)
+})
+
+test_that('quantile prediction types', {
+  skip_if_no_tabpfn()
+
+  set.seed(166)
+  mod <- tab_pfn(predictors, outcome)
+
+  expect_snapshot(
+    predict(mod, mtcars[1:3, -1], type = "quantile"),
+    error = TRUE
+  )
+  pred <- predict(
+    mod,
+    mtcars[1:3, -1],
+    type = "quantile",
+    quantile_levels = 0.5
+  )
+  expect_s3_class(pred, c("tbl_df", "tbl", "data.frame"))
+  expect_equal(nrow(pred), 3L)
+  expect_true("quantile_pred" %in% class(pred$.pred_quantile))
+
+  expect_snapshot(
+    predict(mod, mtcars[1:3, -1], type = "mean", quantile_levels = 0.5),
+    error = TRUE
+  )
+  expect_snapshot(predict(mod, mtcars[1:3, -1], type = "bogus"), error = TRUE)
 })
 
 test_that('training_set_limit with data frame and matrix interfaces', {

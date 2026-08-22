@@ -5,11 +5,13 @@
 #' @param new_data A data frame or matrix of new predictors.
 #'
 #' @param type The type of prediction. For classification, can be `"class"` or
-#' `"prob"`. Defaults to `NULL` which gives all prediction types possible.
+#' `"prob"`. Defaults to `NULL` which gives all prediction types possible. For
+#' regression, can be `"mean"` or `"quantile"`; when `"quantile"`,
+#' `quantile_levels` must be supplied.
 #'
 #' @param quantile_levels A numeric vector of probabilities, sorted in
 #' increasing order, at which to predict the outcome distribution. Regression
-#' only; defaults to `NULL` for no quantile predictions.
+#' only; required when `type = "quantile"` and must otherwise be `NULL`.
 #'
 #' @param ... Not used, but required for extensibility.
 #'
@@ -89,6 +91,24 @@ predict.tab_pfn <- function(
   rlang::check_dots_empty()
   if (!is.null(quantile_levels) && !is.null(object$levels)) {
     cli::cli_abort("{.arg quantile_levels} is only for regression models.")
+  }
+  if (is.null(object$levels)) {
+    if (is.null(type)) {
+      type <- "mean"
+    }
+    type <- rlang::arg_match(type, c("mean", "quantile"))
+
+    if (identical(type, "quantile") && is.null(quantile_levels)) {
+      cli::cli_abort(
+        "{.arg quantile_levels} must be supplied when {.code type = \"quantile\"}."
+      )
+    }
+
+    if (!identical(type, "quantile") && !is.null(quantile_levels)) {
+      cli::cli_abort(
+        "{.arg quantile_levels} can only be supplied when {.code type = \"quantile\"}."
+      )
+    }
   }
   if (!is.null(quantile_levels)) {
     hardhat::check_quantile_levels(quantile_levels)

@@ -54,7 +54,19 @@
 
 ---
 
-    `quantile_levels` is only for regression models.
+    Code
+      predict(mod_mat, x_te_mat, quantile_levels = 0.5)
+    Condition
+      Error in `predict()`:
+      ! `quantile_levels` is only for regression models.
+
+---
+
+    Code
+      predict(mod_mat, x_te_mat, type = "quantile")
+    Condition
+      Error in `predict()`:
+      ! `type` must be one of "class" or "prob", not "quantile".
 
 # classification models - recipes
 

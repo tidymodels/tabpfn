@@ -2,6 +2,9 @@
 
 ## tabpfn (development version)
 
+- Added quantile regression support to
+  [`predict()`](https://rdrr.io/r/stats/predict.html).
+
 - [`tab_pfn()`](https://tabpfn.tidymodels.org/dev/reference/tab_pfn.md)’s
   `version` argument now accepts bare version numbers in addition to
   `"v"`-prefixed strings. A `"v"` is prepended automatically, so

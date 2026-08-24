@@ -21,7 +21,7 @@ Imports:
     cli,
     dplyr,
     generics,
-    hardhat,
+    hardhat (>= 1.4.1),
     jsonlite,
     purrr,
     reticulate (>= 1.41.0.1),
@@ -29,6 +29,8 @@ Imports:
     tibble
 Suggests:
     covr,
+    ggplot2,
+    MASS,
     modeldata,
     recipes,
     rstudioapi,

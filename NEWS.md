@@ -1,5 +1,7 @@
 # tabpfn (development version)
 
+- Added quantile regression support to `predict()`.
+
 - `tab_pfn()`'s `version` argument now accepts bare version numbers in addition to `"v"`-prefixed strings. A `"v"` is prepended automatically, so `version = 2.5`, `version = "2.5"`, and `version = "v2.5"` are all equivalent.
 
 - New `tabpfn_initialize()` eagerly loads the Python `tabpfn` library (and PyTorch). Call it right after `library(tabpfn)` and before other OpenMP-using packages to avoid the segmentation fault described in #34.

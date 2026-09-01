@@ -154,7 +154,7 @@ cbind(grid, grid_pred) |>
 
 [PriorLabs](https://priorlabs.ai/) created the model. Starting with version 2.5, using TabPFN requires accepting the model license and setting a token. Each model version (v2.5, v2.6, etc.) has its own license that must be accepted individually.
 
-To get access, visit [https://ux.priorlabs.ai](https://ux.priorlabs.ai), go to the **Licenses** tab (1), and accept the license for each model version you intend to use (2). Then set the `TABPFN_TOKEN` environment variable with the token from your account. Users who already have `TABPFN_TOKEN` set can use TabPFN v2 without any additional steps.
+To get access, visit [https://platform.priorlabs.ai:443/](https://platform.priorlabs.ai:443/), go to the **Licenses** tab (1), and accept the license for each model version you intend to use (2). Then set the `TABPFN_TOKEN` environment variable with the token from your account. Users who already have `TABPFN_TOKEN` set can use TabPFN v2 without any additional steps.
 
 ![Screenshot of the PriorLabs UX portal Licenses page](man/figures/license.png)
 

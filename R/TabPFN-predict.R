@@ -36,12 +36,15 @@
 #'      interactive()) {
 #'   library(ggplot2)
 #'
-#'   in_tr <- seq(1, nrow(mcycle), by = 2)
-#'   mcycle_tr <- MASS::mcycle[in_tr, ]
-#'   mcycle_te <- MASS::mcycle[-in_tr, ]
+#'   motorcycles <- MASS::mcycle
+#'   in_tr <- seq(1, nrow(motorcycles), by = 2)
+#'   mcycle_tr <- motorcycles[in_tr, ]
+#'   mcycle_te <- motorcycles[-in_tr, ]
 #'
 #'   mcycle_grid <-
-#'    dplyr::tibble(times = seq(min(mcycle$times), max(mcycle$times), length.out = 200))
+#'    dplyr::tibble(
+#'      times = seq(min(motorcycles$times), max(motorcycles$times), length.out = 200)
+#'    )
 #'   mcycle_grid$.row <- seq_len(nrow(mcycle_grid))
 #'
 #'   fit <- tab_pfn(accel ~ times, data = mcycle_tr)

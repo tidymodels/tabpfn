@@ -161,7 +161,7 @@ has its own license that must be accepted individually.
 
 To set up access:
 \enumerate{
-\item Visit \url{https://ux.priorlabs.ai} and create an
+\item Visit \url{https://platform.priorlabs.ai:443/} and create an
 account.
 \item Go to the \strong{License} tab and accept the license for each model version
 you intend to use.

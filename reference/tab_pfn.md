@@ -157,6 +157,12 @@ A `tab_pfn` object with elements:
 
 - `training`: a vector with the training set dimensions.
 
+- `version`: the underlying TabPFN model version (or `"unknown"` if it
+  cannot be determined).
+
+- `device`: the device(s) the model was fitted on, e.g. `"cpu"`,
+  `"mps"`, or `"cuda:0"` (or `"unknown"` if it cannot be determined).
+
 - `logging`: any R or python messages produced by the computations.
 
 - `blueprint`: am object produced by
@@ -188,7 +194,7 @@ v2.6, etc.) has its own license that must be accepted individually.
 
 To set up access:
 
-1.  Visit <https://ux.priorlabs.ai> and create an account.
+1.  Visit <https://platform.priorlabs.ai:443/> and create an account.
 
 2.  Go to the **License** tab and accept the license for each model
     version you intend to use.
@@ -254,32 +260,29 @@ See the documentation for
 [`reticulate::py_require()`](https://rstudio.github.io/reticulate/reference/py_require.html)
 to learn more about this method.
 
-#### Manually created `venv` Virtual Environment
+#### Persistent Environment with [`install_tabpfn()`](https://tabpfn.tidymodels.org/reference/install_tabpfn.md)
 
-Alternatively, you can use the functions in the reticulate package to
-create a virtual environment and install the required Python packages
-there. An example pattern is:
-
-
-      library(reticulate)
-
-      venv_name <- "r-tabpfn"    # exact name can be different
-      venv_seed_python <-
-        virtualenv_starter(">=3.11,<3.14") 
-
-      virtualenv_create(
-        envname = venv_name,
-        python = venv_seed_python,
-        packages = c("numpy", "tabpfn")
-      )
-
-Once you have that virtual environment installed, you can declare it as
-your preferred Python installation with `use_virtualenv()`. (You must do
-this before reticulate has initialized Python, i.e., before attempting
-to use tabpfn):
+Alternatively,
+[`install_tabpfn()`](https://tabpfn.tidymodels.org/reference/install_tabpfn.md)
+creates a persistent virtual environment named `"r-tabpfn"` and installs
+the Python `tabpfn` library into it:
 
 
-      reticulate::use_virtualenv("r-tabpfn")
+      library(tabpfn)
+
+      # Install the latest release
+      install_tabpfn()
+
+      # Or pin a specific version for reproducibility
+      install_tabpfn(version = "2.0.9")
+
+You do not need to call `use_virtualenv()` afterwards: because this
+package imports the Python module `"tabpfn"`, reticulate automatically
+discovers and prefers the `"r-tabpfn"` environment over the ephemeral
+one. Run
+[`install_tabpfn()`](https://tabpfn.tidymodels.org/reference/install_tabpfn.md)
+before tabpfn has initialized Python (i.e., before fitting a model); if
+Python is already loaded, restart R first.
 
 ### Data
 

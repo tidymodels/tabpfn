@@ -6,10 +6,10 @@ Predict using `TabPFN`
 
 ``` r
 # S3 method for class 'tab_pfn'
-predict(object, new_data, ...)
+predict(object, new_data, type = NULL, quantile_levels = NULL, ...)
 
 # S3 method for class 'tab_pfn'
-augment(x, new_data, ...)
+augment(x, new_data, type = NULL, quantile_levels = NULL, ...)
 ```
 
 ## Arguments
@@ -21,6 +21,19 @@ augment(x, new_data, ...)
 - new_data:
 
   A data frame or matrix of new predictors.
+
+- type:
+
+  The type of prediction. For classification, can be `"class"` or
+  `"prob"`. Defaults to `NULL` which gives all prediction types
+  possible. For regression, can be `"mean"` or `"quantile"`; when
+  `"quantile"`, `quantile_levels` must be supplied.
+
+- quantile_levels:
+
+  A numeric vector of probabilities, sorted in increasing order, at
+  which to predict the outcome distribution. Regression only; required
+  when `type = "quantile"` and must otherwise be `NULL`.
 
 - ...:
 
@@ -39,21 +52,65 @@ classification, the class predictions are in `.pred_class` and the
 probability estimates are in columns with the pattern `.pred_{level}`
 where `level` is the levels of the outcome factor vector.
 
+When `quantile_levels` is given, regression results also have a
+`.pred_quantile` column of
+[`hardhat::quantile_pred()`](https://hardhat.tidymodels.org/reference/quantile_pred.html)
+values.
+
 ## Examples
 
 ``` r
-# Minimal example for quick execution
-car_train <- mtcars[ 1:5,   ]
-car_test  <- mtcars[6, -1]
-
 if (FALSE) { # \dontrun{
-# Fit
-if (is_tab_pfn_installed() & interactive()) {
- mod <- tab_pfn(mpg ~ cyl + log(drat), car_train)
+if (rlang::is_installed(c("MASS", "ggplot2")) &
+     is_tab_pfn_installed() &
+     interactive()) {
+  library(ggplot2)
 
- # Predict
- predict(mod, car_test)
- augment(mod, car_test)
+  motorcycles <- MASS::mcycle
+  in_tr <- seq(1, nrow(motorcycles), by = 2)
+  mcycle_tr <- motorcycles[in_tr, ]
+  mcycle_te <- motorcycles[-in_tr, ]
+
+  mcycle_grid <-
+   dplyr::tibble(
+     times = seq(min(motorcycles$times), max(motorcycles$times), length.out = 200)
+   )
+  mcycle_grid$.row <- seq_len(nrow(mcycle_grid))
+
+  fit <- tab_pfn(accel ~ times, data = mcycle_tr)
+
+  # ------------------------------------------------------------------------------
+  # Predict mean acceleration
+
+  mean_pred <- augment(fit, mcycle_grid)
+
+  mean_p <-
+   mean_pred |>
+   ggplot(aes(times)) +
+   geom_point(data = mcycle_te, aes(y = accel), alpha = 1 / 2) +
+   geom_line(aes(y = .pred))
+
+  #------------------------------------------------------------------------------Predict 5 %, 50%
+  # Predict 5%, 50%, and 90% quantiles of acceleration
+
+  q_pred <-
+   predict(fit,
+           mcycle_grid,
+           type = "quantile",
+           quantile_levels = c(0.1, 0.5, 0.9))
+  q_pred$.row <- seq_len(nrow(q_pred))
+
+  q_pred_longer <-
+   q_pred$.pred_quantile |>
+   dplyr::as_tibble() |>
+   dplyr::full_join(mcycle_grid, by = ".row") |>
+   dplyr::mutate(level = format(.quantile_levels))
+
+  mean_p +
+   geom_line(
+     data = q_pred_longer,
+     aes(y = .pred_quantile, col = level, group = level)
+   )
 }
 } # }
 ```

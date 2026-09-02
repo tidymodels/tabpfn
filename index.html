@@ -6,15 +6,21 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Prior-Data Fitted Network Foundational Model for Tabular Data • tabpfn</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Prior-Data Fitted Network Foundational Model for Tabular Data">
 <meta name="description" content='Provides a consistent API for classification and regression models based on the TabPFN model of Hollmann et al. (2025), "Accurate predictions on small data with a tabular foundation model," Nature, 637(8045) &lt;doi:10.1038/s41586-024-08328-6&gt;. The calculations are served via Python to train and predict the model.'>
 <meta property="og:description" content='Provides a consistent API for classification and regression models based on the TabPFN model of Hollmann et al. (2025), "Accurate predictions on small data with a tabular foundation model," Nature, 637(8045) &lt;doi:10.1038/s41586-024-08328-6&gt;. The calculations are served via Python to train and predict the model.'>
+<meta property="og:image" content="https://tabpfn.tidymodels.org/logo.png">
 <script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="tabpfn.tidymodels.org,all.tidymodels.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
@@ -25,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tabpfn</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +56,11 @@
 </nav><div class="container template-home" id="container">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="tabpfn">tabpfn<a class="anchor" aria-label="anchor" href="#tabpfn"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="tabpfn-">tabpfn 
+<a class="anchor" aria-label="anchor" href="#tabpfn-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
 <p>tabpfn, meaning prior fitted networks for tabular data, is a deep-learning model. See:</p>
@@ -112,10 +121,14 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">364</span><span class="op">)</span></span>
 <span><span class="va">reg_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">reg_mod</span></span>
-<span><span class="co">#&gt; TabPFN Regression Model</span></span>
-<span><span class="co">#&gt; Training set</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── TabPFN-v3 Regression Model ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Training set:</span></span>
 <span><span class="co">#&gt; ℹ 25 data points</span></span>
-<span><span class="co">#&gt; ℹ 10 predictors</span></span></code></pre></div>
+<span><span class="co">#&gt; ℹ 10 predictors</span></span>
+<span><span class="co">#&gt; Device:</span></span>
+<span><span class="co">#&gt; ℹ mps</span></span></code></pre></div>
 <p>There are also formula and recipes interfaces.</p>
 <p>Prediction follows the usual S3 <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -134,6 +147,7 @@
 <p>For a classification model, the outcome should always be a factor vector. For example, using these data from the modeldata package:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://modeldata.tidymodels.org" class="external-link">modeldata</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'modeldata' was built under R version 4.6.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'modeldata'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:datasets':</span></span>
@@ -154,16 +168,16 @@
 <span><span class="co">#&gt; # A tibble: 625 × 3</span></span>
 <span><span class="co">#&gt;    .pred_Class1 .pred_Class2 .pred_class</span></span>
 <span><span class="co">#&gt;           &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;      </span></span>
-<span><span class="co">#&gt;  1        0.997      0.00273 Class1     </span></span>
-<span><span class="co">#&gt;  2        0.998      0.00217 Class1     </span></span>
+<span><span class="co">#&gt;  1        0.997      0.00269 Class1     </span></span>
+<span><span class="co">#&gt;  2        0.998      0.00227 Class1     </span></span>
 <span><span class="co">#&gt;  3        0.998      0.00182 Class1     </span></span>
-<span><span class="co">#&gt;  4        0.998      0.00155 Class1     </span></span>
-<span><span class="co">#&gt;  5        0.998      0.00167 Class1     </span></span>
-<span><span class="co">#&gt;  6        0.998      0.00222 Class1     </span></span>
-<span><span class="co">#&gt;  7        0.996      0.00438 Class1     </span></span>
-<span><span class="co">#&gt;  8        0.989      0.0109  Class1     </span></span>
-<span><span class="co">#&gt;  9        0.948      0.0522  Class1     </span></span>
-<span><span class="co">#&gt; 10        0.745      0.255   Class1     </span></span>
+<span><span class="co">#&gt;  4        0.998      0.00177 Class1     </span></span>
+<span><span class="co">#&gt;  5        0.998      0.00176 Class1     </span></span>
+<span><span class="co">#&gt;  6        0.998      0.00243 Class1     </span></span>
+<span><span class="co">#&gt;  7        0.995      0.00479 Class1     </span></span>
+<span><span class="co">#&gt;  8        0.987      0.0126  Class1     </span></span>
+<span><span class="co">#&gt;  9        0.950      0.0500  Class1     </span></span>
+<span><span class="co">#&gt; 10        0.755      0.245   Class1     </span></span>
 <span><span class="co">#&gt; # ℹ 615 more rows</span></span></code></pre></div>
 <p>The fit looks fairly good when shown with out-of-sample data:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -188,7 +202,7 @@
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
 <p><a href="https://priorlabs.ai/" class="external-link">PriorLabs</a> created the model. Starting with version 2.5, using TabPFN requires accepting the model license and setting a token. Each model version (v2.5, v2.6, etc.) has its own license that must be accepted individually.</p>
-<p>To get access, visit <a href="https://ux.priorlabs.ai" class="external-link uri">https://ux.priorlabs.ai</a>, go to the <strong>Licenses</strong> tab (1), and accept the license for each model version you intend to use (2). Then set the <code>TABPFN_TOKEN</code> environment variable with the token from your account. Users who already have <code>TABPFN_TOKEN</code> set can use TabPFN v2 without any additional steps.</p>
+<p>To get access, visit <a href="https://platform.priorlabs.ai:443/" class="external-link uri">https://platform.priorlabs.ai:443/</a>, go to the <strong>Licenses</strong> tab (1), and accept the license for each model version you intend to use (2). Then set the <code>TABPFN_TOKEN</code> environment variable with the token from your account. Users who already have <code>TABPFN_TOKEN</code> set can use TabPFN v2 without any additional steps.</p>
 <figure><img src="reference/figures/license.png" alt="Screenshot of the PriorLabs UX portal Licenses page"><figcaption aria-hidden="true">
 Screenshot of the PriorLabs UX portal Licenses page
 </figcaption></figure><p>Also, the model is most effective when a GPU is available (by an order of magnitude or two). This may seem obvious to anyone already working with deep learning models, but it is a fairly new requirement for those strictly working with traditional tabular data models.</p>
@@ -253,7 +267,7 @@ Screenshot of the PriorLabs UX portal Licenses page
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
   </div></footer>

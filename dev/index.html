@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tabpfn</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.2.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -122,10 +122,14 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">364</span><span class="op">)</span></span>
 <span><span class="va">reg_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">reg_mod</span></span>
-<span><span class="co">#&gt; TabPFN Regression Model</span></span>
-<span><span class="co">#&gt; Training set</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── TabPFN-v3 Regression Model ──</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Training set:</span></span>
 <span><span class="co">#&gt; ℹ 25 data points</span></span>
-<span><span class="co">#&gt; ℹ 10 predictors</span></span></code></pre></div>
+<span><span class="co">#&gt; ℹ 10 predictors</span></span>
+<span><span class="co">#&gt; Device:</span></span>
+<span><span class="co">#&gt; ℹ mps</span></span></code></pre></div>
 <p>There are also formula and recipes interfaces.</p>
 <p>Prediction follows the usual S3 <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -144,6 +148,7 @@
 <p>For a classification model, the outcome should always be a factor vector. For example, using these data from the modeldata package:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://modeldata.tidymodels.org" class="external-link">modeldata</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'modeldata' was built under R version 4.6.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'modeldata'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:datasets':</span></span>
@@ -164,16 +169,16 @@
 <span><span class="co">#&gt; # A tibble: 625 × 3</span></span>
 <span><span class="co">#&gt;    .pred_Class1 .pred_Class2 .pred_class</span></span>
 <span><span class="co">#&gt;           &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;      </span></span>
-<span><span class="co">#&gt;  1        0.997      0.00270 Class1     </span></span>
-<span><span class="co">#&gt;  2        0.998      0.00228 Class1     </span></span>
-<span><span class="co">#&gt;  3        0.998      0.00183 Class1     </span></span>
+<span><span class="co">#&gt;  1        0.997      0.00269 Class1     </span></span>
+<span><span class="co">#&gt;  2        0.998      0.00227 Class1     </span></span>
+<span><span class="co">#&gt;  3        0.998      0.00182 Class1     </span></span>
 <span><span class="co">#&gt;  4        0.998      0.00177 Class1     </span></span>
 <span><span class="co">#&gt;  5        0.998      0.00176 Class1     </span></span>
 <span><span class="co">#&gt;  6        0.998      0.00243 Class1     </span></span>
 <span><span class="co">#&gt;  7        0.995      0.00479 Class1     </span></span>
 <span><span class="co">#&gt;  8        0.987      0.0126  Class1     </span></span>
-<span><span class="co">#&gt;  9        0.950      0.0501  Class1     </span></span>
-<span><span class="co">#&gt; 10        0.754      0.246   Class1     </span></span>
+<span><span class="co">#&gt;  9        0.950      0.0500  Class1     </span></span>
+<span><span class="co">#&gt; 10        0.755      0.245   Class1     </span></span>
 <span><span class="co">#&gt; # ℹ 615 more rows</span></span></code></pre></div>
 <p>The fit looks fairly good when shown with out-of-sample data:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -198,7 +203,7 @@
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
 <p><a href="https://priorlabs.ai/" class="external-link">PriorLabs</a> created the model. Starting with version 2.5, using TabPFN requires accepting the model license and setting a token. Each model version (v2.5, v2.6, etc.) has its own license that must be accepted individually.</p>
-<p>To get access, visit <a href="https://ux.priorlabs.ai" class="external-link uri">https://ux.priorlabs.ai</a>, go to the <strong>Licenses</strong> tab (1), and accept the license for each model version you intend to use (2). Then set the <code>TABPFN_TOKEN</code> environment variable with the token from your account. Users who already have <code>TABPFN_TOKEN</code> set can use TabPFN v2 without any additional steps.</p>
+<p>To get access, visit <a href="https://platform.priorlabs.ai:443/" class="external-link uri">https://platform.priorlabs.ai:443/</a>, go to the <strong>Licenses</strong> tab (1), and accept the license for each model version you intend to use (2). Then set the <code>TABPFN_TOKEN</code> environment variable with the token from your account. Users who already have <code>TABPFN_TOKEN</code> set can use TabPFN v2 without any additional steps.</p>
 <figure><img src="reference/figures/license.png" alt="Screenshot of the PriorLabs UX portal Licenses page"><figcaption aria-hidden="true">
 Screenshot of the PriorLabs UX portal Licenses page
 </figcaption></figure><p>Also, the model is most effective when a GPU is available (by an order of magnitude or two). This may seem obvious to anyone already working with deep learning models, but it is a fairly new requirement for those strictly working with traditional tabular data models.</p>

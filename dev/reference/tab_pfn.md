@@ -194,7 +194,7 @@ v2.6, etc.) has its own license that must be accepted individually.
 
 To set up access:
 
-1.  Visit <https://ux.priorlabs.ai> and create an account.
+1.  Visit <https://platform.priorlabs.ai:443/> and create an account.
 
 2.  Go to the **License** tab and accept the license for each model
     version you intend to use.

@@ -2,6 +2,8 @@
 
 ## tabpfn (development version)
 
+## tabpfn 0.3.0
+
 - Added quantile regression support to
   [`predict()`](https://rdrr.io/r/stats/predict.html).
 
@@ -35,15 +37,16 @@
 - Added a `type` argument to be consistent with parsnip. Defaults to
   `NULL`, which will produce all prediction types.
 
-- The fitted `tab_pfn` object now records the underlying TabPFN model
-  version in a `version` element, which is also shown by the print
-  method. It falls back to `"unknown"` if the version cannot be
-  determined.
+- The fitted `tab_pfn` object now records:
 
-- The fitted `tab_pfn` object now records the device(s) used to fit the
-  model (e.g. `"cpu"`, `"mps"`, or `"cuda:0"`) in a `device` element,
-  which is also shown by the print method. It falls back to `"unknown"`
-  if the device cannot be determined.
+- The underlying TabPFN model version in a `version` element, which is
+  also shown by the print method. It falls back to `"unknown"` if the
+  version cannot be determined.
+
+- The device(s) used to fit the model (e.g. `"cpu"`, `"mps"`, or
+  `"cuda:0"`) in a `device` element, which is also shown by the print
+  method. It falls back to `"unknown"` if the device cannot be
+  determined.
 
 ## tabpfn 0.2.0
 

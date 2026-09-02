@@ -80,10 +80,14 @@ we can fit a model via the standard x/y interface.
 set.seed(364)
 reg_mod <- tab_pfn(mtcars[1:25, -1], mtcars$mpg[1:25])
 reg_mod
-#> TabPFN Regression Model
-#> Training set
+#> 
+#> ── TabPFN-v3 Regression Model ──
+#> 
+#> Training set:
 #> ℹ 25 data points
 #> ℹ 10 predictors
+#> Device:
+#> ℹ mps
 ```
 
 There are also formula and recipes interfaces.
@@ -115,6 +119,7 @@ vector. For example, using these data from the modeldata package:
 ``` r
 
 library(modeldata)
+#> Warning: package 'modeldata' was built under R version 4.6.1
 #> 
 #> Attaching package: 'modeldata'
 #> The following object is masked from 'package:datasets':
@@ -135,16 +140,16 @@ grid_pred
 #> # A tibble: 625 × 3
 #>    .pred_Class1 .pred_Class2 .pred_class
 #>           <dbl>        <dbl> <fct>      
-#>  1        0.997      0.00270 Class1     
-#>  2        0.998      0.00228 Class1     
-#>  3        0.998      0.00183 Class1     
+#>  1        0.997      0.00269 Class1     
+#>  2        0.998      0.00227 Class1     
+#>  3        0.998      0.00182 Class1     
 #>  4        0.998      0.00177 Class1     
 #>  5        0.998      0.00176 Class1     
 #>  6        0.998      0.00243 Class1     
 #>  7        0.995      0.00479 Class1     
 #>  8        0.987      0.0126  Class1     
-#>  9        0.950      0.0501  Class1     
-#> 10        0.754      0.246   Class1     
+#>  9        0.950      0.0500  Class1     
+#> 10        0.755      0.245   Class1     
 #> # ℹ 615 more rows
 ```
 
@@ -178,11 +183,11 @@ version 2.5, using TabPFN requires accepting the model license and
 setting a token. Each model version (v2.5, v2.6, etc.) has its own
 license that must be accepted individually.
 
-To get access, visit <https://ux.priorlabs.ai>, go to the **Licenses**
-tab (1), and accept the license for each model version you intend to use
-(2). Then set the `TABPFN_TOKEN` environment variable with the token
-from your account. Users who already have `TABPFN_TOKEN` set can use
-TabPFN v2 without any additional steps.
+To get access, visit <https://platform.priorlabs.ai:443/>, go to the
+**Licenses** tab (1), and accept the license for each model version you
+intend to use (2). Then set the `TABPFN_TOKEN` environment variable with
+the token from your account. Users who already have `TABPFN_TOKEN` set
+can use TabPFN v2 without any additional steps.
 
 ![Screenshot of the PriorLabs UX portal Licenses
 page](reference/figures/license.png)

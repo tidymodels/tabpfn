@@ -6,7 +6,10 @@
   # Set PyTorch TorchInductor cache to R's temp directory
   # This prevents 'torchinductor' directory creation in working directory
   if (Sys.getenv("TORCHINDUCTOR_CACHE_DIR") == "") {
-    torch_cache_dir <- file.path(tempdir(), "torchinductor")
+    torch_cache_dir <- file.path(
+      tools::R_user_dir("tabpfn", "cache"),
+      "torchinductor"
+    )
     Sys.setenv(TORCHINDUCTOR_CACHE_DIR = torch_cache_dir)
   }
 

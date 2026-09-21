@@ -1,5 +1,7 @@
 # tabpfn (development version)
 
+- Updated the `?tab_pfn` documentation: current model versions in the `version` examples, and data limits for all versions up to v3.5.
+
 # tabpfn 0.3.0
 
 - Added quantile regression support to `predict()`.

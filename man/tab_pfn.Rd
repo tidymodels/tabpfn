@@ -101,8 +101,10 @@ function or after? Default is \code{FALSE}.}
 that can be used to keep the training data within the limits of the
 data constraints imposed by the Python library.}
 
-\item{version}{A character string for the model version (e.g., \code{"v2"},
-\code{"v2.5"}). When \code{NULL} (the default), the Python library's current default
+\item{version}{The model version, such as \code{"v2.5"} or \code{"v3.5"}. A bare
+number works too: \code{2.5}, \code{"2.5"}, and \code{"v2.5"} are equivalent. Call
+\code{\link[=tabpfn_list_versions]{tabpfn_list_versions()}} for the versions your installed Python library
+offers. When \code{NULL} (the default), the Python library's current default
 version is used. When set, the model is initialized via
 \code{create_default_for_version()} with the corresponding \code{ModelVersion} enum
 value.}
@@ -156,12 +158,13 @@ specific computations and might be slower than the CPU for some data sets.
 \subsection{License Requirements}{
 
 Starting with version 2.5, using TabPFN requires accepting the model license
-and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
-has its own license that must be accepted individually.
+and obtaining a token from PriorLabs. Every version from 2.5 onwards has its
+own license, and you must accept each one on its own. Accepting the license
+for one version does not cover the others.
 
 To set up access:
 \enumerate{
-\item Visit \url{https://platform.priorlabs.ai:443/} and create an
+\item Visit \url{https://ux.priorlabs.ai} and create an
 account.
 \item Go to the \strong{License} tab and accept the license for each model version
 you intend to use.
@@ -274,15 +277,22 @@ By default, TabPFN uses the Python library's current default model version.
 There are two ways to override this.
 \subsection{Selecting a model version}{
 
-Use the \code{version} argument to select a specific released model version. For
-example:
+Use the \code{version} argument to select a specific released model version:
 
 \preformatted{
-  # Use version 2.0
-  mod <- tab_pfn(predictors, outcome, version = "v2")
-
-  # Use version 2.5
   mod <- tab_pfn(predictors, outcome, version = "v2.5")
+
+  # A bare number works too
+  mod <- tab_pfn(predictors, outcome, version = 3.5)
+}
+
+New model versions are released from time to time, so rather than listing
+them here, call \code{\link[=tabpfn_list_versions]{tabpfn_list_versions()}} to see what your installed Python
+library offers:
+
+\preformatted{
+  > tabpfn_list_versions()
+  [1] "v2"    "v2.5"  "v2.6"  "v3"    "v3.5"  "v3.5-fast"
 }
 }
 

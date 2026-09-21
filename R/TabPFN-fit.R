@@ -42,8 +42,10 @@
 #' that can be used to keep the training data within the limits of the
 #' data constraints imposed by the Python library.
 #'
-#' @param version A character string for the model version (e.g., `"v2"`,
-#' `"v2.5"`). When `NULL` (the default), the Python library's current default
+#' @param version The model version, such as `"v2.5"` or `"v3.5"`. A bare
+#' number works too: `2.5`, `"2.5"`, and `"v2.5"` are equivalent. Call
+#' [tabpfn_list_versions()] for the versions your installed Python library
+#' offers. When `NULL` (the default), the Python library's current default
 #' version is used. When set, the model is initialized via
 #' `create_default_for_version()` with the corresponding `ModelVersion` enum
 #' value.
@@ -71,8 +73,9 @@
 #' ## License Requirements
 #'
 #' Starting with version 2.5, using TabPFN requires accepting the model license
-#' and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
-#' has its own license that must be accepted individually.
+#' and obtaining a token from PriorLabs. Every version from 2.5 onwards has its
+#' own license, and you must accept each one on its own. Accepting the license
+#' for one version does not cover the others.
 #'
 #' To set up access:
 #'
@@ -184,15 +187,22 @@
 #'
 #' ### Selecting a model version
 #'
-#' Use the `version` argument to select a specific released model version. For
-#' example:
+#' Use the `version` argument to select a specific released model version:
 #'
 #' \preformatted{
-#'   # Use version 2.0
-#'   mod <- tab_pfn(predictors, outcome, version = "v2")
-#'
-#'   # Use version 2.5
 #'   mod <- tab_pfn(predictors, outcome, version = "v2.5")
+#'
+#'   # A bare number works too
+#'   mod <- tab_pfn(predictors, outcome, version = 3.5)
+#' }
+#'
+#' New model versions are released from time to time, so rather than listing
+#' them here, call [tabpfn_list_versions()] to see what your installed Python
+#' library offers:
+#'
+#' \preformatted{
+#'   > tabpfn_list_versions()
+#'   [1] "v2"    "v2.5"  "v2.6"  "v3"    "v3.5"  "v3.5-fast"
 #' }
 #'
 #' ### Pointing to a local model file

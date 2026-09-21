@@ -167,18 +167,26 @@
 #'
 #' ## Data
 #'
-#' Be default, there are limits to the training data dimensions:
+#' Each model version was pre-trained on data up to a certain size, and those
+#' sizes have grown a great deal across versions. Newest first:
 #'
-#'   * Version 2.0: number of training set samples (10,000) and, the number of
-#'   predictors (500). There is an unchangeable limit to the number of classes
-#'   (10).
+#' | Version | Training rows | Predictors | Classes |
+#' | --- | --- | --- | --- |
+#' | `"v3.5"`, `"v3.5-fast"` | 1M | 20K | 160 |
+#' | `"v3"` | 1M | 2K | 160 |
+#' | `"v2.5"`, `"v2.6"` | 100K | 2K | 10 |
+#' | `"v2"` | 10K | 500 | 10 |
 #'
-#'   * Version 2.5: number of training set samples (50,000) and, the number of
-#'   predictors (2,000). There is an unchangeable limit to the number of classes
-#'   (10).
+#' The row and predictor maxima trade off against each other, so you cannot
+#' always reach both at once. The ceiling in the table is not a promise either:
+#' for `"v3.5"`, PriorLabs recommends up to 6,000 predictors even though the
+#' model tops out at 20,000.
 #'
 #' Predictors do not require preprocessing; missing values and factor vectors
 #' are allowed.
+#'
+#' See <https://docs.priorlabs.ai/models> for the constraints of the current
+#' models.
 #'
 #' ## Model Selection
 #'

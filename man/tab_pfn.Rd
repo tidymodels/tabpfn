@@ -257,18 +257,26 @@ before fitting a model); if Python is already loaded, restart R first.
 
 \subsection{Data}{
 
-Be default, there are limits to the training data dimensions:
-\itemize{
-\item Version 2.0: number of training set samples (10,000) and, the number of
-predictors (500). There is an unchangeable limit to the number of classes
-(10).
-\item Version 2.5: number of training set samples (50,000) and, the number of
-predictors (2,000). There is an unchangeable limit to the number of classes
-(10).
+Each model version was pre-trained on data up to a certain size, and those
+sizes have grown a great deal across versions. Newest first:\tabular{llll}{
+   Version \tab Training rows \tab Predictors \tab Classes \cr
+   \code{"v3.5"}, \code{"v3.5-fast"} \tab 1M \tab 20K \tab 160 \cr
+   \code{"v3"} \tab 1M \tab 2K \tab 160 \cr
+   \code{"v2.5"}, \code{"v2.6"} \tab 100K \tab 2K \tab 10 \cr
+   \code{"v2"} \tab 10K \tab 500 \tab 10 \cr
 }
+
+
+The row and predictor maxima trade off against each other, so you cannot
+always reach both at once. The ceiling in the table is not a promise either:
+for \code{"v3.5"}, PriorLabs recommends up to 6,000 predictors even though the
+model tops out at 20,000.
 
 Predictors do not require preprocessing; missing values and factor vectors
 are allowed.
+
+See \url{https://docs.priorlabs.ai/models} for the constraints of the current
+models.
 }
 
 \subsection{Model Selection}{

@@ -262,7 +262,8 @@ sizes have grown a great deal across versions. Newest first:\tabular{llll}{
    Version \tab Training rows \tab Predictors \tab Classes \cr
    \code{"v3.5"}, \code{"v3.5-fast"} \tab 1M \tab 20K \tab 160 \cr
    \code{"v3"} \tab 1M \tab 2K \tab 160 \cr
-   \code{"v2.5"}, \code{"v2.6"} \tab 100K \tab 2K \tab 10 \cr
+   \code{"v2.6"} \tab 100K \tab 2K \tab 10 \cr
+   \code{"v2.5"} \tab 50K \tab 2K \tab 10 \cr
    \code{"v2"} \tab 10K \tab 500 \tab 10 \cr
 }
 

@@ -174,7 +174,8 @@
 #' | --- | --- | --- | --- |
 #' | `"v3.5"`, `"v3.5-fast"` | 1M | 20K | 160 |
 #' | `"v3"` | 1M | 2K | 160 |
-#' | `"v2.5"`, `"v2.6"` | 100K | 2K | 10 |
+#' | `"v2.6"` | 100K | 2K | 10 |
+#' | `"v2.5"` | 50K | 2K | 10 |
 #' | `"v2"` | 10K | 500 | 10 |
 #'
 #' The row and predictor maxima trade off against each other, so you cannot

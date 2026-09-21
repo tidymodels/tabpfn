@@ -30,7 +30,9 @@ release on PyPI and you are asked whether to upgrade. Set to \code{FALSE} to
 skip this check (useful when intentionally staying on an older version).}
 
 \item{extra_packages}{An optional character vector of additional Python
-packages to install alongside \code{tabpfn}.}
+packages to install alongside \code{tabpfn}. You can also use it to set the
+version of one of \code{tabpfn}'s own dependencies, such as holding \code{torch} at
+an older release. See the \emph{Pinning dependencies} section.}
 
 \item{python_version}{An optional Python version to use for the environment.}
 
@@ -65,6 +67,41 @@ demand. Environments selected via \code{RETICULATE_PYTHON}, \code{VIRTUAL_ENV}, 
 project-local \code{.venv} take precedence over \code{"r-tabpfn"}.
 }
 
+\section{Pinning dependencies}{
+
+The Python \code{tabpfn} library pulls in other Python packages, among them
+\code{torch}, \code{numpy}, \code{pandas}, and \code{scikit-learn}. A new release of any one of
+them can break code that worked the week before, even though your R version
+and your \code{tabpfn} version did not change. The error usually points at
+\code{tabpfn} rather than at the package that changed, so pinning the suspect
+dependency is a quick way to confirm the cause and to keep working until a
+fix lands upstream.
+
+To pin a dependency in the persistent environment that \code{install_tabpfn()}
+builds, pass it and the version you want in \code{extra_packages}:
+
+\preformatted{
+  install_tabpfn(
+    version = "2.0.9",
+    extra_packages = "torch==2.13.0",
+    new_env = TRUE
+  )
+}
+
+\code{extra_packages} is used only when an install runs. If \code{envname} already
+exists and already has the version you asked for, this function returns
+early and ignores the pin. Pass \code{new_env = TRUE} to delete the environment
+and build it again with the pin.
+
+To pin a dependency in the ephemeral environment instead, call
+\code{\link[reticulate:py_require]{reticulate::py_require()}} before you fit a model:
+
+\preformatted{
+  library(tabpfn)
+  reticulate::py_require("torch==2.13.0")
+}
+}
+
 \examples{
 \dontrun{
 # Install the latest release into "r-tabpfn"
@@ -72,5 +109,8 @@ install_tabpfn()
 
 # Pin a specific version
 install_tabpfn(version = "2.0.9")
+
+# Pin a dependency as well
+install_tabpfn(version = "2.0.9", extra_packages = "torch==2.13.0")
 }
 }

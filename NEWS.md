@@ -1,5 +1,7 @@
 # tabpfn (development version)
 
+- Documented how to pin a version of one of the Python `tabpfn` library's own dependencies, such as `torch` or `numpy`, when a new release of that dependency breaks a `tabpfn` version that worked before. Use `extra_packages` in `install_tabpfn()` for the persistent environment, or `reticulate::py_require()` for the ephemeral one. See the "Pinning dependencies" section in `?install_tabpfn` (#40).
+
 # tabpfn 0.3.0
 
 - Added quantile regression support to `predict()`.

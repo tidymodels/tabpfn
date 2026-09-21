@@ -4,7 +4,7 @@
       mod_df
     Message
       
-      -- TabPFN-v3 Classification Model --
+      -- TabPFN-v3.5 Classification Model --
       
       Training set:
       i 20 data points
@@ -22,7 +22,7 @@
       mod_f
     Message
       
-      -- TabPFN-v3 Classification Model --
+      -- TabPFN-v3.5 Classification Model --
       
       Training set:
       i 20 data points
@@ -40,7 +40,7 @@
       mod_mat
     Message
       
-      -- TabPFN-v3 Classification Model --
+      -- TabPFN-v3.5 Classification Model --
       
       Training set:
       i 20 data points
@@ -74,7 +74,7 @@
       mod_rec
     Message
       
-      -- TabPFN-v3 Classification Model --
+      -- TabPFN-v3.5 Classification Model --
       
       Training set:
       i 20 data points

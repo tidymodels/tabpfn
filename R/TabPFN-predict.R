@@ -140,19 +140,18 @@ predict.tabpfn.regressor.TabPFNRegressor <- function(
   ...
 ) {
   py_msg <- reticulate::py_capture_output(
-    res <- try(
+    res <- tryCatch(
       object$predict(
         new_data,
         output_type = if (is.null(quantile_levels)) "mean" else "main",
         quantiles = as.list(quantile_levels)
       ),
-      silent = TRUE
+      error = function(cnd) cnd
     )
   )
 
-  if (inherits(res, "try-error")) {
-    msgs <- as.character(res)
-    cli::cli_abort("Prediction failed: {msgs}")
+  if (inherits(res, "error")) {
+    abort_python_fit(res, call = quote(predict()))
   } else if (is.null(quantile_levels)) {
     res <- tibble::tibble(.pred = as.vector(res))
   } else {
@@ -177,12 +176,11 @@ predict.tabpfn.classifier.TabPFNClassifier <- function(
   ...
 ) {
   py_msg <- reticulate::py_capture_output(
-    res <- try(object$predict_proba(new_data), silent = TRUE)
+    res <- tryCatch(object$predict_proba(new_data), error = function(cnd) cnd)
   )
 
-  if (inherits(res, "try-error")) {
-    msgs <- as.character(res)
-    cli::cli_abort("Prediction failed: {msgs}")
+  if (inherits(res, "error")) {
+    abort_python_fit(res, call = quote(predict()))
   } else {
     colnames(res) <- paste0(".pred_", object$classes_)
     cls_ind <- apply(res, 1, which.max)

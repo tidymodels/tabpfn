@@ -443,6 +443,88 @@ crop_training_set <- function(processed, training_set_limit) {
 }
 
 # ------------------------------------------------------------------------------
+# Failures from the Python library
+#
+# The library validates the data against the checkpoint in use and raises with
+# the offending count and the limit. That sentence is worth keeping. What comes
+# wrapped around it is not: the exception class, reticulate's footer, and advice
+# written in Python.
+
+abort_python_fit <- function(cnd, call = quote(tab_pfn())) {
+  msg <- clean_python_message(conditionMessage(cnd))
+
+  cli::cli_abort(c(x = "{msg}", python_fit_hints(msg)), call = call)
+}
+
+clean_python_message <- function(msg) {
+  # "tabpfn.errors.TabPFNValidationError: ", "RuntimeError: ", and so on.
+  msg <- sub("^[A-Za-z_.]*(Error|Exception):[[:space:]]*", "", msg)
+  # Drop whole sentences, so nothing is left dangling, and wherever they sit in
+  # the message:
+  #
+  #   * reticulate's footer, whose detail is already on screen
+  #   * the advice to set `ignore_pretraining_limits` or
+  #     `TABPFN_ALLOW_CPU_LARGE_DATASET`, which is given below in R, and which
+  #     Python states in a syntax that will not run here
+  # Newlines count as breaks too. Not every sentence the library writes ends in
+  # a full stop, and one that ends in a URL would otherwise absorb whatever
+  # follows it and be dropped along with it.
+  sentences <- unlist(
+    strsplit(msg, "(?<=[.!])[[:space:]]+|[\r\n]+", perl = TRUE)
+  )
+  keep <- !grepl(
+    "py_last_error|ignore_pretraining_limits|TABPFN_ALLOW_CPU_LARGE_DATASET",
+    sentences
+  )
+  msg <- paste(sentences[keep], collapse = " ")
+
+  trimws(gsub("[[:space:]]+", " ", msg))
+}
+
+# What to do about it, in R.
+#
+# Matching on the library's prose is the fragile part of this, so it is kept to
+# single words that name the thing at fault rather than whole phrases, and a
+# message we do not recognise gets no advice rather than wrong advice. CPU is
+# tested first because its message mentions samples as well.
+python_fit_hints <- function(msg) {
+  sample_or_lift <- "Set {.arg training_set_limit} to fit on a sample,
+                     or {.code control_tab_pfn(ignore_pretraining_limits = TRUE)}
+                     to use every row."
+
+  if (grepl("CPU", msg, fixed = TRUE)) {
+    return(c(
+      i = "Set {.arg training_set_limit} to fit on a sample,
+           or {.code control_tab_pfn(ignore_pretraining_limits = TRUE)} to use
+           every row. The {.envvar TABPFN_ALLOW_CPU_LARGE_DATASET} environment
+           variable lifts the CPU limit too."
+    ))
+  }
+
+  if (grepl("samples", msg, fixed = TRUE)) {
+    return(c(i = sample_or_lift))
+  }
+
+  # Sampling rows cannot help here, so do not suggest it.
+  if (grepl("features", msg, fixed = TRUE)) {
+    return(c(
+      i = "Use fewer predictors, or
+           {.code control_tab_pfn(ignore_pretraining_limits = TRUE)} to keep
+           them all."
+    ))
+  }
+
+  if (grepl("classes", msg, fixed = TRUE)) {
+    return(c(
+      i = "Later model versions allow more classes. See the {.arg version}
+           argument."
+    ))
+  }
+
+  character(0)
+}
+
+# ------------------------------------------------------------------------------
 # Bridge
 
 tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
@@ -508,15 +590,13 @@ tab_pfn_impl <- function(x, y, opts, version = NULL) {
   }
 
   py_msg <- reticulate::py_capture_output(
-    model_fit <- try(mod_obj$fit(x, y), silent = TRUE)
+    model_fit <- tryCatch(mod_obj$fit(x, y), error = function(cnd) cnd)
   )
 
-  if (inherits(model_fit, "try-error")) {
-    msgs <- as.character(model_fit)
-    cli::cli_abort("Model failed: {msgs}")
-  } else {
-    msgs <- character(0)
+  if (inherits(model_fit, "error")) {
+    abort_python_fit(model_fit)
   }
+  msgs <- character(0)
 
   # check for failures
   res <- list(

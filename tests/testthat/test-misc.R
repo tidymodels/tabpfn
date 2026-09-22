@@ -99,7 +99,7 @@ test_that("the limits table matches the installed library", {
   y <- factor(mtcars$am)
 
   for (v in tabpfn:::tabpfn_limits$version) {
-    ours <- tabpfn:::tabpfn_limits_for(v)
+    ours <- tabpfn:::tabpfn_limits[tabpfn:::tabpfn_limits$version == v, ]
     fit <- tab_pfn(mtcars[, -1], y, version = v)
     theirs <- fit$fit$inference_config_
 

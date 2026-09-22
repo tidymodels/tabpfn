@@ -20,7 +20,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -33,7 +33,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -46,7 +46,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -59,7 +59,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -97,15 +97,11 @@ only.}
 \code{num_estimators > 1}, should the average be done before using the softmax
 function or after? Default is \code{FALSE}.}
 
-\item{training_set_limit}{An integer greater than 2L (and possibly \code{Inf})
-for the largest training set to use. The default of 10,000 keeps a first fit
-quick on any machine. Larger data is sampled down to this many rows,
-stratified by class for classification and by quartile for regression, and
-you are told when that happens. Lower it to speed up a fit, or to make one
-possible at all on a machine that cannot hold the whole training set; raise
-it, or set \code{Inf}, to use more of your data. The model's own limit still
-applies on top of this, and on a CPU a much lower one does; see the \emph{Data}
-section.}
+\item{training_set_limit}{An integer greater than 2L, or \code{Inf} (the default)
+to use every row. Anything smaller samples the training set down to that many
+rows, stratified by class for classification and by quartile for regression.
+Use it to speed up a fit, or to make one possible at all on a machine that
+cannot hold the whole training set.}
 
 \item{version}{The model version, such as \code{"v2.5"} or \code{"v3.5"}. A bare
 number works too: \code{2.5}, \code{"2.5"}, and \code{"v2.5"} are equivalent. Call
@@ -267,8 +263,9 @@ Each model version was pre-trained on data up to a certain size, and those
 sizes have grown a great deal across versions. The \emph{Data limits by version}
 section below has the numbers.
 
-By default \code{tab_pfn()} does not use all of your data: it samples down to
-\code{training_set_limit} rows, and tells you when it does.
+These limits are enforced by the Python library, which raises when data
+exceeds them. \pkg{tabpfn} does not check them itself, so the error you see
+names the model actually loaded.
 
 Predictors do not require preprocessing; missing values and factor vectors
 are allowed.
@@ -343,6 +340,10 @@ rows, whatever the version's own limit says, so \code{"v3.5"} stops at 5,000
 rows on a machine without a GPU. Set \code{ignore_pretraining_limits = TRUE}
 in \code{\link[=control_tab_pfn]{control_tab_pfn()}}, or the \code{TABPFN_ALLOW_CPU_LARGE_DATASET}
 environment variable, to lift it. The fit then runs, slowly.
+
+Every limit here is enforced by the Python library, which raises an error
+naming the count and the limit. Use \code{training_set_limit} to fit on a
+sample instead.
 
 The row and predictor maxima trade off against each other, so you cannot
 always reach both at once. The ceiling is not a promise either: for

@@ -22,11 +22,12 @@ A value of -1L indicates all possible resources.}
 \item{device}{A character value for the device used for torch (e.g., \code{"cpu"},
 \code{"cuda"}, \code{"mps"}, etc.). Th default is \code{"auto"}.}
 
-\item{ignore_pretraining_limits}{A logical to bypass the data limits on the
-number of training set samples and predictors, which vary by model
-version; see the \emph{Data} section of \code{\link[=tab_pfn]{tab_pfn()}}. This also lifts the much
-lower limit that applies when the fit runs on a CPU. The limit on the
-number of classes always applies.}
+\item{ignore_pretraining_limits}{A logical, passed to the Python library,
+allowing data past the limits the model was pre-trained for. It covers the
+number of training set samples and predictors, and the much lower sample
+limit that applies when the fit runs on a CPU. The limit on the number of
+classes always applies. See the \emph{Data limits by version} section of
+\code{\link[=tab_pfn]{tab_pfn()}}.}
 
 \item{inference_precision}{A character value for the trade off between speed
 and reproducibility. This can be a torch \code{dtype}, \code{"autocast"} (for torch's

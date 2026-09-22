@@ -1,14 +1,12 @@
 # tabpfn (development version)
 
-- Data limits are now taken from the model version in use, rather than one fixed set of numbers applied to every version. A v3.5 model accepts up to 1,000,000 rows, 20,000 predictors and 160 classes; previously it was held to v2.5's limits and, for example, refused an outcome with more than 10 classes.
+- The `training_set_limit` argument of `tab_pfn()` now defaults to `Inf`, so all of your data is used. It previously sampled anything larger down to 10,000 rows without saying so.
 
-- `tab_pfn()` now reports when it samples the training set down to `training_set_limit`, which it previously did in silence.
+- `tab_pfn()` no longer checks your data against the model's limits; the Python library does, and its error names the model in use. Limits now follow the version you chose rather than one fixed set.
 
-- `tab_pfn()` no longer errors when the training set has too many rows. Row counts are now handled by sampling the data down to whatever the chosen model and device support, with a message saying so, rather than by refusing to fit. Too many predictors or classes still raises an error, as before.
+- `?tab_pfn` now lists each model version's limits, including the lower one that applies on a CPU, and its examples use current versions rather than earlier ones.
 
-- On a CPU, `tab_pfn()` samples down to the much lower limit the Python library enforces there (5,000 rows for v3.x, 1,000 for v2.x) and says so, instead of letting the fit fail with a Python error. `control_tab_pfn(ignore_pretraining_limits = TRUE)` or the `TABPFN_ALLOW_CPU_LARGE_DATASET` environment variable lifts it.
-
-- Updated the `?tab_pfn` documentation: current model versions in the `version` examples, and a table of data limits per version that is generated from the same numbers the checks use.
+- Test snapshots now record TabPFN v3.5, the model the Python library currently defaults to. They will need updating again whenever that default moves.
 
 # tabpfn 0.3.0
 

@@ -4,10 +4,11 @@
 #' A value of -1L indicates all possible resources.
 #' @param device A character value for the device used for torch (e.g., `"cpu"`,
 #' `"cuda"`, `"mps"`, etc.). Th default is `"auto"`.
-#' @param ignore_pretraining_limits A logical to bypass the default data limits
-#'   on:the number of training set samples (10,000) and, the number of
-#'   predictors (500). There is an unchangeable limit to the number of classes
-#'   (10).
+#' @param ignore_pretraining_limits A logical to bypass the data limits on the
+#'   number of training set samples and predictors, which vary by model
+#'   version; see the *Data* section of [tab_pfn()]. This also lifts the much
+#'   lower limit that applies when the fit runs on a CPU. The limit on the
+#'   number of classes always applies.
 #' @param inference_precision A character value for the trade off between speed
 #' and reproducibility. This can be a torch `dtype`, `"autocast"` (for torch's
 #' mixed-precision autocast), or "auto".

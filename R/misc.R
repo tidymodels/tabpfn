@@ -27,8 +27,9 @@ uses_canonical_env <- function(envname = "r-tabpfn") {
 
   exe <- norm(exe)
 
-  venv <- if (reticulate::virtualenv_exists(envname)) {
-    norm(reticulate::virtualenv_python(envname))
+  venv <- NULL
+  if (reticulate::virtualenv_exists(envname)) {
+    venv <- norm(reticulate::virtualenv_python(envname))
   }
   conda <- tryCatch(
     norm(reticulate::conda_python(envname)),
@@ -77,44 +78,247 @@ check_libomp <- function() {
 
 # ------------------------------------------------------------------------------
 
-row_limits <- 50000
-col_limits <- 2000
-cls_limits <- 10
+# The data limits of each model version.
+#
+# `rows_gpu`, `predictors` and `classes` mirror `MAX_NUMBER_OF_SAMPLES`,
+# `MAX_NUMBER_OF_FEATURES` and `MAX_NUMBER_OF_CLASSES` on the Python
+# `InferenceConfig`. `rows_cpu` mirrors `MAX_CPU_SAMPLES`, which comes from
+# `tabpfn.inference_config.cpu_sample_limit()` and is a far lower ceiling that
+# applies when the fit runs on a CPU.
+#
+# HOW TO UPDATE, when a new model version ships:
+#
+#   * Read the numbers off a fitted model, do not copy them from
+#     <https://docs.priorlabs.ai/models>. The site and the library disagree:
+#     the site lists 100K rows for v2.5, the library reports 50K.
+#
+#       m <- tab_pfn(mtcars[, -1], mtcars[, 1], version = "v3.5")
+#       m$fit$inference_config_$MAX_NUMBER_OF_SAMPLES
+#
+#   * One row per version, even where the numbers repeat. A row is one fact
+#     about one version.
+#
+#   * An entry must be exact or absent. `NA` means "we do not know", which
+#     approves and lets Python decide. Being too permissive is cheap, because
+#     Python catches it; being too strict rejects work that would have
+#     succeeded.
+#
+# `test-misc.R` checks this table against a live model for every version it
+# lists, so a stale entry fails there rather than in a bug report.
+tabpfn_limits <- tibble::tribble(
+  ~version,    ~rows_gpu, ~rows_cpu, ~predictors, ~classes,
+  "v3.5-fast", 1000000,   5000,      20000,       160,
+  "v3.5",      1000000,   5000,      20000,       160,
+  "v3",        1000000,   5000,      2000,        160,
+  "v2.6",      100000,    1000,      2000,        10,
+  "v2.5",      50000,     1000,      2000,        10,
+  "v2",        10000,     1000,      500,         10
+)
 
-check_data_constraints <- function(x, y, control) {
-  lvls <- levels(y)
+# The limits for one version, as a one-row list. Every value is `NA` when the
+# version is unknown or `NULL`, which makes each check skip itself.
+tabpfn_limits_for <- function(version) {
+  unknown <- list(
+    rows_gpu = NA_real_,
+    rows_cpu = NA_real_,
+    predictors = NA_real_,
+    classes = NA_real_
+  )
 
-  x_dims <- dim(x)
-  if (x_dims[1] > row_limits & !control$ignore_pretraining_limits) {
-    cli::cli_abort(
-      call = NULL,
-      c(
-        i = "There are {format(x_dims[1], big.mark = ',')} rows in the training set.",
-        i = "TabPFN (version 2) is intended for training set sizes <=
-        {format(row_limits, big.mark = ',')} rows.",
-        i = "Consider setting the option {.arg ignore_pretraining_limits} to
-        {.val TRUE} or subset the training size using the
-        {.arg training_set_limit} argument."
-      )
-    )
+  if (is.null(version) || is.na(version)) {
+    return(unknown)
   }
-  if (x_dims[2] > col_limits & !control$ignore_pretraining_limits) {
+
+  idx <- match(version, tabpfn_limits$version)
+  if (is.na(idx)) {
+    return(unknown)
+  }
+
+  list(
+    rows_gpu = tabpfn_limits$rows_gpu[idx],
+    rows_cpu = tabpfn_limits$rows_cpu[idx],
+    predictors = tabpfn_limits$predictors[idx],
+    classes = tabpfn_limits$classes[idx]
+  )
+}
+
+# The row limit that applies to this fit, which depends on the device.
+device_row_limit <- function(limits, on_cpu) {
+  if (isTRUE(on_cpu)) {
+    return(limits$rows_cpu)
+  }
+  limits$rows_gpu
+}
+
+# The model version whose limits apply, which is not always the version handed
+# to Python. Returns `NA` when we cannot know, so the checks stand down.
+#
+#   1. the user named a version, so use it
+#   2. no version, but a `model_path`, so the version comes from that file.
+#      Python reads it out of the file name and falls back to v2 for a name it
+#      does not recognise, which would quietly apply the strictest limits in
+#      the table. Better to know nothing.
+#   3. neither, so the library's own default applies
+resolve_limit_version <- function(version, options) {
+  if (!is.null(version)) {
+    return(normalize_model_version(version))
+  }
+
+  if (!is.null(options$model_path)) {
+    return(NA_character_)
+  }
+
+  py_default_model_version()
+}
+
+# 1000 -> "1K", 1e6 -> "1M", for the documentation table.
+abbreviate_count <- function(x) {
+  if (is.na(x)) {
+    return("unknown")
+  }
+  if (x >= 1e6) {
+    return(paste0(x / 1e6, "M"))
+  }
+  if (x >= 1000) {
+    return(paste0(x / 1000, "K"))
+  }
+  as.character(x)
+}
+
+# Renders `tabpfn_limits` as roxygen markdown, so the table in `?tab_pfn` cannot
+# drift from the table the checks use. Called from `@eval`.
+limits_table_md <- function() {
+  fmt <- function(x) {
+    purrr::map_chr(x, abbreviate_count)
+  }
+
+  rows <- paste0(
+    "| `\"",
+    tabpfn_limits$version,
+    "\"` | ",
+    fmt(tabpfn_limits$rows_gpu),
+    " | ",
+    fmt(tabpfn_limits$rows_cpu),
+    " | ",
+    fmt(tabpfn_limits$predictors),
+    " | ",
+    fmt(tabpfn_limits$classes),
+    " |"
+  )
+
+  c(
+    "@section Data limits by version:",
+    "",
+    "| Version | Rows (GPU) | Rows (CPU) | Predictors | Classes |",
+    "| --- | --- | --- | --- | --- |",
+    rows,
+    "",
+    "The CPU column is not advice. TabPFN refuses a CPU fit above that many",
+    "rows, whatever the version's own limit says, so `\"v3.5\"` stops at 5,000",
+    "rows on a machine without a GPU. Set `ignore_pretraining_limits = TRUE`",
+    "in [control_tab_pfn()], or the `TABPFN_ALLOW_CPU_LARGE_DATASET`",
+    "environment variable, to lift it. The fit then runs, slowly.",
+    "",
+    "The row and predictor maxima trade off against each other, so you cannot",
+    "always reach both at once. The ceiling is not a promise either: for",
+    "`\"v3.5\"`, PriorLabs recommends up to 6,000 predictors even though the",
+    "model tops out at 20,000. See <https://docs.priorlabs.ai/models>."
+  )
+}
+
+# ------------------------------------------------------------------------------
+# Thin wrappers around the Python side, isolated for testing.
+
+# nocov start
+
+# The version the library uses when none is given. This is a constant in the
+# installed Python package, not a lookup against PriorLabs, and the
+# `TABPFN_MODEL_VERSION` environment variable overrides it.
+py_default_model_version <- function() {
+  out <- try(
+    reticulate::import("tabpfn.settings")$settings$tabpfn$model_version,
+    silent = TRUE
+  )
+  if (inherits(out, "try-error")) {
+    return(NA_character_)
+  }
+  as.character(out)
+}
+
+# Will this fit run on a CPU? Ask the library rather than torch: it resolves
+# `"auto"` itself, honours `TABPFN_EXCLUDE_DEVICES`, and falls back to CPU on
+# Apple silicon when torch is older than 2.6. Several CUDA devices come back
+# at once, so the question is whether any of them is a CPU, which is what
+# `_validate_num_samples_for_cpu()` asks on the Python side.
+py_fit_on_cpu <- function(device = "auto") {
+  out <- try(
+    reticulate::import("tabpfn.utils")$infer_devices(device %||% "auto"),
+    silent = TRUE
+  )
+  if (inherits(out, "try-error")) {
+    return(NA)
+  }
+  any(purrr::map_lgl(out, ~ identical(.x$type, "cpu")))
+}
+
+# Has the user told the library it may exceed the CPU ceiling? Read the same
+# settings object `validation.py` reads, so we cannot disagree with it.
+py_allows_large_cpu <- function() {
+  out <- try(
+    reticulate::import("tabpfn.settings")$settings$tabpfn$allow_cpu_large_dataset,
+    silent = TRUE
+  )
+  if (inherits(out, "try-error")) {
+    return(FALSE)
+  }
+  isTRUE(out)
+}
+
+# nocov end
+
+# Is either of the two things Python accepts as permission to exceed the CPU
+# ceiling in force? `validation.py` treats them the same way.
+limits_bypassed <- function(control) {
+  isTRUE(control$ignore_pretraining_limits) || py_allows_large_cpu()
+}
+
+check_data_constraints <- function(x, y, control, version = NULL) {
+  limits <- tabpfn_limits_for(version)
+  label <- version_label(version)
+
+  lvls <- levels(y)
+  x_dims <- dim(x)
+
+  # There is no check on rows here. `crop_training_set()` has already sampled
+  # the data down to the row limit for this version and device, so by the time
+  # we get here the count cannot be over it. The one thing that lifts the crop,
+  # `ignore_pretraining_limits`, would have switched a check off anyway.
+
+  if (
+    !is.na(limits$predictors) &&
+      x_dims[2] > limits$predictors &&
+      !control$ignore_pretraining_limits
+  ) {
     cli::cli_abort(
       call = NULL,
       c(
         i = "There are {format(x_dims[2], big.mark = ',')} predictors in the training set.",
-        i = "TabPFN (version 2) is intended for <= {col_limits} predictors.",
+        i = "{label} is intended for <= {format(limits$predictors, big.mark = ',', scientific = FALSE)} predictors.",
         i = "Consider setting the option {.arg ignore_pretraining_limits} to {.val TRUE} or subset the training size."
       )
     )
   }
 
-  if (!is.null(lvls) && length(lvls) > cls_limits) {
+  # Python's `validate_max_classes()` raises whatever the user asked for, so
+  # `ignore_pretraining_limits` deliberately does not apply here.
+  if (
+    !is.null(lvls) && !is.na(limits$classes) && length(lvls) > limits$classes
+  ) {
     cli::cli_abort(
       call = NULL,
       c(
         i = "There are {length(lvls)} classes in the outcome.",
-        x = "TabPFN (version 2) is intended for <= {cls_limits} classes and won't work with more."
+        x = "{label} is intended for <= {limits$classes} classes and won't work with more."
       )
     )
   }
@@ -122,9 +326,18 @@ check_data_constraints <- function(x, y, control) {
   invisible(NULL)
 }
 
+# How to name the model in a message. Falls back to something true but vague
+# when the version could not be resolved.
+version_label <- function(version) {
+  if (is.null(version) || is.na(version)) {
+    return("TabPFN")
+  }
+  paste("TabPFN", version)
+}
+
 # Sampling down the data for data constraints
 
-sample_indicies <- function(molded, size_limit = row_limits) {
+sample_indicies <- function(molded, size_limit) {
   num_rows <- nrow(molded$outcomes)
   if (num_rows <= size_limit) {
     return(integer(0))

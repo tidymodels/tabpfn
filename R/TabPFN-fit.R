@@ -39,8 +39,14 @@
 #' function or after? Default is `FALSE`.
 #'
 #' @param training_set_limit An integer greater than 2L (and possibly `Inf`)
-#' that can be used to keep the training data within the limits of the
-#' data constraints imposed by the Python library.
+#' for the largest training set to use. The default of 10,000 keeps a first fit
+#' quick on any machine. Larger data is sampled down to this many rows,
+#' stratified by class for classification and by quartile for regression, and
+#' you are told when that happens. Lower it to speed up a fit, or to make one
+#' possible at all on a machine that cannot hold the whole training set; raise
+#' it, or set `Inf`, to use more of your data. The model's own limit still
+#' applies on top of this, and on a CPU a much lower one does; see the *Data*
+#' section.
 #'
 #' @param version The model version, such as `"v2.5"` or `"v3.5"`. A bare
 #' number works too: `2.5`, `"2.5"`, and `"v2.5"` are equivalent. Call
@@ -168,26 +174,14 @@
 #' ## Data
 #'
 #' Each model version was pre-trained on data up to a certain size, and those
-#' sizes have grown a great deal across versions. Newest first:
+#' sizes have grown a great deal across versions. The *Data limits by version*
+#' section below has the numbers.
 #'
-#' | Version | Training rows | Predictors | Classes |
-#' | --- | --- | --- | --- |
-#' | `"v3.5"`, `"v3.5-fast"` | 1M | 20K | 160 |
-#' | `"v3"` | 1M | 2K | 160 |
-#' | `"v2.6"` | 100K | 2K | 10 |
-#' | `"v2.5"` | 50K | 2K | 10 |
-#' | `"v2"` | 10K | 500 | 10 |
-#'
-#' The row and predictor maxima trade off against each other, so you cannot
-#' always reach both at once. The ceiling in the table is not a promise either:
-#' for `"v3.5"`, PriorLabs recommends up to 6,000 predictors even though the
-#' model tops out at 20,000.
+#' By default `tab_pfn()` does not use all of your data: it samples down to
+#' `training_set_limit` rows, and tells you when it does.
 #'
 #' Predictors do not require preprocessing; missing values and factor vectors
 #' are allowed.
-#'
-#' See <https://docs.priorlabs.ai/models> for the constraints of the current
-#' models.
 #'
 #' ## Model Selection
 #'
@@ -267,6 +261,7 @@
 #' Frank Hutter. "Transformers can do Bayesian inference." _arXiv preprint_
 #' arXiv:2112.10510 (2021).
 #'
+#' @eval limits_table_md()
 #' @seealso [control_tab_pfn()], [predict.tab_pfn()]
 #' @examples
 #' predictors <- mtcars[, -1]
@@ -329,11 +324,7 @@ tab_pfn.data.frame <- function(
   check_number_whole(training_set_limit, min = 2, allow_infinite = TRUE)
 
   processed <- hardhat::mold(x, y)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit, options, version)
 
   tab_pfn_bridge(processed, options, version = version, ...)
 }
@@ -363,11 +354,7 @@ tab_pfn.matrix <- function(
   check_number_whole(training_set_limit, min = 2, allow_infinite = TRUE)
 
   processed <- hardhat::mold(x, y)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit, options, version)
 
   tab_pfn_bridge(processed, options, version = version, ...)
 }
@@ -404,11 +391,7 @@ tab_pfn.formula <- function(
     composition = "tibble"
   )
   processed <- hardhat::mold(formula, data, blueprint = bp)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit, options, version)
 
   tab_pfn_bridge(processed, options, version = version, ...)
 }
@@ -438,13 +421,98 @@ tab_pfn.recipe <- function(
   check_number_whole(training_set_limit, min = 2, allow_infinite = TRUE)
 
   processed <- hardhat::mold(x, data)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit, options, version)
 
   tab_pfn_bridge(processed, options, version = version, ...)
+}
+
+# ------------------------------------------------------------------------------
+# Cropping the training set
+#
+# Shared by all four fit methods, which are otherwise identical apart from the
+# `hardhat::mold()` call that produced `processed`.
+
+crop_training_set <- function(processed, training_set_limit, options, version) {
+  num_rows <- nrow(processed$outcomes)
+
+  limit_version <- resolve_limit_version(version, options)
+  limits <- tabpfn_limits_for(limit_version)
+  on_cpu <- py_fit_on_cpu(options$device)
+
+  # The device ceiling only binds while neither bypass is in force. Python
+  # treats `ignore_pretraining_limits` and `TABPFN_ALLOW_CPU_LARGE_DATASET`
+  # alike, so we have to as well, or we end up stricter than the library.
+  if (limits_bypassed(options)) {
+    cap <- Inf
+  } else {
+    cap <- device_row_limit(limits, on_cpu)
+  }
+  if (is.na(cap)) {
+    cap <- Inf
+  }
+
+  crop <- min(training_set_limit, cap)
+  if (num_rows <= crop) {
+    return(processed)
+  }
+
+  tr_ind <- sample_indicies(processed, size_limit = crop)
+  processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
+  processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
+
+  inform_crop(num_rows, crop, cap, limits, limit_version, on_cpu)
+
+  processed
+}
+
+# Say what was dropped, and why, and how to keep it. Which advice is useful
+# depends on whether the user's own limit or the device ceiling did the work.
+inform_crop <- function(num_rows, crop, cap, limits, version, on_cpu) {
+  fmt <- function(x) format(x, big.mark = ",", scientific = FALSE)
+  label <- version_label(version)
+  bound_by_device <- identical(crop, cap)
+
+  msg <- c("!" = "Training on {fmt(crop)} of {fmt(num_rows)} rows.")
+
+  if (bound_by_device && isTRUE(on_cpu)) {
+    msg <- c(
+      msg,
+      i = "{label} is limited to {fmt(cap)} rows on a CPU{gpu_aside(limits)}.",
+      i = "Set {.code training_set_limit = Inf} and
+           {.code control_tab_pfn(ignore_pretraining_limits = TRUE)} to use all
+           of the data.",
+      i = "The {.envvar TABPFN_ALLOW_CPU_LARGE_DATASET} environment variable
+           lifts the CPU limit too.",
+      i = "A CPU fit that size will be slow."
+    )
+    cli::cli_inform(msg)
+    return(invisible(NULL))
+  }
+
+  if (bound_by_device) {
+    msg <- c(msg, i = "{label} supports up to {fmt(cap)} rows.")
+  } else if (!is.na(limits$rows_gpu)) {
+    msg <- c(msg, i = "{label} supports up to {fmt(limits$rows_gpu)} rows.")
+  }
+
+  msg <- c(
+    msg,
+    i = "Set {.arg training_set_limit} higher, or to {.code Inf}, to use all of
+         the data."
+  )
+  cli::cli_inform(msg)
+  invisible(NULL)
+}
+
+# Mention the model's own ceiling when the CPU one is what bit.
+gpu_aside <- function(limits) {
+  if (is.na(limits$rows_gpu)) {
+    return("")
+  }
+  paste0(
+    ". Its own limit is ",
+    format(limits$rows_gpu, big.mark = ",", scientific = FALSE)
+  )
 }
 
 # ------------------------------------------------------------------------------
@@ -461,7 +529,15 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
   predictors <- processed$predictors
   outcome <- processed$outcomes[[1]]
 
-  check_data_constraints(predictors, outcome, options)
+  # Not the same as `version`: this is the version whose limits apply, which is
+  # resolved even when the user named none. `version` stays as it was, because
+  # `NULL` is what tells `tab_pfn_impl()` to let the library pick the model.
+  check_data_constraints(
+    predictors,
+    outcome,
+    options,
+    version = resolve_limit_version(version, options)
+  )
 
   res <- tab_pfn_impl(predictors, outcome, options, version = version)
 
@@ -576,10 +652,10 @@ extract_model_device <- function(model_fit) {
 #' @export
 print.tab_pfn <- function(x, ...) {
   type <- ifelse(is.null(x$levels), "Regression", "Classification")
-  model <- if (is.null(x$version) || identical(x$version, "unknown")) {
-    "TabPFN"
+  if (is.null(x$version) || identical(x$version, "unknown")) {
+    model <- "TabPFN"
   } else {
-    x$version
+    model <- x$version
   }
   cli::cli_h2("{model} {type} Model")
   cli::cli_inform("Training set:")

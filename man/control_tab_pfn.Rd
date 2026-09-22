@@ -22,10 +22,11 @@ A value of -1L indicates all possible resources.}
 \item{device}{A character value for the device used for torch (e.g., \code{"cpu"},
 \code{"cuda"}, \code{"mps"}, etc.). Th default is \code{"auto"}.}
 
-\item{ignore_pretraining_limits}{A logical to bypass the default data limits
-on:the number of training set samples (10,000) and, the number of
-predictors (500). There is an unchangeable limit to the number of classes
-(10).}
+\item{ignore_pretraining_limits}{A logical to bypass the data limits on the
+number of training set samples and predictors, which vary by model
+version; see the \emph{Data} section of \code{\link[=tab_pfn]{tab_pfn()}}. This also lifts the much
+lower limit that applies when the fit runs on a CPU. The limit on the
+number of classes always applies.}
 
 \item{inference_precision}{A character value for the trade off between speed
 and reproducibility. This can be a torch \code{dtype}, \code{"autocast"} (for torch's

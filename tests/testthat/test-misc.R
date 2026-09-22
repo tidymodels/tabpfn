@@ -87,3 +87,34 @@ test_that("uses_canonical_env is FALSE when Python is unresolved", {
 
   expect_false(uses_canonical_env())
 })
+
+test_that("the limits table matches the installed library", {
+  # Ground truth lives in the checkpoints, so this needs a token and downloads
+  # a model per version. Gated for the same reason the install tests are.
+  skip_if_not_installing()
+  skip_if_no_tabpfn()
+
+  # Fit a classifier, not a regressor: a regression checkpoint carries no class
+  # limit, and some versions report `MAX_NUMBER_OF_CLASSES` as 0 there.
+  y <- factor(mtcars$am)
+
+  for (v in tabpfn:::tabpfn_limits$version) {
+    ours <- tabpfn:::tabpfn_limits_for(v)
+    fit <- tab_pfn(mtcars[, -1], y, version = v)
+    theirs <- fit$fit$inference_config_
+
+    expect_equal(ours$rows_gpu, theirs$MAX_NUMBER_OF_SAMPLES, info = v)
+    expect_equal(ours$rows_cpu, theirs$MAX_CPU_SAMPLES, info = v)
+    expect_equal(ours$predictors, theirs$MAX_NUMBER_OF_FEATURES, info = v)
+    expect_equal(ours$classes, theirs$MAX_NUMBER_OF_CLASSES, info = v)
+  }
+})
+
+test_that("every version the library offers is in the limits table", {
+  skip_if_no_tabpfn()
+
+  # A new model version that we do not know about is approved by default, which
+  # is safe but means no fast local check. This fails when it is time to add a
+  # row; see the comment above `tabpfn_limits`.
+  expect_setequal(tabpfn:::tabpfn_limits$version, tabpfn_list_versions())
+})

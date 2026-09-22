@@ -98,8 +98,14 @@ only.}
 function or after? Default is \code{FALSE}.}
 
 \item{training_set_limit}{An integer greater than 2L (and possibly \code{Inf})
-that can be used to keep the training data within the limits of the
-data constraints imposed by the Python library.}
+for the largest training set to use. The default of 10,000 keeps a first fit
+quick on any machine. Larger data is sampled down to this many rows,
+stratified by class for classification and by quartile for regression, and
+you are told when that happens. Lower it to speed up a fit, or to make one
+possible at all on a machine that cannot hold the whole training set; raise
+it, or set \code{Inf}, to use more of your data. The model's own limit still
+applies on top of this, and on a CPU a much lower one does; see the \emph{Data}
+section.}
 
 \item{version}{The model version, such as \code{"v2.5"} or \code{"v3.5"}. A bare
 number works too: \code{2.5}, \code{"2.5"}, and \code{"v2.5"} are equivalent. Call
@@ -258,26 +264,14 @@ before fitting a model); if Python is already loaded, restart R first.
 \subsection{Data}{
 
 Each model version was pre-trained on data up to a certain size, and those
-sizes have grown a great deal across versions. Newest first:\tabular{llll}{
-   Version \tab Training rows \tab Predictors \tab Classes \cr
-   \code{"v3.5"}, \code{"v3.5-fast"} \tab 1M \tab 20K \tab 160 \cr
-   \code{"v3"} \tab 1M \tab 2K \tab 160 \cr
-   \code{"v2.6"} \tab 100K \tab 2K \tab 10 \cr
-   \code{"v2.5"} \tab 50K \tab 2K \tab 10 \cr
-   \code{"v2"} \tab 10K \tab 500 \tab 10 \cr
-}
+sizes have grown a great deal across versions. The \emph{Data limits by version}
+section below has the numbers.
 
-
-The row and predictor maxima trade off against each other, so you cannot
-always reach both at once. The ceiling in the table is not a promise either:
-for \code{"v3.5"}, PriorLabs recommends up to 6,000 predictors even though the
-model tops out at 20,000.
+By default \code{tab_pfn()} does not use all of your data: it samples down to
+\code{training_set_limit} rows, and tells you when it does.
 
 Predictors do not require preprocessing; missing values and factor vectors
 are allowed.
-
-See \url{https://docs.priorlabs.ai/models} for the constraints of the current
-models.
 }
 
 \subsection{Model Selection}{
@@ -332,6 +326,30 @@ exp(value / softmax_temperature)
 A value of \code{softmax_temperature = 1} results in a plain softmax value.
 }
 }
+\section{Data limits by version}{
+\tabular{lllll}{
+   Version \tab Rows (GPU) \tab Rows (CPU) \tab Predictors \tab Classes \cr
+   \code{"v3.5-fast"} \tab 1M \tab 5K \tab 20K \tab 160 \cr
+   \code{"v3.5"} \tab 1M \tab 5K \tab 20K \tab 160 \cr
+   \code{"v3"} \tab 1M \tab 5K \tab 2K \tab 160 \cr
+   \code{"v2.6"} \tab 100K \tab 1K \tab 2K \tab 10 \cr
+   \code{"v2.5"} \tab 50K \tab 1K \tab 2K \tab 10 \cr
+   \code{"v2"} \tab 10K \tab 1K \tab 500 \tab 10 \cr
+}
+
+
+The CPU column is not advice. TabPFN refuses a CPU fit above that many
+rows, whatever the version's own limit says, so \code{"v3.5"} stops at 5,000
+rows on a machine without a GPU. Set \code{ignore_pretraining_limits = TRUE}
+in \code{\link[=control_tab_pfn]{control_tab_pfn()}}, or the \code{TABPFN_ALLOW_CPU_LARGE_DATASET}
+environment variable, to lift it. The fit then runs, slowly.
+
+The row and predictor maxima trade off against each other, so you cannot
+always reach both at once. The ceiling is not a promise either: for
+\code{"v3.5"}, PriorLabs recommends up to 6,000 predictors even though the
+model tops out at 20,000. See \url{https://docs.priorlabs.ai/models}.
+}
+
 \examples{
 predictors <- mtcars[, -1]
 outcome <- mtcars[, 1]

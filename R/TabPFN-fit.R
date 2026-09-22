@@ -442,11 +442,17 @@ crop_training_set <- function(processed, training_set_limit, options, version) {
   # The device ceiling only binds while neither bypass is in force. Python
   # treats `ignore_pretraining_limits` and `TABPFN_ALLOW_CPU_LARGE_DATASET`
   # alike, so we have to as well, or we end up stricter than the library.
-  if (limits_bypassed(options)) {
+  bypassed <- isTRUE(options$ignore_pretraining_limits) || py_allows_large_cpu()
+
+  if (bypassed) {
     cap <- Inf
+  } else if (isTRUE(on_cpu)) {
+    cap <- limits$rows_cpu
   } else {
-    cap <- device_row_limit(limits, on_cpu)
+    cap <- limits$rows_gpu
   }
+
+  # An unknown version leaves every limit `NA`, which means no ceiling of ours.
   if (is.na(cap)) {
     cap <- Inf
   }
@@ -475,9 +481,17 @@ inform_crop <- function(num_rows, crop, cap, limits, version, on_cpu) {
   msg <- c("!" = "Training on {fmt(crop)} of {fmt(num_rows)} rows.")
 
   if (bound_by_device && isTRUE(on_cpu)) {
+    # Worth naming the model's own ceiling here, so the CPU figure does not
+    # read as the model's limit.
+    if (is.na(limits$rows_gpu)) {
+      aside <- ""
+    } else {
+      aside <- paste0(". Its own limit is ", fmt(limits$rows_gpu))
+    }
+
     msg <- c(
       msg,
-      i = "{label} is limited to {fmt(cap)} rows on a CPU{gpu_aside(limits)}.",
+      i = "{label} is limited to {fmt(cap)} rows on a CPU{aside}.",
       i = "Set {.code training_set_limit = Inf} and
            {.code control_tab_pfn(ignore_pretraining_limits = TRUE)} to use all
            of the data.",
@@ -502,17 +516,6 @@ inform_crop <- function(num_rows, crop, cap, limits, version, on_cpu) {
   )
   cli::cli_inform(msg)
   invisible(NULL)
-}
-
-# Mention the model's own ceiling when the CPU one is what bit.
-gpu_aside <- function(limits) {
-  if (is.na(limits$rows_gpu)) {
-    return("")
-  }
-  paste0(
-    ". Its own limit is ",
-    format(limits$rows_gpu, big.mark = ",", scientific = FALSE)
-  )
 }
 
 # ------------------------------------------------------------------------------
@@ -651,7 +654,11 @@ extract_model_device <- function(model_fit) {
 
 #' @export
 print.tab_pfn <- function(x, ...) {
-  type <- ifelse(is.null(x$levels), "Regression", "Classification")
+  if (is.null(x$levels)) {
+    type <- "Regression"
+  } else {
+    type <- "Classification"
+  }
   if (is.null(x$version) || identical(x$version, "unknown")) {
     model <- "TabPFN"
   } else {

@@ -142,14 +142,6 @@ tabpfn_limits_for <- function(version) {
   )
 }
 
-# The row limit that applies to this fit, which depends on the device.
-device_row_limit <- function(limits, on_cpu) {
-  if (isTRUE(on_cpu)) {
-    return(limits$rows_cpu)
-  }
-  limits$rows_gpu
-}
-
 # The model version whose limits apply, which is not always the version handed
 # to Python. Returns `NA` when we cannot know, so the checks stand down.
 #
@@ -275,12 +267,6 @@ py_allows_large_cpu <- function() {
 }
 
 # nocov end
-
-# Is either of the two things Python accepts as permission to exceed the CPU
-# ceiling in force? `validation.py` treats them the same way.
-limits_bypassed <- function(control) {
-  isTRUE(control$ignore_pretraining_limits) || py_allows_large_cpu()
-}
 
 check_data_constraints <- function(x, y, control, version = NULL) {
   limits <- tabpfn_limits_for(version)

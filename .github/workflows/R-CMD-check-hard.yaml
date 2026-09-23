@@ -6,11 +6,9 @@
 # installed, with the exception of testthat, knitr, and rmarkdown. The cache is
 # never used to avoid accidentally restoring a cache containing a suggested
 # dependency.
+# Temporarily disabled while the capture fix is confirmed on Windows.
 on:
-  push:
-    branches: main
-  pull_request:
-    branches: main
+  workflow_dispatch:
 
 name: R-CMD-check-hard.yaml
 

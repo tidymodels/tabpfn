@@ -78,36 +78,9 @@ check_libomp <- function() {
 
 # ------------------------------------------------------------------------------
 
-# The data limits of each model version.
-#
-# `rows_gpu`, `predictors` and `classes` mirror `MAX_NUMBER_OF_SAMPLES`,
-# `MAX_NUMBER_OF_FEATURES` and `MAX_NUMBER_OF_CLASSES` on the Python
-# `InferenceConfig`. `rows_cpu` mirrors `MAX_CPU_SAMPLES`, which comes from
-# `tabpfn.inference_config.cpu_sample_limit()` and is a far lower ceiling that
-# applies when the fit runs on a CPU.
-#
-# HOW TO UPDATE, when a new model version ships:
-#
-#   * Read the numbers off a fitted model, do not copy them from
-#     <https://docs.priorlabs.ai/models>. The site and the library disagree:
-#     the site lists 100K rows for v2.5, the library reports 50K.
-#
-#       m <- tab_pfn(mtcars[, -1], mtcars[, 1], version = "v3.5")
-#       m$fit$inference_config_$MAX_NUMBER_OF_SAMPLES
-#
-#   * One row per version, even where the numbers repeat. A row is one fact
-#     about one version.
-#
-#   * An entry must be exact or absent. `NA` means "we do not know", which
-#     approves and lets Python decide. Being too permissive is cheap, because
-#     Python catches it; being too strict rejects work that would have
-#     succeeded.
-#
-# Nothing in the package enforces these numbers: the Python library does that,
-# and raises its own error. The table exists so `?tab_pfn` can show the limits
-# without anyone retyping them. `test-misc.R` checks it against a live model
-# for every version it lists, so a stale entry fails there rather than in the
-# help page.
+# Documentation only: the Python library enforces these and raises its own
+# error. Read new numbers off a fitted model's `inference_config_`, not from
+# docs.priorlabs.ai, which disagrees with the library on v2.5.
 tabpfn_limits <- tibble::tribble(
   ~version,    ~rows_gpu, ~rows_cpu, ~predictors, ~classes,
   "v3.5-fast", 1000000,   5000,      20000,       160,
@@ -177,6 +150,26 @@ limits_table_md <- function() {
   )
 }
 
+# Run `expr`, returning anything Python printed. Not `py_capture_output()`: it
+# also reassigns logging handler streams, which raises on a read-only one (#40).
+with_py_output <- function(expr) {
+  sys <- reticulate::import("sys", convert = FALSE)
+  buffer <- reticulate::import("io", convert = FALSE)$StringIO()
+
+  old_out <- sys$stdout
+  old_err <- sys$stderr
+  sys$stdout <- buffer
+  sys$stderr <- buffer
+  on.exit({
+    sys$stdout <- old_out
+    sys$stderr <- old_err
+  })
+
+  force(expr)
+  reticulate::py_to_r(buffer$getvalue())
+}
+
+# ------------------------------------------------------------------------------
 # Sampling down the data when the user asks for a smaller training set.
 
 sample_indicies <- function(molded, size_limit) {

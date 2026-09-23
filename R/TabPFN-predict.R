@@ -139,7 +139,7 @@ predict.tabpfn.regressor.TabPFNRegressor <- function(
   quantile_levels = NULL,
   ...
 ) {
-  py_msg <- reticulate::py_capture_output(
+  py_msg <- with_py_output(
     res <- tryCatch(
       object$predict(
         new_data,
@@ -175,7 +175,7 @@ predict.tabpfn.classifier.TabPFNClassifier <- function(
   type = NULL,
   ...
 ) {
-  py_msg <- reticulate::py_capture_output(
+  py_msg <- with_py_output(
     res <- tryCatch(object$predict_proba(new_data), error = function(cnd) cnd)
   )
 

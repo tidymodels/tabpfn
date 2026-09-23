@@ -424,11 +424,8 @@ tab_pfn.recipe <- function(
 }
 
 # ------------------------------------------------------------------------------
-# Cropping the training set
-#
-# Only runs when the user asks for it: `training_set_limit` defaults to `Inf`.
-# Shared by all four fit methods, which are otherwise identical apart from the
-# `hardhat::mold()` call that produced `processed`.
+# Shared by the four fit methods. Only samples when asked: `training_set_limit`
+# defaults to `Inf`.
 
 crop_training_set <- function(processed, training_set_limit) {
   if (nrow(processed$outcomes) <= training_set_limit) {
@@ -443,12 +440,8 @@ crop_training_set <- function(processed, training_set_limit) {
 }
 
 # ------------------------------------------------------------------------------
-# Failures from the Python library
-#
-# The library validates the data against the checkpoint in use and raises with
-# the offending count and the limit. That sentence is worth keeping. What comes
-# wrapped around it is not: the exception class, reticulate's footer, and advice
-# written in Python.
+# Keep what the library said about the failure. Drop the exception class,
+# reticulate's footer, and its advice, which is written in Python syntax.
 
 abort_python_fit <- function(cnd, call = quote(tab_pfn())) {
   msg <- clean_python_message(conditionMessage(cnd))
@@ -481,12 +474,8 @@ clean_python_message <- function(msg) {
   trimws(gsub("[[:space:]]+", " ", msg))
 }
 
-# What to do about it, in R.
-#
-# Matching on the library's prose is the fragile part of this, so it is kept to
-# single words that name the thing at fault rather than whole phrases, and a
-# message we do not recognise gets no advice rather than wrong advice. CPU is
-# tested first because its message mentions samples as well.
+# What to do about it, in R. Matched on single words so a rewording upstream
+# costs us the advice, not the message. CPU first: its message says samples too.
 python_fit_hints <- function(msg) {
   sample_or_lift <- "Set {.arg training_set_limit} to fit on a sample,
                      or {.code control_tab_pfn(ignore_pretraining_limits = TRUE)}
@@ -538,10 +527,8 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
   predictors <- processed$predictors
   outcome <- processed$outcomes[[1]]
 
-  # The data limits are not checked here. The Python library validates rows,
-  # predictors and classes against the checkpoint actually in use, and raises
-  # with the offending count and the limit, so a second copy of those rules in
-  # R could only be wrong in ways the library is not.
+  # No data limits are checked here. The Python library validates against the
+  # checkpoint in use, so a copy of those rules in R could only be staler.
 
   res <- tab_pfn_impl(predictors, outcome, options, version = version)
 
@@ -589,7 +576,7 @@ tab_pfn_impl <- function(x, y, opts, version = NULL) {
     mod_obj <- rlang::eval_bare(cls_cl)
   }
 
-  py_msg <- reticulate::py_capture_output(
+  py_msg <- with_py_output(
     model_fit <- tryCatch(mod_obj$fit(x, y), error = function(cnd) cnd)
   )
 

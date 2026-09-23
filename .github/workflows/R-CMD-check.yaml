@@ -4,10 +4,10 @@
 # NOTE: This workflow is overkill for most R packages and
 # check-standard.yaml is likely a better choice.
 # usethis::use_github_action("check-standard") will install it.
-# Disabled while the torch pin is confirmed in test-coverage.yaml, which fails
-# faster. Restore the push and pull_request triggers once that run is clean.
 on:
-  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
 
 name: R-CMD-check.yaml
 
@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           uv venv ~/.virtualenvs/r-reticulate --python 3.13.1
-          uv pip install tabpfn --python ~/.virtualenvs/r-reticulate
+          uv pip install tabpfn 'torch==2.13.0' --python ~/.virtualenvs/r-reticulate
 
       - name: Get TabPFN cache info
         id: tabpfn-cache

@@ -1,7 +1,11 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
-# Temporarily disabled while the capture fix is confirmed on Windows.
 on:
+  push:
+    branches: [main, master]
+  pull_request:
+  release:
+    types: [published]
   workflow_dispatch:
 
 name: pkgdown.yaml

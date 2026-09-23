@@ -4,6 +4,8 @@
 
 - `tab_pfn()` no longer checks your data against the model's limits; the Python library does, and its error names the model in use. Limits now follow the version you chose rather than one fixed set.
 
+- Failures coming from the Python library are now reported as R errors. The message keeps what the library said and drops the wrapper around it, and `tab_pfn()` adds what to do about it in R, such as lowering `training_set_limit`. This covers `predict()` as well.
+
 - `?tab_pfn` now lists each model version's limits, including the lower one that applies on a CPU, and its examples use current versions rather than earlier ones.
 
 - Test snapshots now record TabPFN v3.5, the model the Python library currently defaults to. They will need updating again whenever that default moves.

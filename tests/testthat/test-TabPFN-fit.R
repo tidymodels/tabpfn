@@ -133,3 +133,109 @@ test_that("the Python library is what enforces the data limits", {
     )
   )
 })
+
+test_that("clean_python_message strips the plumbing", {
+  msg <- paste0(
+    "tabpfn.errors.TabPFNValidationError: Number of samples `50,001` in the ",
+    "input data is greater than the maximum number of samples `50,000` ",
+    "officially supported by TabPFN. Set `ignore_pretraining_limits=True` to ",
+    "override this error!\nRun `reticulate::py_last_error()` for details."
+  )
+
+  expect_equal(
+    tabpfn:::clean_python_message(msg),
+    paste0(
+      "Number of samples `50,001` in the input data is greater than the ",
+      "maximum number of samples `50,000` officially supported by TabPFN."
+    )
+  )
+})
+
+test_that("clean_python_message drops the footer wherever it sits", {
+  # reticulate puts it in different places depending on the session.
+  expect_equal(
+    tabpfn:::clean_python_message(
+      "X.Error: Too many rows.\nRun `reticulate::py_last_error()` for details."
+    ),
+    "Too many rows."
+  )
+  expect_equal(
+    tabpfn:::clean_python_message(
+      paste(
+        "X.Error: Too many rows.",
+        "Run `reticulate::py_last_error()` for details.",
+        "And more."
+      )
+    ),
+    "Too many rows. And more."
+  )
+})
+
+test_that("clean_python_message keeps a line that ends in a URL", {
+  # Nothing but the newline separates this from the line after it, so dropping
+  # by sentence alone would take the advice about a GPU with it.
+  msg <- paste0(
+    "RuntimeError: Running on CPU with more than 5000 samples is not allowed.\n",
+    "To override this behavior, set ignore_pretraining_limits=True.\n",
+    "Alternatively, consider a GPU or https://github.com/PriorLabs/tabpfn-client"
+  )
+
+  out <- tabpfn:::clean_python_message(msg)
+  expect_match(out, "Alternatively", fixed = TRUE)
+  expect_no_match(out, "ignore_pretraining_limits", fixed = TRUE)
+})
+
+test_that("python_fit_hints picks advice by what failed", {
+  expect_match(
+    tabpfn:::python_fit_hints("Running on CPU with more than 5000 samples"),
+    "TABPFN_ALLOW_CPU_LARGE_DATASET"
+  )
+  expect_match(
+    tabpfn:::python_fit_hints("maximum number of samples"),
+    "training_set_limit"
+  )
+  # Sampling rows cannot help with too many columns, so it is not offered.
+  expect_no_match(
+    tabpfn:::python_fit_hints("maximum number of features"),
+    "training_set_limit"
+  )
+  expect_match(
+    tabpfn:::python_fit_hints("maximum number of classes"),
+    "version"
+  )
+})
+
+test_that("an unrecognised failure gets no advice", {
+  expect_length(tabpfn:::python_fit_hints("Something new and unmatched."), 0)
+})
+
+test_that("a real limit failure is rendered by us, not by reticulate", {
+  skip_if_not_installing()
+  skip_if_no_tabpfn()
+
+  set.seed(1)
+  n <- 50001
+  d <- data.frame(y = rnorm(n), x1 = rnorm(n), x2 = rnorm(n))
+
+  cnd <- tryCatch(
+    tab_pfn(d[, 2:3], d$y, version = "v2.5"),
+    error = function(cnd) cnd
+  )
+  msg <- conditionMessage(cnd)
+
+  # Nothing here pins the library's wording, so a rewording upstream will not
+  # fail this. What it checks is the plumbing we remove and the advice we add.
+  expect_no_match(msg, "py_last_error", fixed = TRUE)
+  expect_no_match(msg, "py_call_impl", fixed = TRUE)
+  expect_no_match(msg, "TabPFNValidationError", fixed = TRUE)
+  expect_no_match(msg, "ignore_pretraining_limits=True", fixed = TRUE)
+
+  expect_match(msg, "training_set_limit", fixed = TRUE)
+  expect_match(
+    msg,
+    "control_tab_pfn(ignore_pretraining_limits = TRUE)",
+    fixed = TRUE
+  )
+
+  expect_equal(conditionCall(cnd), quote(tab_pfn()))
+})

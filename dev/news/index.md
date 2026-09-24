@@ -2,6 +2,17 @@
 
 ## tabpfn (development version)
 
+- Documented how to pin a version of one of the Python `tabpfn`
+  library’s own dependencies, such as `torch` or `numpy`, when a new
+  release of that dependency breaks a `tabpfn` version that worked
+  before. Use `extra_packages` in
+  [`install_tabpfn()`](https://tabpfn.tidymodels.org/dev/reference/install_tabpfn.md)
+  for the persistent environment, or
+  [`reticulate::py_require()`](https://rstudio.github.io/reticulate/reference/py_require.html)
+  for the ephemeral one. See the “Pinning dependencies” section in
+  [`?install_tabpfn`](https://tabpfn.tidymodels.org/dev/reference/install_tabpfn.md)
+  ([\#40](https://github.com/tidymodels/tabpfn/issues/40)).
+
 - The `training_set_limit` argument of
   [`tab_pfn()`](https://tabpfn.tidymodels.org/dev/reference/tab_pfn.md)
   now defaults to `Inf`, so all of your data is used. It previously

@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           uv venv ~/.virtualenvs/r-reticulate --python 3.13.1
-          uv pip install tabpfn --python ~/.virtualenvs/r-reticulate
+          uv pip install tabpfn 'torch==2.13.0' --python ~/.virtualenvs/r-reticulate
 
       - name: Get TabPFN cache info
         id: tabpfn-cache

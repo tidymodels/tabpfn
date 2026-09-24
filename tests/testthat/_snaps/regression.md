@@ -4,7 +4,7 @@
       mod_df
     Message
       
-      -- TabPFN-v3 Regression Model --
+      -- TabPFN-v3.5 Regression Model --
       
       Training set:
       i 32 data points
@@ -21,7 +21,7 @@
       mod_f
     Message
       
-      -- TabPFN-v3 Regression Model --
+      -- TabPFN-v3.5 Regression Model --
       
       Training set:
       i 32 data points
@@ -38,7 +38,7 @@
       mod_mat
     Message
       
-      -- TabPFN-v3 Regression Model --
+      -- TabPFN-v3.5 Regression Model --
       
       Training set:
       i 32 data points
@@ -91,7 +91,7 @@
       mod_rec
     Message
       
-      -- TabPFN-v3 Regression Model --
+      -- TabPFN-v3.5 Regression Model --
       
       Training set:
       i 20 data points

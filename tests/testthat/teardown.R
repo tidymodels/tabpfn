@@ -13,8 +13,11 @@ for (dir in torch_dirs) {
   }
 }
 
-# Also clean up the test-specific temp cache
-temp_cache <- file.path(tempdir(), "torchinductor_test")
-if (dir.exists(temp_cache)) {
-  unlink(temp_cache, recursive = TRUE, force = TRUE)
-}
+# Also clean up the test-specific temp caches
+pkg_cache_dirnames <-
+  c("torchinductor_test", "skrub_data_test")
+unlink(
+  file.path(tempdir(), pkg_cache_dirnames),
+  recursive = TRUE,
+  force = TRUE
+)

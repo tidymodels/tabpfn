@@ -1,5 +1,7 @@
 # tabpfn 0.4.0
 
+- Documented how to pin a version of one of the Python `tabpfn` library's own dependencies, such as `torch` or `numpy`, when a new release of that dependency breaks a `tabpfn` version that worked before. Use `extra_packages` in `install_tabpfn()` for the persistent environment, or `reticulate::py_require()` for the ephemeral one. See the "Pinning dependencies" section in `?install_tabpfn` (#40).
+
 - The `training_set_limit` argument of `tab_pfn()` now defaults to `Inf`, so all of your data is used. It previously sampled anything larger down to 10,000 rows without saying so.
 
 - `tab_pfn()` no longer checks your data against the model's limits; the Python library does, and its error names the model in use. Limits now follow the version you chose rather than one fixed set.

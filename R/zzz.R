@@ -6,8 +6,22 @@
   # Set PyTorch TorchInductor cache to R's temp directory
   # This prevents 'torchinductor' directory creation in working directory
   if (Sys.getenv("TORCHINDUCTOR_CACHE_DIR") == "") {
-    torch_cache_dir <- file.path(tempdir(), "torchinductor")
+    torch_cache_dir <- file.path(
+      tools::R_user_dir("tabpfn", "cache"),
+      "torchinductor"
+    )
     Sys.setenv(TORCHINDUCTOR_CACHE_DIR = torch_cache_dir)
+  }
+
+  # Set skrub's data cache to R's per-package user cache directory
+  # This prevents 'skrub_data' directory creation in the user's home directory,
+  # while still persisting the cache across sessions
+  if (Sys.getenv("SKB_DATA_DIRECTORY") == "") {
+    skrub_data_dir <- file.path(
+      tools::R_user_dir("tabpfn", "cache"),
+      "skrub_data"
+    )
+    Sys.setenv(SKB_DATA_DIRECTORY = skrub_data_dir)
   }
 
   reticulate::py_require("tabpfn")

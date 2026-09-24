@@ -20,7 +20,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -33,7 +33,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -46,7 +46,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -59,7 +59,7 @@ tab_pfn(x, ...)
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -97,12 +97,16 @@ only.}
 \code{num_estimators > 1}, should the average be done before using the softmax
 function or after? Default is \code{FALSE}.}
 
-\item{training_set_limit}{An integer greater than 2L (and possibly \code{Inf})
-that can be used to keep the training data within the limits of the
-data constraints imposed by the Python library.}
+\item{training_set_limit}{An integer greater than 2L, or \code{Inf} (the default)
+to use every row. Anything smaller samples the training set down to that many
+rows, stratified by class for classification and by quartile for regression.
+Use it to speed up a fit, or to make one possible at all on a machine that
+cannot hold the whole training set.}
 
-\item{version}{A character string for the model version (e.g., \code{"v2"},
-\code{"v2.5"}). When \code{NULL} (the default), the Python library's current default
+\item{version}{The model version, such as \code{"v2.5"} or \code{"v3.5"}. A bare
+number works too: \code{2.5}, \code{"2.5"}, and \code{"v2.5"} are equivalent. Call
+\code{\link[=tabpfn_list_versions]{tabpfn_list_versions()}} for the versions your installed Python library
+offers. When \code{NULL} (the default), the Python library's current default
 version is used. When set, the model is initialized via
 \code{create_default_for_version()} with the corresponding \code{ModelVersion} enum
 value.}
@@ -156,12 +160,13 @@ specific computations and might be slower than the CPU for some data sets.
 \subsection{License Requirements}{
 
 Starting with version 2.5, using TabPFN requires accepting the model license
-and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
-has its own license that must be accepted individually.
+and obtaining a token from PriorLabs. Every version from 2.5 onwards has its
+own license, and you must accept each one on its own. Accepting the license
+for one version does not cover the others.
 
 To set up access:
 \enumerate{
-\item Visit \url{https://platform.priorlabs.ai:443/} and create an
+\item Visit \url{https://ux.priorlabs.ai} and create an
 account.
 \item Go to the \strong{License} tab and accept the license for each model version
 you intend to use.
@@ -254,15 +259,13 @@ before fitting a model); if Python is already loaded, restart R first.
 
 \subsection{Data}{
 
-Be default, there are limits to the training data dimensions:
-\itemize{
-\item Version 2.0: number of training set samples (10,000) and, the number of
-predictors (500). There is an unchangeable limit to the number of classes
-(10).
-\item Version 2.5: number of training set samples (50,000) and, the number of
-predictors (2,000). There is an unchangeable limit to the number of classes
-(10).
-}
+Each model version was pre-trained on data up to a certain size, and those
+sizes have grown a great deal across versions. The \emph{Data limits by version}
+section below has the numbers.
+
+These limits are enforced by the Python library, which raises when data
+exceeds them. \pkg{tabpfn} does not check them itself, so the error you see
+names the model actually loaded.
 
 Predictors do not require preprocessing; missing values and factor vectors
 are allowed.
@@ -274,15 +277,22 @@ By default, TabPFN uses the Python library's current default model version.
 There are two ways to override this.
 \subsection{Selecting a model version}{
 
-Use the \code{version} argument to select a specific released model version. For
-example:
+Use the \code{version} argument to select a specific released model version:
 
 \preformatted{
-  # Use version 2.0
-  mod <- tab_pfn(predictors, outcome, version = "v2")
-
-  # Use version 2.5
   mod <- tab_pfn(predictors, outcome, version = "v2.5")
+
+  # A bare number works too
+  mod <- tab_pfn(predictors, outcome, version = 3.5)
+}
+
+New model versions are released from time to time, so rather than listing
+them here, call \code{\link[=tabpfn_list_versions]{tabpfn_list_versions()}} to see what your installed Python
+library offers:
+
+\preformatted{
+  > tabpfn_list_versions()
+  [1] "v2"    "v2.5"  "v2.6"  "v3"    "v3.5"  "v3.5-fast"
 }
 }
 
@@ -313,6 +323,34 @@ exp(value / softmax_temperature)
 A value of \code{softmax_temperature = 1} results in a plain softmax value.
 }
 }
+\section{Data limits by version}{
+\tabular{lllll}{
+   Version \tab Rows (GPU) \tab Rows (CPU) \tab Predictors \tab Classes \cr
+   \code{"v3.5-fast"} \tab 1M \tab 5K \tab 20K \tab 160 \cr
+   \code{"v3.5"} \tab 1M \tab 5K \tab 20K \tab 160 \cr
+   \code{"v3"} \tab 1M \tab 5K \tab 2K \tab 160 \cr
+   \code{"v2.6"} \tab 100K \tab 1K \tab 2K \tab 10 \cr
+   \code{"v2.5"} \tab 50K \tab 1K \tab 2K \tab 10 \cr
+   \code{"v2"} \tab 10K \tab 1K \tab 500 \tab 10 \cr
+}
+
+
+The CPU column is not advice. TabPFN refuses a CPU fit above that many
+rows, whatever the version's own limit says, so \code{"v3.5"} stops at 5,000
+rows on a machine without a GPU. Set \code{ignore_pretraining_limits = TRUE}
+in \code{\link[=control_tab_pfn]{control_tab_pfn()}}, or the \code{TABPFN_ALLOW_CPU_LARGE_DATASET}
+environment variable, to lift it. The fit then runs, slowly.
+
+Every limit here is enforced by the Python library, which raises an error
+naming the count and the limit. Use \code{training_set_limit} to fit on a
+sample instead.
+
+The row and predictor maxima trade off against each other, so you cannot
+always reach both at once. The ceiling is not a promise either: for
+\code{"v3.5"}, PriorLabs recommends up to 6,000 predictors even though the
+model tops out at 20,000. See \url{https://docs.priorlabs.ai/models}.
+}
+
 \examples{
 predictors <- mtcars[, -1]
 outcome <- mtcars[, 1]

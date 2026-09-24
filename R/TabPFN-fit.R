@@ -38,12 +38,16 @@
 #' `num_estimators > 1`, should the average be done before using the softmax
 #' function or after? Default is `FALSE`.
 #'
-#' @param training_set_limit An integer greater than 2L (and possibly `Inf`)
-#' that can be used to keep the training data within the limits of the
-#' data constraints imposed by the Python library.
+#' @param training_set_limit An integer greater than 2L, or `Inf` (the default)
+#' to use every row. Anything smaller samples the training set down to that many
+#' rows, stratified by class for classification and by quartile for regression.
+#' Use it to speed up a fit, or to make one possible at all on a machine that
+#' cannot hold the whole training set.
 #'
-#' @param version A character string for the model version (e.g., `"v2"`,
-#' `"v2.5"`). When `NULL` (the default), the Python library's current default
+#' @param version The model version, such as `"v2.5"` or `"v3.5"`. A bare
+#' number works too: `2.5`, `"2.5"`, and `"v2.5"` are equivalent. Call
+#' [tabpfn_list_versions()] for the versions your installed Python library
+#' offers. When `NULL` (the default), the Python library's current default
 #' version is used. When set, the model is initialized via
 #' `create_default_for_version()` with the corresponding `ModelVersion` enum
 #' value.
@@ -71,8 +75,9 @@
 #' ## License Requirements
 #'
 #' Starting with version 2.5, using TabPFN requires accepting the model license
-#' and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
-#' has its own license that must be accepted individually.
+#' and obtaining a token from PriorLabs. Every version from 2.5 onwards has its
+#' own license, and you must accept each one on its own. Accepting the license
+#' for one version does not cover the others.
 #'
 #' To set up access:
 #'
@@ -164,15 +169,13 @@
 #'
 #' ## Data
 #'
-#' Be default, there are limits to the training data dimensions:
+#' Each model version was pre-trained on data up to a certain size, and those
+#' sizes have grown a great deal across versions. The *Data limits by version*
+#' section below has the numbers.
 #'
-#'   * Version 2.0: number of training set samples (10,000) and, the number of
-#'   predictors (500). There is an unchangeable limit to the number of classes
-#'   (10).
-#'
-#'   * Version 2.5: number of training set samples (50,000) and, the number of
-#'   predictors (2,000). There is an unchangeable limit to the number of classes
-#'   (10).
+#' These limits are enforced by the Python library, which raises when data
+#' exceeds them. \pkg{tabpfn} does not check them itself, so the error you see
+#' names the model actually loaded.
 #'
 #' Predictors do not require preprocessing; missing values and factor vectors
 #' are allowed.
@@ -184,15 +187,22 @@
 #'
 #' ### Selecting a model version
 #'
-#' Use the `version` argument to select a specific released model version. For
-#' example:
+#' Use the `version` argument to select a specific released model version:
 #'
 #' \preformatted{
-#'   # Use version 2.0
-#'   mod <- tab_pfn(predictors, outcome, version = "v2")
-#'
-#'   # Use version 2.5
 #'   mod <- tab_pfn(predictors, outcome, version = "v2.5")
+#'
+#'   # A bare number works too
+#'   mod <- tab_pfn(predictors, outcome, version = 3.5)
+#' }
+#'
+#' New model versions are released from time to time, so rather than listing
+#' them here, call [tabpfn_list_versions()] to see what your installed Python
+#' library offers:
+#'
+#' \preformatted{
+#'   > tabpfn_list_versions()
+#'   [1] "v2"    "v2.5"  "v2.6"  "v3"    "v3.5"  "v3.5-fast"
 #' }
 #'
 #' ### Pointing to a local model file
@@ -248,6 +258,7 @@
 #' Frank Hutter. "Transformers can do Bayesian inference." _arXiv preprint_
 #' arXiv:2112.10510 (2021).
 #'
+#' @eval limits_table_md()
 #' @seealso [control_tab_pfn()], [predict.tab_pfn()]
 #' @examples
 #' predictors <- mtcars[, -1]
@@ -296,7 +307,7 @@ tab_pfn.data.frame <- function(
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -310,11 +321,7 @@ tab_pfn.data.frame <- function(
   check_number_whole(training_set_limit, min = 2, allow_infinite = TRUE)
 
   processed <- hardhat::mold(x, y)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit)
 
   tab_pfn_bridge(processed, options, version = version, ...)
 }
@@ -330,7 +337,7 @@ tab_pfn.matrix <- function(
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -344,11 +351,7 @@ tab_pfn.matrix <- function(
   check_number_whole(training_set_limit, min = 2, allow_infinite = TRUE)
 
   processed <- hardhat::mold(x, y)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit)
 
   tab_pfn_bridge(processed, options, version = version, ...)
 }
@@ -364,7 +367,7 @@ tab_pfn.formula <- function(
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -385,11 +388,7 @@ tab_pfn.formula <- function(
     composition = "tibble"
   )
   processed <- hardhat::mold(formula, data, blueprint = bp)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit)
 
   tab_pfn_bridge(processed, options, version = version, ...)
 }
@@ -405,7 +404,7 @@ tab_pfn.recipe <- function(
   softmax_temperature = 0.9,
   balance_probabilities = FALSE,
   average_before_softmax = FALSE,
-  training_set_limit = 10000,
+  training_set_limit = Inf,
   version = NULL,
   control = control_tab_pfn(),
   ...
@@ -419,13 +418,99 @@ tab_pfn.recipe <- function(
   check_number_whole(training_set_limit, min = 2, allow_infinite = TRUE)
 
   processed <- hardhat::mold(x, data)
-  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
-  if (length(tr_ind) > 0) {
-    processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
-    processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
-  }
+  processed <- crop_training_set(processed, training_set_limit)
 
   tab_pfn_bridge(processed, options, version = version, ...)
+}
+
+# ------------------------------------------------------------------------------
+# Shared by the four fit methods. Only samples when asked: `training_set_limit`
+# defaults to `Inf`.
+
+crop_training_set <- function(processed, training_set_limit) {
+  if (nrow(processed$outcomes) <= training_set_limit) {
+    return(processed)
+  }
+
+  tr_ind <- sample_indicies(processed, size_limit = training_set_limit)
+  processed$predictors <- processed$predictors[tr_ind, , drop = FALSE]
+  processed$outcomes <- processed$outcomes[tr_ind, , drop = FALSE]
+
+  processed
+}
+
+# ------------------------------------------------------------------------------
+# Keep what the library said about the failure. Drop the exception class,
+# reticulate's footer, and its advice, which is written in Python syntax.
+
+abort_python_fit <- function(cnd, call = quote(tab_pfn())) {
+  msg <- clean_python_message(conditionMessage(cnd))
+
+  cli::cli_abort(c(x = "{msg}", python_fit_hints(msg)), call = call)
+}
+
+clean_python_message <- function(msg) {
+  # "tabpfn.errors.TabPFNValidationError: ", "RuntimeError: ", and so on.
+  msg <- sub("^[A-Za-z_.]*(Error|Exception):[[:space:]]*", "", msg)
+  # Drop whole sentences, so nothing is left dangling, and wherever they sit in
+  # the message:
+  #
+  #   * reticulate's footer, whose detail is already on screen
+  #   * the advice to set `ignore_pretraining_limits` or
+  #     `TABPFN_ALLOW_CPU_LARGE_DATASET`, which is given below in R, and which
+  #     Python states in a syntax that will not run here
+  # Newlines count as breaks too. Not every sentence the library writes ends in
+  # a full stop, and one that ends in a URL would otherwise absorb whatever
+  # follows it and be dropped along with it.
+  sentences <- unlist(
+    strsplit(msg, "(?<=[.!])[[:space:]]+|[\r\n]+", perl = TRUE)
+  )
+  keep <- !grepl(
+    "py_last_error|ignore_pretraining_limits|TABPFN_ALLOW_CPU_LARGE_DATASET",
+    sentences
+  )
+  msg <- paste(sentences[keep], collapse = " ")
+
+  trimws(gsub("[[:space:]]+", " ", msg))
+}
+
+# What to do about it, in R. Matched on single words so a rewording upstream
+# costs us the advice, not the message. CPU first: its message says samples too.
+python_fit_hints <- function(msg) {
+  sample_or_lift <- "Set {.arg training_set_limit} to fit on a sample,
+                     or {.code control_tab_pfn(ignore_pretraining_limits = TRUE)}
+                     to use every row."
+
+  if (grepl("CPU", msg, fixed = TRUE)) {
+    return(c(
+      i = "Set {.arg training_set_limit} to fit on a sample,
+           or {.code control_tab_pfn(ignore_pretraining_limits = TRUE)} to use
+           every row. The {.envvar TABPFN_ALLOW_CPU_LARGE_DATASET} environment
+           variable lifts the CPU limit too."
+    ))
+  }
+
+  if (grepl("samples", msg, fixed = TRUE)) {
+    return(c(i = sample_or_lift))
+  }
+
+  # Sampling rows cannot help here, so do not suggest it.
+  if (grepl("features", msg, fixed = TRUE)) {
+    return(c(
+      i = "Use fewer predictors, or
+           {.code control_tab_pfn(ignore_pretraining_limits = TRUE)} to keep
+           them all."
+    ))
+  }
+
+  if (grepl("classes", msg, fixed = TRUE)) {
+    return(c(
+      i = "Later model versions allow more classes. See the {.arg version}
+           argument."
+    ))
+  }
+
+  character(0)
 }
 
 # ------------------------------------------------------------------------------
@@ -442,7 +527,8 @@ tab_pfn_bridge <- function(processed, options, version = NULL, ...) {
   predictors <- processed$predictors
   outcome <- processed$outcomes[[1]]
 
-  check_data_constraints(predictors, outcome, options)
+  # No data limits are checked here. The Python library validates against the
+  # checkpoint in use, so a copy of those rules in R could only be staler.
 
   res <- tab_pfn_impl(predictors, outcome, options, version = version)
 
@@ -490,16 +576,14 @@ tab_pfn_impl <- function(x, y, opts, version = NULL) {
     mod_obj <- rlang::eval_bare(cls_cl)
   }
 
-  py_msg <- reticulate::py_capture_output(
-    model_fit <- try(mod_obj$fit(x, y), silent = TRUE)
+  py_msg <- with_py_output(
+    model_fit <- tryCatch(mod_obj$fit(x, y), error = function(cnd) cnd)
   )
 
-  if (inherits(model_fit, "try-error")) {
-    msgs <- as.character(model_fit)
-    cli::cli_abort("Model failed: {msgs}")
-  } else {
-    msgs <- character(0)
+  if (inherits(model_fit, "error")) {
+    abort_python_fit(model_fit)
   }
+  msgs <- character(0)
 
   # check for failures
   res <- list(
@@ -556,11 +640,15 @@ extract_model_device <- function(model_fit) {
 
 #' @export
 print.tab_pfn <- function(x, ...) {
-  type <- ifelse(is.null(x$levels), "Regression", "Classification")
-  model <- if (is.null(x$version) || identical(x$version, "unknown")) {
-    "TabPFN"
+  if (is.null(x$levels)) {
+    type <- "Regression"
   } else {
-    x$version
+    type <- "Classification"
+  }
+  if (is.null(x$version) || identical(x$version, "unknown")) {
+    model <- "TabPFN"
+  } else {
+    model <- x$version
   }
   cli::cli_h2("{model} {type} Model")
   cli::cli_inform("Training set:")

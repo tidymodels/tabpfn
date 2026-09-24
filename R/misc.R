@@ -27,8 +27,9 @@ uses_canonical_env <- function(envname = "r-tabpfn") {
 
   exe <- norm(exe)
 
-  venv <- if (reticulate::virtualenv_exists(envname)) {
-    norm(reticulate::virtualenv_python(envname))
+  venv <- NULL
+  if (reticulate::virtualenv_exists(envname)) {
+    venv <- norm(reticulate::virtualenv_python(envname))
   }
   conda <- tryCatch(
     norm(reticulate::conda_python(envname)),
@@ -77,54 +78,101 @@ check_libomp <- function() {
 
 # ------------------------------------------------------------------------------
 
-row_limits <- 50000
-col_limits <- 2000
-cls_limits <- 10
+# Documentation only: the Python library enforces these and raises its own
+# error. Read new numbers off a fitted model's `inference_config_`, not from
+# docs.priorlabs.ai, which disagrees with the library on v2.5.
+tabpfn_limits <- tibble::tribble(
+  ~version,    ~rows_gpu, ~rows_cpu, ~predictors, ~classes,
+  "v3.5-fast", 1000000,   5000,      20000,       160,
+  "v3.5",      1000000,   5000,      20000,       160,
+  "v3",        1000000,   5000,      2000,        160,
+  "v2.6",      100000,    1000,      2000,        10,
+  "v2.5",      50000,     1000,      2000,        10,
+  "v2",        10000,     1000,      500,         10
+)
 
-check_data_constraints <- function(x, y, control) {
-  lvls <- levels(y)
-
-  x_dims <- dim(x)
-  if (x_dims[1] > row_limits & !control$ignore_pretraining_limits) {
-    cli::cli_abort(
-      call = NULL,
-      c(
-        i = "There are {format(x_dims[1], big.mark = ',')} rows in the training set.",
-        i = "TabPFN (version 2) is intended for training set sizes <=
-        {format(row_limits, big.mark = ',')} rows.",
-        i = "Consider setting the option {.arg ignore_pretraining_limits} to
-        {.val TRUE} or subset the training size using the
-        {.arg training_set_limit} argument."
-      )
-    )
+# 1000 -> "1K", 1e6 -> "1M", for the documentation table.
+abbreviate_count <- function(x) {
+  if (is.na(x)) {
+    return("unknown")
   }
-  if (x_dims[2] > col_limits & !control$ignore_pretraining_limits) {
-    cli::cli_abort(
-      call = NULL,
-      c(
-        i = "There are {format(x_dims[2], big.mark = ',')} predictors in the training set.",
-        i = "TabPFN (version 2) is intended for <= {col_limits} predictors.",
-        i = "Consider setting the option {.arg ignore_pretraining_limits} to {.val TRUE} or subset the training size."
-      )
-    )
+  if (x >= 1e6) {
+    return(paste0(x / 1e6, "M"))
   }
-
-  if (!is.null(lvls) && length(lvls) > cls_limits) {
-    cli::cli_abort(
-      call = NULL,
-      c(
-        i = "There are {length(lvls)} classes in the outcome.",
-        x = "TabPFN (version 2) is intended for <= {cls_limits} classes and won't work with more."
-      )
-    )
+  if (x >= 1000) {
+    return(paste0(x / 1000, "K"))
   }
-
-  invisible(NULL)
+  as.character(x)
 }
 
-# Sampling down the data for data constraints
+# Renders `tabpfn_limits` as roxygen markdown, so the help page cannot drift
+# from the table. Called from `@eval`.
+limits_table_md <- function() {
+  fmt <- function(x) {
+    purrr::map_chr(x, abbreviate_count)
+  }
 
-sample_indicies <- function(molded, size_limit = row_limits) {
+  rows <- paste0(
+    "| `\"",
+    tabpfn_limits$version,
+    "\"` | ",
+    fmt(tabpfn_limits$rows_gpu),
+    " | ",
+    fmt(tabpfn_limits$rows_cpu),
+    " | ",
+    fmt(tabpfn_limits$predictors),
+    " | ",
+    fmt(tabpfn_limits$classes),
+    " |"
+  )
+
+  c(
+    "@section Data limits by version:",
+    "",
+    "| Version | Rows (GPU) | Rows (CPU) | Predictors | Classes |",
+    "| --- | --- | --- | --- | --- |",
+    rows,
+    "",
+    "The CPU column is not advice. TabPFN refuses a CPU fit above that many",
+    "rows, whatever the version's own limit says, so `\"v3.5\"` stops at 5,000",
+    "rows on a machine without a GPU. Set `ignore_pretraining_limits = TRUE`",
+    "in [control_tab_pfn()], or the `TABPFN_ALLOW_CPU_LARGE_DATASET`",
+    "environment variable, to lift it. The fit then runs, slowly.",
+    "",
+    "Every limit here is enforced by the Python library, which raises an error",
+    "naming the count and the limit. Use `training_set_limit` to fit on a",
+    "sample instead.",
+    "",
+    "The row and predictor maxima trade off against each other, so you cannot",
+    "always reach both at once. The ceiling is not a promise either: for",
+    "`\"v3.5\"`, PriorLabs recommends up to 6,000 predictors even though the",
+    "model tops out at 20,000. See <https://docs.priorlabs.ai/models>."
+  )
+}
+
+# Run `expr`, returning anything Python printed. Not `py_capture_output()`: it
+# also reassigns logging handler streams, which raises on a read-only one (#40).
+with_py_output <- function(expr) {
+  sys <- reticulate::import("sys", convert = FALSE)
+  buffer <- reticulate::import("io", convert = FALSE)$StringIO()
+
+  old_out <- sys$stdout
+  old_err <- sys$stderr
+  sys$stdout <- buffer
+  sys$stderr <- buffer
+  on.exit({
+    sys$stdout <- old_out
+    sys$stderr <- old_err
+  })
+
+  force(expr)
+  reticulate::py_to_r(buffer$getvalue())
+}
+
+# ------------------------------------------------------------------------------
+# Sampling down the data when the user asks for a smaller training set.
+
+sample_indicies <- function(molded, size_limit) {
   num_rows <- nrow(molded$outcomes)
   if (num_rows <= size_limit) {
     return(integer(0))

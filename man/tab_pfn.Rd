@@ -166,8 +166,7 @@ for one version does not cover the others.
 
 To set up access:
 \enumerate{
-\item Visit \url{https://ux.priorlabs.ai} and create an
-account.
+\item Visit \verb{https://ux.priorlabs.ai} and create an account.
 \item Go to the \strong{License} tab and accept the license for each model version
 you intend to use.
 \item Obtain your token from your account page.
@@ -390,6 +389,12 @@ a second." \emph{arXiv preprint} arXiv:2207.01848 (2022).
 Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and
 Frank Hutter. "Transformers can do Bayesian inference." \emph{arXiv preprint}
 arXiv:2112.10510 (2021).
+
+Grinsztajn, Léo, et al. "Tabpfn-3: Technical report." \emph{arXiv preprint}
+arXiv:2605.13986 (2026).
+
+Jäger, Benjamin, et al. "TabPFN-3.5: Technical Report." \emph{arXiv preprint}
+arXiv:2609.17895 (2026).
 }
 \seealso{
 \code{\link[=control_tab_pfn]{control_tab_pfn()}}, \code{\link[=predict.tab_pfn]{predict.tab_pfn()}}

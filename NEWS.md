@@ -1,4 +1,4 @@
-# tabpfn (development version)
+# tabpfn 0.4.0
 
 - The `training_set_limit` argument of `tab_pfn()` now defaults to `Inf`, so all of your data is used. It previously sampled anything larger down to 10,000 rows without saying so.
 

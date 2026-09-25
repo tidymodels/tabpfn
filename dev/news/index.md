@@ -2,6 +2,8 @@
 
 ## tabpfn (development version)
 
+## tabpfn 0.4.0
+
 - Documented how to pin a version of one of the Python `tabpfn`
   library’s own dependencies, such as `torch` or `numpy`, when a new
   release of that dependency breaks a `tabpfn` version that worked

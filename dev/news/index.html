@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tabpfn</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.3.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="tabpfn-development-version">tabpfn (development version)<a class="anchor" aria-label="anchor" href="#tabpfn-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="tabpfn-040">tabpfn 0.4.0<a class="anchor" aria-label="anchor" href="#tabpfn-040"></a></h2>
 <ul><li><p>Documented how to pin a version of one of the Python <code>tabpfn</code> library’s own dependencies, such as <code>torch</code> or <code>numpy</code>, when a new release of that dependency breaks a <code>tabpfn</code> version that worked before. Use <code>extra_packages</code> in <code><a href="../reference/install_tabpfn.html">install_tabpfn()</a></code> for the persistent environment, or <code><a href="https://rstudio.github.io/reticulate/reference/py_require.html" class="external-link">reticulate::py_require()</a></code> for the ephemeral one. See the “Pinning dependencies” section in <code><a href="../reference/install_tabpfn.html">?install_tabpfn</a></code> (<a href="https://github.com/tidymodels/tabpfn/issues/40" class="external-link">#40</a>).</p></li>
 <li><p>The <code>training_set_limit</code> argument of <code><a href="../reference/tab_pfn.html">tab_pfn()</a></code> now defaults to <code>Inf</code>, so all of your data is used. It previously sampled anything larger down to 10,000 rows without saying so.</p></li>
 <li><p><code><a href="../reference/tab_pfn.html">tab_pfn()</a></code> no longer checks your data against the model’s limits; the Python library does, and its error names the model in use. Limits now follow the version you chose rather than one fixed set.</p></li>
@@ -73,7 +76,7 @@
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, Edgar Ruiz, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

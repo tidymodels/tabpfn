@@ -81,8 +81,7 @@
 #'
 #' To set up access:
 #'
-#' 1. Visit [https://ux.priorlabs.ai](https://ux.priorlabs.ai) and create an
-#'    account.
+#' 1. Visit `https://ux.priorlabs.ai` and create an account.
 #' 2. Go to the **License** tab and accept the license for each model version
 #'    you intend to use.
 #' 3. Obtain your token from your account page.
@@ -257,6 +256,12 @@
 #' Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and
 #' Frank Hutter. "Transformers can do Bayesian inference." _arXiv preprint_
 #' arXiv:2112.10510 (2021).
+#'
+#' Grinsztajn, Léo, et al. "Tabpfn-3: Technical report." _arXiv preprint_
+#' arXiv:2605.13986 (2026).
+#'
+#' Jäger, Benjamin, et al. "TabPFN-3.5: Technical Report." _arXiv preprint_
+#' arXiv:2609.17895 (2026).
 #'
 #' @eval limits_table_md()
 #' @seealso [control_tab_pfn()], [predict.tab_pfn()]

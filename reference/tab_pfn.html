@@ -11,7 +11,7 @@ regression and classification models."><meta property="og:image" content="https:
 
     <a class="navbar-brand me-2" href="../index.html">tabpfn</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,7 @@ regression and classification models.</p>
 <span>  softmax_temperature <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  training_set_limit <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -71,7 +71,7 @@ regression and classification models.</p>
 <span>  softmax_temperature <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  training_set_limit <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -85,7 +85,7 @@ regression and classification models.</p>
 <span>  softmax_temperature <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  training_set_limit <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -99,7 +99,7 @@ regression and classification models.</p>
 <span>  softmax_temperature <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  balance_probabilities <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  average_before_softmax <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  training_set_limit <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  training_set_limit <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="control_tab_pfn.html">control_tab_pfn</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -152,14 +152,18 @@ function or after? Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-training-set-limit">training_set_limit<a class="anchor" aria-label="anchor" href="#arg-training-set-limit"></a></dt>
-<dd><p>An integer greater than 2L (and possibly <code>Inf</code>)
-that can be used to keep the training data within the limits of the
-data constraints imposed by the Python library.</p></dd>
+<dd><p>An integer greater than 2L, or <code>Inf</code> (the default)
+to use every row. Anything smaller samples the training set down to that many
+rows, stratified by class for classification and by quartile for regression.
+Use it to speed up a fit, or to make one possible at all on a machine that
+cannot hold the whole training set.</p></dd>
 
 
 <dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>A character string for the model version (e.g., <code>"v2"</code>,
-<code>"v2.5"</code>). When <code>NULL</code> (the default), the Python library's current default
+<dd><p>The model version, such as <code>"v2.5"</code> or <code>"v3.5"</code>. A bare
+number works too: <code>2.5</code>, <code>"2.5"</code>, and <code>"v2.5"</code> are equivalent. Call
+<code><a href="tabpfn_list_versions.html">tabpfn_list_versions()</a></code> for the versions your installed Python library
+offers. When <code>NULL</code> (the default), the Python library's current default
 version is used. When set, the model is initialized via
 <code>create_default_for_version()</code> with the corresponding <code>ModelVersion</code> enum
 value.</p></dd>
@@ -216,10 +220,10 @@ specific computations and might be slower than the CPU for some data sets.</p>
 
 
 <p>Starting with version 2.5, using TabPFN requires accepting the model license
-and obtaining a token from PriorLabs. Each model version (v2.5, v2.6, etc.)
-has its own license that must be accepted individually.</p>
-<p>To set up access:</p><ol><li><p>Visit <a href="https://platform.priorlabs.ai:443/" class="external-link">https://platform.priorlabs.ai:443/</a> and create an
-account.</p></li>
+and obtaining a token from PriorLabs. Every version from 2.5 onwards has its
+own license, and you must accept each one on its own. Accepting the license
+for one version does not cover the others.</p>
+<p>To set up access:</p><ol><li><p>Visit <code>https://ux.priorlabs.ai</code> and create an account.</p></li>
 <li><p>Go to the <strong>License</strong> tab and accept the license for each model version
 you intend to use.</p></li>
 <li><p>Obtain your token from your account page.</p></li>
@@ -310,13 +314,13 @@ before fitting a model); if Python is already loaded, restart R first.</p>
 <h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a></h3>
 
 
-<p>Be default, there are limits to the training data dimensions:</p><ul><li><p>Version 2.0: number of training set samples (10,000) and, the number of
-predictors (500). There is an unchangeable limit to the number of classes
-(10).</p></li>
-<li><p>Version 2.5: number of training set samples (50,000) and, the number of
-predictors (2,000). There is an unchangeable limit to the number of classes
-(10).</p></li>
-</ul><p>Predictors do not require preprocessing; missing values and factor vectors
+<p>Each model version was pre-trained on data up to a certain size, and those
+sizes have grown a great deal across versions. The <em>Data limits by version</em>
+section below has the numbers.</p>
+<p>These limits are enforced by the Python library, which raises when data
+exceeds them. <span class="pkg">tabpfn</span> does not check them itself, so the error you see
+names the model actually loaded.</p>
+<p>Predictors do not require preprocessing; missing values and factor vectors
 are allowed.</p>
 </div>
 
@@ -329,14 +333,20 @@ There are two ways to override this.</p><div class="section">
 <h4 id="selecting-a-model-version">Selecting a model version<a class="anchor" aria-label="anchor" href="#selecting-a-model-version"></a></h4>
 
 
-<p>Use the <code>version</code> argument to select a specific released model version. For
-example:</p>
+<p>Use the <code>version</code> argument to select a specific released model version:</p>
 <div class="sourceCode"><pre><code><span></span>
-<span>  <span class="co"># Use version 2.0</span></span>
-<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="st">"v2"</span><span class="op">)</span></span>
+<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="st">"v2.5"</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="co"># Use version 2.5</span></span>
-<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="st">"v2.5"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="co"># A bare number works too</span></span>
+<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">predictors</span>, <span class="va">outcome</span>, version <span class="op">=</span> <span class="fl">3.5</span><span class="op">)</span></span></code></pre></div>
+
+<p>New model versions are released from time to time, so rather than listing
+them here, call <code><a href="tabpfn_list_versions.html">tabpfn_list_versions()</a></code> to see what your installed Python
+library offers:</p>
+<div class="sourceCode"><pre><code>
+  &gt; tabpfn_list_versions()
+  [1] "v2"    "v2.5"  "v2.6"  "v3"    "v3.5"  "v3.5-fast"
+</code></pre></div>
 
 </div>
 
@@ -370,6 +380,22 @@ is set, it overwrites any <code>model_path</code> supplied through <code>control
 
     </div>
     <div class="section level2">
+    <h2 id="data-limits-by-version">Data limits by version<a class="anchor" aria-label="anchor" href="#data-limits-by-version"></a></h2>
+
+<table class="table table"><tr><td>Version</td><td>Rows (GPU)</td><td>Rows (CPU)</td><td>Predictors</td><td>Classes</td></tr><tr><td><code>"v3.5-fast"</code></td><td>1M</td><td>5K</td><td>20K</td><td>160</td></tr><tr><td><code>"v3.5"</code></td><td>1M</td><td>5K</td><td>20K</td><td>160</td></tr><tr><td><code>"v3"</code></td><td>1M</td><td>5K</td><td>2K</td><td>160</td></tr><tr><td><code>"v2.6"</code></td><td>100K</td><td>1K</td><td>2K</td><td>10</td></tr><tr><td><code>"v2.5"</code></td><td>50K</td><td>1K</td><td>2K</td><td>10</td></tr><tr><td><code>"v2"</code></td><td>10K</td><td>1K</td><td>500</td><td>10</td></tr></table><p>The CPU column is not advice. TabPFN refuses a CPU fit above that many
+rows, whatever the version's own limit says, so <code>"v3.5"</code> stops at 5,000
+rows on a machine without a GPU. Set <code>ignore_pretraining_limits = TRUE</code>
+in <code><a href="control_tab_pfn.html">control_tab_pfn()</a></code>, or the <code>TABPFN_ALLOW_CPU_LARGE_DATASET</code>
+environment variable, to lift it. The fit then runs, slowly.</p>
+<p>Every limit here is enforced by the Python library, which raises an error
+naming the count and the limit. Use <code>training_set_limit</code> to fit on a
+sample instead.</p>
+<p>The row and predictor maxima trade off against each other, so you cannot
+always reach both at once. The ceiling is not a promise either: for
+<code>"v3.5"</code>, PriorLabs recommends up to 6,000 predictors even though the
+model tops out at 20,000. See <a href="https://docs.priorlabs.ai/models" class="external-link">https://docs.priorlabs.ai/models</a>.</p>
+    </div>
+    <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Hollmann, Noah, Samuel Müller, Lennart Purucker, Arjun Krishnakumar, Max
 Körfer, Shi Bin Hoo, Robin Tibor Schirrmeister, and Frank Hutter.
@@ -381,6 +407,10 @@ a second." <em>arXiv preprint</em> arXiv:2207.01848 (2022).</p>
 <p>Müller, Samuel, Noah Hollmann, Sebastian Pineda Arango, Josif Grabocka, and
 Frank Hutter. "Transformers can do Bayesian inference." <em>arXiv preprint</em>
 arXiv:2112.10510 (2021).</p>
+<p>Grinsztajn, Léo, et al. "Tabpfn-3: Technical report." <em>arXiv preprint</em>
+arXiv:2605.13986 (2026).</p>
+<p>Jäger, Benjamin, et al. "TabPFN-3.5: Technical Report." <em>arXiv preprint</em>
+arXiv:2609.17895 (2026).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -422,7 +452,7 @@ arXiv:2112.10510 (2021).</p>
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, Edgar Ruiz, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tabpfn</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,18 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.0" id="tabpfn-030">tabpfn 0.3.0<a class="anchor" aria-label="anchor" href="#tabpfn-030"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0" id="tabpfn-040">tabpfn 0.4.0<a class="anchor" aria-label="anchor" href="#tabpfn-040"></a></h2>
+<ul><li><p>Documented how to pin a version of one of the Python <code>tabpfn</code> library’s own dependencies, such as <code>torch</code> or <code>numpy</code>, when a new release of that dependency breaks a <code>tabpfn</code> version that worked before. Use <code>extra_packages</code> in <code><a href="../reference/install_tabpfn.html">install_tabpfn()</a></code> for the persistent environment, or <code><a href="https://rstudio.github.io/reticulate/reference/py_require.html" class="external-link">reticulate::py_require()</a></code> for the ephemeral one. See the “Pinning dependencies” section in <code><a href="../reference/install_tabpfn.html">?install_tabpfn</a></code> (<a href="https://github.com/tidymodels/tabpfn/issues/40" class="external-link">#40</a>).</p></li>
+<li><p>The <code>training_set_limit</code> argument of <code><a href="../reference/tab_pfn.html">tab_pfn()</a></code> now defaults to <code>Inf</code>, so all of your data is used. It previously sampled anything larger down to 10,000 rows without saying so.</p></li>
+<li><p><code><a href="../reference/tab_pfn.html">tab_pfn()</a></code> no longer checks your data against the model’s limits; the Python library does, and its error names the model in use. Limits now follow the version you chose rather than one fixed set.</p></li>
+<li><p>Fixed a failure that stopped models from fitting at all on some setups, reported as <code>AttributeError: property 'stream' of '_StderrHandler' object has no setter</code> (<a href="https://github.com/tidymodels/tabpfn/issues/40" class="external-link">#40</a>). The package no longer uses <code><a href="https://rstudio.github.io/reticulate/reference/py_capture_output.html" class="external-link">reticulate::py_capture_output()</a></code>, which reassigns the streams of Python’s logging handlers and errors when one of them is read-only.</p></li>
+<li><p>Failures coming from the Python library are now reported as R errors. The message keeps what the library said and drops the wrapper around it, and <code><a href="../reference/tab_pfn.html">tab_pfn()</a></code> adds what to do about it in R, such as lowering <code>training_set_limit</code>. This covers <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> as well.</p></li>
+<li><p><code><a href="../reference/tab_pfn.html">?tab_pfn</a></code> now lists each model version’s limits, including the lower one that applies on a CPU, and its examples use current versions rather than earlier ones.</p></li>
+<li><p>Test snapshots now record TabPFN v3.5, the model the Python library currently defaults to. They will need updating again whenever that default moves.</p></li>
+<li><p>CI pins <code>torch</code> to 2.13.0. The 2.14.0 release triggers the <code>_StderrHandler</code> failure above, and the pin stays until that is settled upstream.</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="tabpfn-030">tabpfn 0.3.0<a class="anchor" aria-label="anchor" href="#tabpfn-030"></a></h2><p class="text-muted">CRAN release: 2026-09-01</p>
 <ul><li><p>Added quantile regression support to <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code>.</p></li>
 <li><p><code><a href="../reference/tab_pfn.html">tab_pfn()</a></code>’s <code>version</code> argument now accepts bare version numbers in addition to <code>"v"</code>-prefixed strings. A <code>"v"</code> is prepended automatically, so <code>version = 2.5</code>, <code>version = "2.5"</code>, and <code>version = "v2.5"</code> are all equivalent.</p></li>
 <li><p>New <code><a href="../reference/tabpfn_initialize.html">tabpfn_initialize()</a></code> eagerly loads the Python <code>tabpfn</code> library (and PyTorch). Call it right after <code><a href="https://tabpfn.tidymodels.org">library(tabpfn)</a></code> and before other OpenMP-using packages to avoid the segmentation fault described in <a href="https://github.com/tidymodels/tabpfn/issues/34" class="external-link">#34</a>.</p></li>
@@ -62,7 +73,7 @@
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, Edgar Ruiz, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

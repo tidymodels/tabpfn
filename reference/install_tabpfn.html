@@ -15,7 +15,7 @@ section).'><meta property="og:image" content="https://tabpfn.tidymodels.org/logo
 
     <a class="navbar-brand me-2" href="../index.html">tabpfn</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,9 @@ skip this check (useful when intentionally staying on an older version).</p></dd
 
 <dt id="arg-extra-packages">extra_packages<a class="anchor" aria-label="anchor" href="#arg-extra-packages"></a></dt>
 <dd><p>An optional character vector of additional Python
-packages to install alongside <code>tabpfn</code>.</p></dd>
+packages to install alongside <code>tabpfn</code>. You can also use it to set the
+version of one of <code>tabpfn</code>'s own dependencies, such as holding <code>torch</code> at
+an older release. See the <em>Pinning dependencies</em> section.</p></dd>
 
 
 <dt id="arg-python-version">python_version<a class="anchor" aria-label="anchor" href="#arg-python-version"></a></dt>
@@ -128,6 +130,37 @@ preferring it over the ephemeral environment that is otherwise created on
 demand. Environments selected via <code>RETICULATE_PYTHON</code>, <code>VIRTUAL_ENV</code>, or a
 project-local <code>.venv</code> take precedence over <code>"r-tabpfn"</code>.</p>
     </div>
+    <div class="section level2">
+    <h2 id="pinning-dependencies">Pinning dependencies<a class="anchor" aria-label="anchor" href="#pinning-dependencies"></a></h2>
+
+
+<p>The Python <code>tabpfn</code> library pulls in other Python packages, among them
+<code>torch</code>, <code>numpy</code>, <code>pandas</code>, and <code>scikit-learn</code>. A new release of any one of
+them can break code that worked the week before, even though your R version
+and your <code>tabpfn</code> version did not change. The error usually points at
+<code>tabpfn</code> rather than at the package that changed, so pinning the suspect
+dependency is a quick way to confirm the cause and to keep working until a
+fix lands upstream.</p>
+<p>To pin a dependency in the persistent environment that <code>install_tabpfn()</code>
+builds, pass it and the version you want in <code>extra_packages</code>:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span>  <span class="fu"><a href="../reference/install_tabpfn.html">install_tabpfn</a></span><span class="op">(</span></span>
+<span>    version <span class="op">=</span> <span class="st">"2.0.9"</span>,</span>
+<span>    extra_packages <span class="op">=</span> <span class="st">"torch==2.13.0"</span>,</span>
+<span>    new_env <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+
+<p><code>extra_packages</code> is used only when an install runs. If <code>envname</code> already
+exists and already has the version you asked for, this function returns
+early and ignores the pin. Pass <code>new_env = TRUE</code> to delete the environment
+and build it again with the pin.</p>
+<p>To pin a dependency in the ephemeral environment instead, call
+<code><a href="https://rstudio.github.io/reticulate/reference/py_require.html" class="external-link">reticulate::py_require()</a></code> before you fit a model:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tabpfn.tidymodels.org">tabpfn</a></span><span class="op">)</span></span>
+<span>  <span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_require.html" class="external-link">py_require</a></span><span class="op">(</span><span class="st">"torch==2.13.0"</span><span class="op">)</span></span></code></pre></div>
+
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -137,6 +170,9 @@ project-local <code>.venv</code> take precedence over <code>"r-tabpfn"</code>.</
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pin a specific version</span></span></span>
 <span class="r-in"><span><span class="fu">install_tabpfn</span><span class="op">(</span>version <span class="op">=</span> <span class="st">"2.0.9"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Pin a dependency as well</span></span></span>
+<span class="r-in"><span><span class="fu">install_tabpfn</span><span class="op">(</span>version <span class="op">=</span> <span class="st">"2.0.9"</span>, extra_packages <span class="op">=</span> <span class="st">"torch==2.13.0"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
@@ -147,7 +183,7 @@ project-local <code>.venv</code> take precedence over <code>"r-tabpfn"</code>.</
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, Edgar Ruiz, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

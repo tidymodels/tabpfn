@@ -27,6 +27,8 @@ Authors:
 - Max Kuhn <max@posit.co>
   ([ORCID](https://orcid.org/0000-0003-2402-136X))
 
+- Edgar Ruiz <edgar@posit.co>
+
 Other contributors:
 
 - Posit Software, PBC ([ROR](https://ror.org/03wc8by49)) \[copyright

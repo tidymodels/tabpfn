@@ -81,7 +81,7 @@ set.seed(364)
 reg_mod <- tab_pfn(mtcars[1:25, -1], mtcars$mpg[1:25])
 reg_mod
 #> 
-#> ── TabPFN-v3 Regression Model ──
+#> ── TabPFN-v3.5 Regression Model ──
 #> 
 #> Training set:
 #> ℹ 25 data points
@@ -101,13 +101,13 @@ predict(reg_mod, mtcars[26:32, -1])
 #> # A tibble: 7 × 1
 #>   .pred
 #>   <dbl>
-#> 1  31.4
-#> 2  24.3
-#> 3  24.8
-#> 4  16.4
-#> 5  18.9
-#> 6  14.4
-#> 7  22.5
+#> 1  31.1
+#> 2  25.8
+#> 3  25.7
+#> 4  15.8
+#> 5  19.4
+#> 6  13.9
+#> 7  24.3
 ```
 
 tabpfn follows the tidymodels prediction convention: a data frame is
@@ -119,12 +119,6 @@ vector. For example, using these data from the modeldata package:
 ``` r
 
 library(modeldata)
-#> Warning: package 'modeldata' was built under R version 4.6.1
-#> 
-#> Attaching package: 'modeldata'
-#> The following object is masked from 'package:datasets':
-#> 
-#>     penguins
 library(ggplot2)
 
 two_cls_train <- parabolic[1:400,  ]
@@ -140,16 +134,16 @@ grid_pred
 #> # A tibble: 625 × 3
 #>    .pred_Class1 .pred_Class2 .pred_class
 #>           <dbl>        <dbl> <fct>      
-#>  1        0.997      0.00269 Class1     
-#>  2        0.998      0.00227 Class1     
-#>  3        0.998      0.00182 Class1     
-#>  4        0.998      0.00177 Class1     
-#>  5        0.998      0.00176 Class1     
-#>  6        0.998      0.00243 Class1     
-#>  7        0.995      0.00479 Class1     
-#>  8        0.987      0.0126  Class1     
-#>  9        0.950      0.0500  Class1     
-#> 10        0.755      0.245   Class1     
+#>  1        0.991      0.00878 Class1     
+#>  2        0.994      0.00629 Class1     
+#>  3        0.995      0.00468 Class1     
+#>  4        0.996      0.00449 Class1     
+#>  5        0.993      0.00654 Class1     
+#>  6        0.987      0.0126  Class1     
+#>  7        0.964      0.0355  Class1     
+#>  8        0.892      0.108   Class1     
+#>  9        0.750      0.250   Class1     
+#> 10        0.540      0.460   Class1     
 #> # ℹ 615 more rows
 ```
 

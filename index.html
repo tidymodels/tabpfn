@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tabpfn</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -122,7 +122,7 @@
 <span><span class="va">reg_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tab_pfn.html">tab_pfn</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">reg_mod</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ── TabPFN-v3 Regression Model ──</span></span>
+<span><span class="co">#&gt; ── TabPFN-v3.5 Regression Model ──</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Training set:</span></span>
 <span><span class="co">#&gt; ℹ 25 data points</span></span>
@@ -136,23 +136,17 @@
 <span><span class="co">#&gt; # A tibble: 7 × 1</span></span>
 <span><span class="co">#&gt;   .pred</span></span>
 <span><span class="co">#&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1  31.4</span></span>
-<span><span class="co">#&gt; 2  24.3</span></span>
-<span><span class="co">#&gt; 3  24.8</span></span>
-<span><span class="co">#&gt; 4  16.4</span></span>
-<span><span class="co">#&gt; 5  18.9</span></span>
-<span><span class="co">#&gt; 6  14.4</span></span>
-<span><span class="co">#&gt; 7  22.5</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  31.1</span></span>
+<span><span class="co">#&gt; 2  25.8</span></span>
+<span><span class="co">#&gt; 3  25.7</span></span>
+<span><span class="co">#&gt; 4  15.8</span></span>
+<span><span class="co">#&gt; 5  19.4</span></span>
+<span><span class="co">#&gt; 6  13.9</span></span>
+<span><span class="co">#&gt; 7  24.3</span></span></code></pre></div>
 <p>tabpfn follows the tidymodels prediction convention: a data frame is always returned with a standard set of column names.</p>
 <p>For a classification model, the outcome should always be a factor vector. For example, using these data from the modeldata package:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://modeldata.tidymodels.org" class="external-link">modeldata</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'modeldata' was built under R version 4.6.1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'modeldata'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:datasets':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     penguins</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">two_cls_train</span> <span class="op">&lt;-</span> <span class="va">parabolic</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">400</span>,  <span class="op">]</span></span>
@@ -168,16 +162,16 @@
 <span><span class="co">#&gt; # A tibble: 625 × 3</span></span>
 <span><span class="co">#&gt;    .pred_Class1 .pred_Class2 .pred_class</span></span>
 <span><span class="co">#&gt;           &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt;      </span></span>
-<span><span class="co">#&gt;  1        0.997      0.00269 Class1     </span></span>
-<span><span class="co">#&gt;  2        0.998      0.00227 Class1     </span></span>
-<span><span class="co">#&gt;  3        0.998      0.00182 Class1     </span></span>
-<span><span class="co">#&gt;  4        0.998      0.00177 Class1     </span></span>
-<span><span class="co">#&gt;  5        0.998      0.00176 Class1     </span></span>
-<span><span class="co">#&gt;  6        0.998      0.00243 Class1     </span></span>
-<span><span class="co">#&gt;  7        0.995      0.00479 Class1     </span></span>
-<span><span class="co">#&gt;  8        0.987      0.0126  Class1     </span></span>
-<span><span class="co">#&gt;  9        0.950      0.0500  Class1     </span></span>
-<span><span class="co">#&gt; 10        0.755      0.245   Class1     </span></span>
+<span><span class="co">#&gt;  1        0.991      0.00878 Class1     </span></span>
+<span><span class="co">#&gt;  2        0.994      0.00629 Class1     </span></span>
+<span><span class="co">#&gt;  3        0.995      0.00468 Class1     </span></span>
+<span><span class="co">#&gt;  4        0.996      0.00449 Class1     </span></span>
+<span><span class="co">#&gt;  5        0.993      0.00654 Class1     </span></span>
+<span><span class="co">#&gt;  6        0.987      0.0126  Class1     </span></span>
+<span><span class="co">#&gt;  7        0.964      0.0355  Class1     </span></span>
+<span><span class="co">#&gt;  8        0.892      0.108   Class1     </span></span>
+<span><span class="co">#&gt;  9        0.750      0.250   Class1     </span></span>
+<span><span class="co">#&gt; 10        0.540      0.460   Class1     </span></span>
 <span><span class="co">#&gt; # ℹ 615 more rows</span></span></code></pre></div>
 <p>The fit looks fairly good when shown with out-of-sample data:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -249,6 +243,7 @@ Screenshot of the PriorLabs UX portal Licenses page
 <ul class="list-unstyled">
 <li>
 <a href="https://github.com/topepo" class="external-link">Max Kuhn</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2402-136X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Edgar Ruiz <br><small class="roles"> Author </small>   </li>
 <li>
 <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a> <br><small class="roles"> Copyright holder, funder </small>  <a href="https://ror.org/03wc8by49" class="external-link"><img src="https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg" class="ror" alt="ROR"></a> </li>
 </ul>
@@ -263,7 +258,7 @@ Screenshot of the PriorLabs UX portal Licenses page
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
+  <p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, Edgar Ruiz, <a href="https://www.posit.co" class="external-link"><img src="https://www.tidyverse.org/posit-logo.svg" alt="Posit" height="16" width="62" style="margin-bottom: 3px;"></a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -31,9 +31,12 @@ control_tab_pfn(
 
 - ignore_pretraining_limits:
 
-  A logical to bypass the default data limits on:the number of training
-  set samples (10,000) and, the number of predictors (500). There is an
-  unchangeable limit to the number of classes (10).
+  A logical, passed to the Python library, allowing data past the limits
+  the model was pre-trained for. It covers the number of training set
+  samples and predictors, and the much lower sample limit that applies
+  when the fit runs on a CPU. The limit on the number of classes always
+  applies. See the *Data limits by version* section of
+  [`tab_pfn()`](https://tabpfn.tidymodels.org/reference/tab_pfn.md).
 
 - inference_precision:
 

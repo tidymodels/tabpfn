@@ -1,0 +1,64 @@
+# Checks that TABPFN_TOKEN has accepted the license for the default model
+# of the latest Python `tabpfn`. A failure usually means Prior Labs released
+# new weights under a new license, which must be accepted for the token's
+# account at https://ux.priorlabs.ai before CI can download them.
+on:
+  schedule:
+    # runs every day at 1am EST
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+name: tabpfn-license-check.yaml
+
+permissions: read-all
+
+jobs:
+  tabpfn-license-check:
+    runs-on: ubuntu-latest
+
+    env:
+      TABPFN_TOKEN: ${{ secrets.TABPFN_TOKEN }}
+
+    steps:
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Install latest tabpfn
+        run: |
+          uv venv --python 3.13
+          uv pip install tabpfn --torch-backend cpu
+
+      - name: Check license acceptance
+        shell: bash
+        run: |
+          .venv/bin/python - <<'EOF'
+          import os
+          import sys
+
+          from tabpfn.browser_auth import _get_license_name, check_license_accepted
+          from tabpfn.settings import settings
+
+          # tabpfn keeps the version-to-repo map private, so rebuild it:
+          # "v3.5" -> "tabpfn_3_5", "v3.5-fast" -> "tabpfn_3_5"
+          version = settings.tabpfn.model_version.value
+          repo_id = "tabpfn_" + version.removesuffix("-fast").removeprefix("v").replace(".", "_")
+          license_name = _get_license_name(repo_id)
+          status = check_license_accepted(
+              os.environ["TABPFN_TOKEN"], settings.tabpfn.auth_api_url, license_name
+          )
+          print(f"version={version} repo={repo_id} license={license_name} accepted={status}")
+          if status is None:
+              print("::warning::Could not reach the Prior Labs license server")
+          elif not status:
+              print(f"::error::TABPFN_TOKEN has not accepted {license_name}")
+              sys.exit(1)
+          EOF
+
+      - name: Notify slack fail
+        if: failure() && github.event_name == 'schedule'
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v2
+        with:
+          channel_id: C03D2NLG47N
+          status: FAILED
+          color: danger
